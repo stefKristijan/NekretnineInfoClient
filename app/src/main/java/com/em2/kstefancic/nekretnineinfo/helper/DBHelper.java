@@ -80,6 +80,12 @@ public class DBHelper extends SQLiteOpenHelper {
         wdb.close();
     }
 
+    public void deleteUser() {
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        wdb.delete(Schema.TABLE_USER,null,null);
+        wdb.close();
+    }
+
     public User getUser(){
         User user = null;
         SQLiteDatabase wdb = this.getWritableDatabase();
@@ -135,6 +141,8 @@ public class DBHelper extends SQLiteOpenHelper {
         wdb.insert(Schema.TABLE_CONSTUCT_SYS,null,contentValues);
         wdb.close();
     }
+
+
 
     public static class Schema{
 

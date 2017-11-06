@@ -19,7 +19,7 @@ public class User implements Serializable{
     private String mUsername;
     private String mPassword;
     private String mEmail;
-    private Role mRole;
+    private Role mRole=Role.USER;
 
     public User(){}
 

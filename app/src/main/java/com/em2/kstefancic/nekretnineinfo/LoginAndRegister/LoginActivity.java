@@ -8,9 +8,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.em2.kstefancic.nekretnineinfo.MainActivity;
 import com.em2.kstefancic.nekretnineinfo.R;
-import com.em2.kstefancic.nekretnineinfo.UserActivity;
+import com.em2.kstefancic.nekretnineinfo.api.ExceptionUtils.ErrorUtils;
 import com.em2.kstefancic.nekretnineinfo.api.model.ConstructionSystem;
+import com.em2.kstefancic.nekretnineinfo.api.model.ExceptionResponse;
 import com.em2.kstefancic.nekretnineinfo.api.model.Material;
 import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceDataResponse;
 import com.em2.kstefancic.nekretnineinfo.api.model.Position;
@@ -34,9 +36,8 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
     private static final String LOGIN_FRAGMENT = "login";
     private static final String BASE_URL = "http://10.0.2.2:8080/";
     private static final String REGISTRATION_SUCCESS = "Uspješno ste kreirali korisnički račun. Sada se možete prijaviti.";
-    private static final String USERNAME_PASSWORD_MISSMATCH = "Korisničko ime i lozinka se ne poklapaju. Pokušajte ponovno.";
     private static final String DEFAULT_ERROR = "Došlo je do pogreške. Pokušajte ponovno kasnije.";
-    private static final String USER = "user";
+    public static final String USER = "user";
     private Retrofit mRetrofit;
     private SessionManager mSessionManager;
 
@@ -44,6 +45,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        checkIfLoggedIn();
         setUpFragment();
         setRetrofit();
     }
@@ -81,11 +83,15 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                Toast.makeText(getApplicationContext(), REGISTRATION_SUCCESS, Toast.LENGTH_SHORT).show();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.activityLogin_fl, new LogInFragment());
-                fragmentTransaction.commit();
+                if(response.isSuccessful()){
+                    Toast.makeText(getApplicationContext(), REGISTRATION_SUCCESS, Toast.LENGTH_SHORT).show();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.activityLogin_fl, new LogInFragment());
+                    fragmentTransaction.commit();
+                }else {
+                    showErrorResponse(response);
+                }
             }
 
             @Override
@@ -120,25 +126,22 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
                     User user = response.body();
                     DBHelper.getInstance(getApplicationContext()).insertUser(user);
                     getMultiChoiceDataAndSaveToLocalDatabase();
-                    //startMainActivity(user);
-                }else{
-                    switch (response.code()){
-                        case 401:
-                            Toast.makeText(getApplicationContext(),USERNAME_PASSWORD_MISSMATCH,Toast.LENGTH_SHORT).show();
-                            break;
-                        default:
-                            Toast.makeText(getApplicationContext(),DEFAULT_ERROR,Toast.LENGTH_SHORT).show();
-                            break;
-                    }
+                    mSessionManager.setLogin(true);
+                    startMainActivity(user);
+                }else {
+                   showErrorResponse(response);
                 }
-
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                Toast.makeText(getApplicationContext(),DEFAULT_ERROR,Toast.LENGTH_SHORT).show();
+                showDefaultError();
             }
         });
+    }
+
+    private void showDefaultError() {
+        Toast.makeText(getApplicationContext(),DEFAULT_ERROR,Toast.LENGTH_SHORT).show();
     }
 
     private void getMultiChoiceDataAndSaveToLocalDatabase() {
@@ -152,14 +155,21 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
                     insertMaterialsInLocalDatabase(response.body().getMaterial());
                     insertConstructionSystemsInLocalDatabase(response.body().getConstructionSystem());
                     insertPurposesInLocalDatabase(response.body().getPurpose());
+                }else{
+                    showErrorResponse(response);
                 }
             }
 
             @Override
             public void onFailure(Call<MultiChoiceDataResponse> call, Throwable t) {
-
+                showDefaultError();
             }
         });
+    }
+
+    private void showErrorResponse(Response<?> response) {
+        ExceptionResponse exceptionResponse = ErrorUtils.parseError(response,mRetrofit);
+        Toast.makeText(getApplicationContext(),exceptionResponse.getMessage(),Toast.LENGTH_SHORT).show();
     }
 
     private void insertPurposesInLocalDatabase(List<Purpose> purposes) {
@@ -191,13 +201,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
     }
 
     private void startMainActivity(User user) {
-        Intent mainIntent = null;
-        if(user.getmRole().equals(User.Role.USER)){
-            mainIntent = new Intent(LoginActivity.this,UserActivity.class);
-        }
-        else{
-            //mainIntent = new Intent(LoginActivity.this,AdminActivity.class);
-        }
+        Intent mainIntent = new Intent(LoginActivity.this,MainActivity.class);
         mainIntent.putExtra(USER, user);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
