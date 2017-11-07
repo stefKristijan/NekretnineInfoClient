@@ -1,4 +1,4 @@
-package com.em2.kstefancic.nekretnineinfo.api.model;
+package com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels;
 
 /**
  * Created by user on 3.11.2017..
@@ -7,22 +7,22 @@ package com.em2.kstefancic.nekretnineinfo.api.model;
 public class Material {
 
     private int id;
-    private String mMaterial;
+    private String material;
 
     @Override
     public String toString() {
         return "Material{" +
                 "id=" + id +
-                ", mMaterial='" + mMaterial + '\'' +
+                ", material='" + material + '\'' +
                 '}';
     }
 
     public Material() {
     }
 
-    public Material(int id, String mMaterial) {
+    public Material(int id, String material) {
         this.id = id;
-        this.mMaterial = mMaterial;
+        this.material = material;
     }
 
     public int getId() {
@@ -33,11 +33,11 @@ public class Material {
         this.id = id;
     }
 
-    public String getmMaterial() {
-        return mMaterial;
+    public String getMaterial() {
+        return material;
     }
 
-    public void setmMaterial(String mMaterial) {
-        this.mMaterial = mMaterial;
+    public void setMaterial(String material) {
+        this.material = material;
     }
 }

@@ -1,4 +1,4 @@
-package com.em2.kstefancic.nekretnineinfo.api.model;
+package com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels;
 
 /**
  * Created by user on 3.11.2017..
@@ -7,21 +7,21 @@ package com.em2.kstefancic.nekretnineinfo.api.model;
 public class Purpose {
 
     private int id;
-    private String mPurpose;
+    private String purpose;
 
     public Purpose() {
     }
 
-    public Purpose(int id, String mPurpose) {
+    public Purpose(int id, String purpose) {
         this.id = id;
-        this.mPurpose = mPurpose;
+        this.purpose = purpose;
     }
 
     @Override
     public String toString() {
         return "Purpose{" +
                 "id=" + id +
-                ", mPurpose='" + mPurpose + '\'' +
+                ", purpose='" + purpose + '\'' +
                 '}';
     }
 
@@ -33,11 +33,11 @@ public class Purpose {
         this.id = id;
     }
 
-    public String getmPurpose() {
-        return mPurpose;
+    public String getPurpose() {
+        return purpose;
     }
 
-    public void setmPurpose(String mPurpose) {
-        this.mPurpose = mPurpose;
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
     }
 }

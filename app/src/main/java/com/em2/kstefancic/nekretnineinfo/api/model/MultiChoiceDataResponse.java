@@ -1,5 +1,10 @@
 package com.em2.kstefancic.nekretnineinfo.api.model;
 
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.ConstructionSystem;
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Position;
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Purpose;
+
 import java.util.List;
 
 /**

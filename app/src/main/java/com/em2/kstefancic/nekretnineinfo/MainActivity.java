@@ -1,11 +1,13 @@
 package com.em2.kstefancic.nekretnineinfo;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,16 +17,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.em2.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity;
+import com.em2.kstefancic.nekretnineinfo.api.model.RealEstate;
 import com.em2.kstefancic.nekretnineinfo.api.model.User;
+import com.em2.kstefancic.nekretnineinfo.api.service.RealEstateService;
 import com.em2.kstefancic.nekretnineinfo.helper.DBHelper;
 import com.em2.kstefancic.nekretnineinfo.helper.SessionManager;
+
+import java.time.Instant;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.jackson.JacksonConverterFactory;
+
+import static com.em2.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.BASE_URL;
 
 public class MainActivity extends AppCompatActivity{
 
     private User mUser;
     private SessionManager mSessionManager;
+    private Retrofit mRetrofit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +49,7 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
 
         this.mUser = (User) getIntent().getExtras().getSerializable(LoginActivity.USER);
+        getRealEstatesFromDatabase();
 
         this.mSessionManager = new SessionManager(this);
 
@@ -42,10 +60,38 @@ public class MainActivity extends AppCompatActivity{
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                getRealEstatesFromDatabase();
             }
         });
+
+    }
+
+    private void getRealEstatesFromDatabase() {
+        setRetrofit();
+        RealEstateService client = mRetrofit.create(RealEstateService.class);
+        Call<List<RealEstate>> call = client.getRealEstates();
+
+        call.enqueue(new Callback<List<RealEstate>>() {
+          @Override
+          public void onResponse(Call<List<RealEstate>> call, Response<List<RealEstate>> response) {
+              Toast.makeText(getApplicationContext(),response.body().get(0).toString(),Toast.LENGTH_LONG).show();
+          }
+
+          @Override
+          public void onFailure(Call<List<RealEstate>> call, Throwable t) {
+              Toast.makeText(getApplicationContext(),t.toString(),Toast.LENGTH_LONG).show();
+              Log.e("REAL_ESTATE",t.toString());
+          }
+        });
+    }
+
+
+    private void setRetrofit() {
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(JacksonConverterFactory.create());
+
+        mRetrofit = builder.build();
 
     }
 

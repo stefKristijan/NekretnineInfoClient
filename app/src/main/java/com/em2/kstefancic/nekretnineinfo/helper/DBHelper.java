@@ -6,10 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.em2.kstefancic.nekretnineinfo.api.model.ConstructionSystem;
-import com.em2.kstefancic.nekretnineinfo.api.model.Material;
-import com.em2.kstefancic.nekretnineinfo.api.model.Position;
-import com.em2.kstefancic.nekretnineinfo.api.model.Purpose;
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.ConstructionSystem;
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Position;
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Purpose;
 import com.em2.kstefancic.nekretnineinfo.api.model.User;
 
 /**
@@ -108,7 +108,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void insertPosition(Position position){
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Schema.POSITION, position.getmPosition());
+        contentValues.put(Schema.POSITION, position.getPosition());
         contentValues.put(Schema.POSITION_ID, position.getId());
         SQLiteDatabase wdb = this.getWritableDatabase();
         wdb.insert(Schema.TABLE_POSITION,null,contentValues);
@@ -117,7 +117,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void insertPurpose(Purpose purpose){
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Schema.PURPOSE, purpose.getmPurpose());
+        contentValues.put(Schema.PURPOSE, purpose.getPurpose());
         contentValues.put(Schema.PURPOSE_ID, purpose.getId());
         SQLiteDatabase wdb = this.getWritableDatabase();
         wdb.insert(Schema.TABLE_PURPOSE,null,contentValues);
@@ -126,7 +126,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void insertMaterial(Material material){
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Schema.MATERIAL, material.getmMaterial());
+        contentValues.put(Schema.MATERIAL, material.getMaterial());
         contentValues.put(Schema.MATERIAL_ID, material.getId());
         SQLiteDatabase wdb = this.getWritableDatabase();
         wdb.insert(Schema.TABLE_MATERIAL,null,contentValues);
@@ -135,7 +135,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void insertConstructSys(ConstructionSystem constructionSystem){
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Schema.CONSTR_SYS, constructionSystem.getmConstructionSystem());
+        contentValues.put(Schema.CONSTR_SYS, constructionSystem.getConstructionSystem());
         contentValues.put(Schema.CONSTR_SYS_ID, constructionSystem.getId());
         SQLiteDatabase wdb = this.getWritableDatabase();
         wdb.insert(Schema.TABLE_CONSTUCT_SYS,null,contentValues);

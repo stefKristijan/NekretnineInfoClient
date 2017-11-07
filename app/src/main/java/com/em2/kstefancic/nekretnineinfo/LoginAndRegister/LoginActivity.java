@@ -11,12 +11,12 @@ import android.widget.Toast;
 import com.em2.kstefancic.nekretnineinfo.MainActivity;
 import com.em2.kstefancic.nekretnineinfo.R;
 import com.em2.kstefancic.nekretnineinfo.api.ExceptionUtils.ErrorUtils;
-import com.em2.kstefancic.nekretnineinfo.api.model.ConstructionSystem;
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.ConstructionSystem;
 import com.em2.kstefancic.nekretnineinfo.api.model.ExceptionResponse;
-import com.em2.kstefancic.nekretnineinfo.api.model.Material;
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
 import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceDataResponse;
-import com.em2.kstefancic.nekretnineinfo.api.model.Position;
-import com.em2.kstefancic.nekretnineinfo.api.model.Purpose;
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Position;
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Purpose;
 import com.em2.kstefancic.nekretnineinfo.api.model.User;
 import com.em2.kstefancic.nekretnineinfo.api.service.MultiChoiceDataService;
 import com.em2.kstefancic.nekretnineinfo.api.service.UserClient;
@@ -34,7 +34,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public class LoginActivity extends AppCompatActivity implements RegisterFragment.UserDataInsertedListener, LogInFragment.CredentialsInserted{
 
     private static final String LOGIN_FRAGMENT = "login";
-    private static final String BASE_URL = "http://10.0.2.2:8080/";
+    public static final String BASE_URL = "http://10.0.2.2:8080/";
     private static final String REGISTRATION_SUCCESS = "Uspješno ste kreirali korisnički račun. Sada se možete prijaviti.";
     private static final String DEFAULT_ERROR = "Došlo je do pogreške. Pokušajte ponovno kasnije.";
     public static final String USER = "user";

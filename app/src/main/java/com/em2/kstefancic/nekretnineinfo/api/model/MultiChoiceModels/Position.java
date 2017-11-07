@@ -1,4 +1,4 @@
-package com.em2.kstefancic.nekretnineinfo.api.model;
+package com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels;
 
 /**
  * Created by user on 3.11.2017..
@@ -7,22 +7,22 @@ package com.em2.kstefancic.nekretnineinfo.api.model;
 public class Position {
 
     private int id;
-    private String mPosition;
+    private String position;
 
     @Override
     public String toString() {
         return "Position{" +
                 "id=" + id +
-                ", mPosition='" + mPosition + '\'' +
+                ", position='" + position + '\'' +
                 '}';
     }
 
     public Position() {
     }
 
-    public Position(int id, String mPosition) {
+    public Position(int id, String position) {
         this.id = id;
-        this.mPosition = mPosition;
+        this.position = position;
     }
 
     public int getId() {
@@ -33,11 +33,11 @@ public class Position {
         this.id = id;
     }
 
-    public String getmPosition() {
-        return mPosition;
+    public String getPosition() {
+        return position;
     }
 
-    public void setmPosition(String mPosition) {
-        this.mPosition = mPosition;
+    public void setPosition(String position) {
+        this.position = position;
     }
 }
