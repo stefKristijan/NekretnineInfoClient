@@ -14,22 +14,22 @@ public class User implements Serializable{
 
     private Long id;
     private String uId;
-    private String mFirstName;
-    private String mLastName;
-    private String mUsername;
-    private String mPassword;
-    private String mEmail;
-    private Role mRole=Role.USER;
+    private String firstName;
+    private String lastName;
+    private String username;
+    private String password;
+    private String email;
+    private Role role =Role.USER;
 
     public User(){}
 
-    public User(String uid, String mFirstName, String mLastName, String mUsername, String mPassword, String mEmail) {
+    public User(String uid, String firstName, String lastName, String username, String password, String email) {
         this.uId = uid;
-        this.mFirstName = mFirstName;
-        this.mLastName = mLastName;
-        this.mUsername = mUsername;
-        this.mPassword = mPassword;
-        this.mEmail = mEmail;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.password = password;
+        this.email = email;
     }
 
     @Override
@@ -37,12 +37,12 @@ public class User implements Serializable{
         return "User{" +
                 "id=" + id +
                 ", uId='" + uId + '\'' +
-                ", mFirstName='" + mFirstName + '\'' +
-                ", mLastName='" + mLastName + '\'' +
-                ", mUsername='" + mUsername + '\'' +
-                ", mPassword='" + mPassword + '\'' +
-                ", mEmail='" + mEmail + '\'' +
-                ", mRole='" + mRole + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", role='" + role + '\'' +
                 '}';
     }
 
@@ -61,12 +61,12 @@ public class User implements Serializable{
         return uId.hashCode();
     }
 
-    public Role getmRole() {
-        return mRole;
+    public Role getRole() {
+        return role;
     }
 
-    public void setmRole(Role mRole) {
-        this.mRole = mRole;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public Long getId() {
@@ -85,43 +85,43 @@ public class User implements Serializable{
         this.uId = uId;
     }
 
-    public String getmFirstName() {
-        return mFirstName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setmFirstName(String mFirstName) {
-        this.mFirstName = mFirstName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getmLastName() {
-        return mLastName;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setmLastName(String mLastName) {
-        this.mLastName = mLastName;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public String getmUsername() {
-        return mUsername;
+    public String getUsername() {
+        return username;
     }
 
-    public void setmUsername(String mUsername) {
-        this.mUsername = mUsername;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getmPassword() {
-        return mPassword;
+    public String getPassword() {
+        return password;
     }
 
-    public void setmPassword(String mPassword) {
-        this.mPassword = mPassword;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public String getmEmail() {
-        return mEmail;
+    public String getEmail() {
+        return email;
     }
 
-    public void setmEmail(String mEmail) {
-        this.mEmail = mEmail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

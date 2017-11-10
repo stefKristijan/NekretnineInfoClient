@@ -13,4 +13,5 @@
     <string name="tvHaveAccount">Već imaš račun?</string>
     <string name="tvLoginText"><u>Prijavi se</u></string>
     <string name="action_log_out">Odjava</string>
+    <string name="tvSynchronized">Sinkronizirano</string>
 </resources>

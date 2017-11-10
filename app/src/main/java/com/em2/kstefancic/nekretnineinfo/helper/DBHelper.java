@@ -70,11 +70,11 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(Schema.USER_ID,user.getId());
         contentValues.put(Schema.USER_UNIQID,user.getuId());
-        contentValues.put(Schema.USERNAME,user.getmUsername());
-        contentValues.put(Schema.PASSWORD,user.getmPassword());
-        contentValues.put(Schema.FIRST_NAME,user.getmFirstName());
-        contentValues.put(Schema.LAST_NAME,user.getmLastName());
-        contentValues.put(Schema.EMAIL,user.getmEmail());
+        contentValues.put(Schema.USERNAME,user.getUsername());
+        contentValues.put(Schema.PASSWORD,user.getPassword());
+        contentValues.put(Schema.FIRST_NAME,user.getFirstName());
+        contentValues.put(Schema.LAST_NAME,user.getLastName());
+        contentValues.put(Schema.EMAIL,user.getEmail());
         SQLiteDatabase wdb = this.getWritableDatabase();
         wdb.insert(Schema.TABLE_USER,null,contentValues);
         wdb.close();
@@ -146,7 +146,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static class Schema{
 
-        private static final int SCHEMA_VERSION = 2;
+        private static final int SCHEMA_VERSION = 5;
         private static final String DATABASE_NAME = "nekretnine_info.db";
 
         //user table

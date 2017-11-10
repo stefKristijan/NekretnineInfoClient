@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.em2.kstefancic.nekretnineinfo.MainActivity;
 import com.em2.kstefancic.nekretnineinfo.R;
-import com.em2.kstefancic.nekretnineinfo.api.ExceptionUtils.ErrorUtils;
+import com.em2.kstefancic.nekretnineinfo.api.exceptionutils.ErrorUtils;
 import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.ConstructionSystem;
 import com.em2.kstefancic.nekretnineinfo.api.model.ExceptionResponse;
 import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
@@ -135,6 +135,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
+                Log.e("ERROR",t.toString());
                 showDefaultError();
             }
         });

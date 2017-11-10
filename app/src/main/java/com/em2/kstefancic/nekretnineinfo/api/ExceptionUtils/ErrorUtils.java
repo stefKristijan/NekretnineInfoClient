@@ -1,4 +1,4 @@
-package com.em2.kstefancic.nekretnineinfo.api.ExceptionUtils;
+package com.em2.kstefancic.nekretnineinfo.api.exceptionutils;
 
 import com.em2.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity;
 import com.em2.kstefancic.nekretnineinfo.api.model.ExceptionResponse;
