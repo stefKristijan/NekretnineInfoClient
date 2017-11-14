@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -34,7 +35,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public class LoginActivity extends AppCompatActivity implements RegisterFragment.UserDataInsertedListener, LogInFragment.CredentialsInserted{
 
     private static final String LOGIN_FRAGMENT = "login";
-    public static final String BASE_URL = "http://10.0.2.2:8080/";
+    public static final String BASE_URL = "http://10.0.2.2:8080";
     private static final String REGISTRATION_SUCCESS = "Uspješno ste kreirali korisnički račun. Sada se možete prijaviti.";
     private static final String DEFAULT_ERROR = "Došlo je do pogreške. Pokušajte ponovno kasnije.";
     public static final String USER = "user";
@@ -52,10 +53,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 
     private void checkIfLoggedIn() {
         this.mSessionManager = new SessionManager(this);
-       /*this.mSessionManager.setLogin(false);
-        UserDBHelper.getInstance(this).deleteAllergies();
-        UserDBHelper.getInstance(this).deleteUser();
-        UserDBHelper.getInstance(this).deleteLocation();*/
+        //this.mSessionManager.setLogin(false,null);
         if(this.mSessionManager.isLoggedIn()){
             User user = DBHelper.getInstance(this).getUser();
             startMainActivity(user);
@@ -115,7 +113,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
         loginNetworkRequest(username, password);
     }
 
-    private void loginNetworkRequest(String username, String password) {
+    private void loginNetworkRequest(String username, final String password) {
         UserClient client = mRetrofit.create(UserClient.class);
         Call<User> call = client.login(username,password);
 
@@ -125,8 +123,8 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
                 if(response.isSuccessful()){
                     User user = response.body();
                     DBHelper.getInstance(getApplicationContext()).insertUser(user);
-                    getMultiChoiceDataAndSaveToLocalDatabase();
-                    mSessionManager.setLogin(true);
+                    getMultiChoiceDataAndSaveToLocalDatabase(user);
+                    mSessionManager.setLogin(true,password);
                     startMainActivity(user);
                 }else {
                    showErrorResponse(response);
@@ -145,9 +143,13 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
         Toast.makeText(getApplicationContext(),DEFAULT_ERROR,Toast.LENGTH_SHORT).show();
     }
 
-    private void getMultiChoiceDataAndSaveToLocalDatabase() {
+    private void getMultiChoiceDataAndSaveToLocalDatabase(User user) {
         MultiChoiceDataService multiChoiceDataClient = mRetrofit.create(MultiChoiceDataService.class);
-        final Call<MultiChoiceDataResponse> getMultiChoiceCall = multiChoiceDataClient.getMultiChoiceData();
+
+        String base = user.getUsername()+":"+user.getPassword();
+        String authHeader = "Basic "+ Base64.encodeToString(base.getBytes(), Base64.NO_WRAP);
+
+        final Call<MultiChoiceDataResponse> getMultiChoiceCall = multiChoiceDataClient.getMultiChoiceData(authHeader);
         getMultiChoiceCall.enqueue(new Callback<MultiChoiceDataResponse>() {
             @Override
             public void onResponse(Call<MultiChoiceDataResponse> call, Response<MultiChoiceDataResponse> response) {

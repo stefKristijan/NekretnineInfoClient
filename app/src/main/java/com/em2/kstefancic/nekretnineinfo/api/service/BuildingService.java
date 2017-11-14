@@ -10,9 +10,12 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.HEAD;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 
 /**
  * Created by user on 7.11.2017..
@@ -20,11 +23,14 @@ import retrofit2.http.Part;
 
 public interface BuildingService {
 
-    @GET("/buildings")
-    Call<List<Building>> getBuildings();
+    @GET("/api/users/{username}/buildings")
+    Call<List<Building>> getBuildings(@Header("Authorization") String authorization, @Path("username") String username);
 
     @Multipart
-    @POST("/upload")
-    Call<ResponseBody> uploadBuilding(@Part List<MultipartBody.Part> files, @Part("building") Building building);
+    @POST("/api/users/{username}/buildings")
+    Call<ResponseBody> uploadBuilding(@Header("Authorization") String authorization,
+                                      @Path("username") String username,
+                                      @Part List<MultipartBody.Part> files,
+                                      @Part("building") Building building);
 
 }

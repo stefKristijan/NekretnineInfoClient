@@ -4,6 +4,8 @@ import com.em2.kstefancic.nekretnineinfo.api.model.User;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -14,9 +16,10 @@ import retrofit2.http.Path;
 
 public interface UserClient {
 
-    @POST("register")
+    @POST("/register")
     Call<User> createAccount(@Body User user);
 
-    @POST("login/{username}/{password}")
-    Call<User> login(@Path("username") String username, @Path("password") String password);
+    @FormUrlEncoded
+    @POST("/login")
+    Call<User> login(@Field("username") String username, @Field("password") String password);
 }

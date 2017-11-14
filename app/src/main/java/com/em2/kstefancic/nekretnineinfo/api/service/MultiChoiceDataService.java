@@ -6,6 +6,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 
 /**
  * Created by user on 6.11.2017..
@@ -13,6 +14,6 @@ import retrofit2.http.GET;
 
 public interface MultiChoiceDataService {
 
-    @GET("/multi-choice-data")
-    Call<MultiChoiceDataResponse> getMultiChoiceData();
+    @GET("/api/multi-choice-data")
+    Call<MultiChoiceDataResponse> getMultiChoiceData(@Header("Authorization") String authorization);
 }

@@ -19,6 +19,7 @@ public class SessionManager {
 
     private static final String PREF_NAME = "SessionControl";
     private static final String KEY_LOGGED_IN = "isLoggedIn";
+    private static final String KEY_PASSWORD = "password";
 
     public SessionManager(Context mContext) {
         this.mContext = mContext;
@@ -26,13 +27,17 @@ public class SessionManager {
         this.editor=sharedPreferences.edit();
     }
 
-    public void setLogin(boolean isLoggedIn){
+    public void setLogin(boolean isLoggedIn, String userPassword){
         editor.putBoolean(KEY_LOGGED_IN,isLoggedIn);
-
+        editor.putString(KEY_PASSWORD,userPassword);
         editor.commit();
     }
 
     public boolean isLoggedIn(){
         return sharedPreferences.getBoolean(KEY_LOGGED_IN,false);
+    }
+
+    public String getPassword(){
+        return sharedPreferences.getString(KEY_PASSWORD,"");
     }
 }

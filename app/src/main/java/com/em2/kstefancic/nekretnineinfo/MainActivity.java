@@ -7,8 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,7 +16,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.JsonReader;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
@@ -33,13 +34,9 @@ import com.em2.kstefancic.nekretnineinfo.api.model.User;
 import com.em2.kstefancic.nekretnineinfo.api.service.BuildingService;
 import com.em2.kstefancic.nekretnineinfo.helper.DBHelper;
 import com.em2.kstefancic.nekretnineinfo.helper.SessionManager;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.em2.kstefancic.nekretnineinfo.views.BuildingAdapter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +58,10 @@ public class MainActivity extends AppCompatActivity{
     private SessionManager mSessionManager;
     private Retrofit mRetrofit;
     private Building building;
+    private RecyclerView recyclerView;
+    private BuildingAdapter buildingAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView.ItemDecoration itemDecoration;
 
 
     @Override
@@ -69,13 +70,16 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
 
         this.mUser = (User) getIntent().getExtras().getSerializable(LoginActivity.USER);
+        this.mSessionManager = new SessionManager(this);
+
         getRealEstatesFromDatabase();
 
-        this.mSessionManager = new SessionManager(this);
 
         if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},100);
         }
+
+        this.recyclerView = findViewById(R.id.rvBuilding);
 
         Toolbar toolbar =  findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -107,15 +111,22 @@ public class MainActivity extends AppCompatActivity{
     private void getRealEstatesFromDatabase() {
         setRetrofit();
         BuildingService client = mRetrofit.create(BuildingService.class);
-        Call<List<Building>> call = client.getBuildings();
+        Call<List<Building>> call = client.getBuildings(setAuthenticationHeader(),mUser.getUsername());
 
         call.enqueue(new Callback<List<Building>>() {
           @Override
           public void onResponse(Call<List<Building>> call, Response<List<Building>> response) {
-              //Toast.makeText(getApplicationContext(),response.body().get(0).toString(),Toast.LENGTH_LONG).show();
-              building = response.body().get(0);
+              if(response.isSuccessful()){
+                  Log.d("ON BUILDING RESPONSE", response.body().toString());
+                  //Toast.makeText(getApplicationContext(),response.body().get(0).toString(),Toast.LENGTH_LONG).show();
+                  List<Building> buildings = response.body();
+                  Log.d("BUILDING",buildings.get(0).toString());
+                  setRecyclerView(buildings);
+                  //uploadToServer();
+              }else {
+                  Log.e("ON BUILDING RESPONSE", response.raw().toString());
+              }
 
-              uploadToServer();
           }
 
           @Override
@@ -124,6 +135,18 @@ public class MainActivity extends AppCompatActivity{
               Log.e("REAL_ESTATE",t.toString());
           }
         });
+    }
+
+    private void setRecyclerView(List<Building> buildings) {
+
+        Context context = getApplicationContext();
+        this.buildingAdapter= new BuildingAdapter(buildings,context);
+        this.layoutManager = new LinearLayoutManager(context);
+        this.itemDecoration= new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+
+        this.recyclerView.addItemDecoration(this.itemDecoration);
+        this.recyclerView.setLayoutManager(this.layoutManager);
+        this.recyclerView.setAdapter(this.buildingAdapter);
     }
 
     private void uploadToServer() {
@@ -183,7 +206,7 @@ public class MainActivity extends AppCompatActivity{
 
 
 
-        Call<ResponseBody> call = buildingService.uploadBuilding(parts,building);
+        Call<ResponseBody> call = buildingService.uploadBuilding(setAuthenticationHeader(),mUser.getUsername(),parts,building);
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -196,6 +219,11 @@ public class MainActivity extends AppCompatActivity{
                 Log.e("Error", t.toString());
             }
         });
+    }
+
+    private String setAuthenticationHeader() {
+        String base = mUser.getUsername()+":"+this.mSessionManager.getPassword();
+        return "Basic "+ Base64.encodeToString(base.getBytes(), Base64.NO_WRAP);
     }
 
     @NonNull
@@ -258,8 +286,8 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void signOut() {
-        this.mSessionManager.setLogin(false);
-        DBHelper.getInstance(this).deleteUser();
+        this.mSessionManager.setLogin(false,"");
+        DBHelper.getInstance(this).deleteUserTable();
         Intent loginIntent = new Intent(MainActivity.this,LoginActivity.class);
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);

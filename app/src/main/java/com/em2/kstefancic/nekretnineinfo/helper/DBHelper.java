@@ -60,7 +60,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_BUILDING=
             "CREATE TABLE IF NOT EXISTS "+ Schema.TABLE_BUILDING + " ("+
-                                            Schema.BUILDING_ID +" BIGINT PRIMARY KEY AUTOINCREMENT,"+
+                                            Schema.BUILDING_ID +" BIGINT PRIMARY KEY,"+
                                             Schema.BRUTO_AREA + " DOUBLE,"+
                                             Schema.CADASTRAL_PARTICLE +" VARCHAR(10),"+
                                             Schema.CITY +" VARCHAR(255),"+
@@ -95,7 +95,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_IMAGE_PATH=
             "CREATE TABLE IF NOT EXISTS " + Schema.TABLE_IMAGES + " (" +
-                    Schema.IMAGE_ID +" INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    Schema.IMAGE_ID +" INTEGER PRIMARY KEY," +
                     Schema.IMAGE_PATH+" VARCHAR(255),"+
                     Schema.IMAGE+" BLOB,"+
                     Schema.IP_BUILDING_ID+ " BIGINT,"+
@@ -168,6 +168,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(Schema.FIRST_NAME,user.getFirstName());
         contentValues.put(Schema.LAST_NAME,user.getLastName());
         contentValues.put(Schema.EMAIL,user.getEmail());
+        contentValues.put(Schema.ENABLED,user.isEnabled());
         SQLiteDatabase wdb = this.getWritableDatabase();
         wdb.insert(Schema.TABLE_USER,null,contentValues);
         wdb.close();
@@ -324,7 +325,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static class Schema{
 
-        private static final int SCHEMA_VERSION = 6;
+        private static final int SCHEMA_VERSION = 8;
         private static final String DATABASE_NAME = "nekretnine_info.db";
 
         //USER table

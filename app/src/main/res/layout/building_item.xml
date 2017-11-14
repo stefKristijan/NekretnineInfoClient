@@ -9,7 +9,7 @@
 
 
     <ImageView
-        android:id="@+id/rvRealEstate_ivRealEstate"
+        android:id="@+id/rvBuilding_ivBuilding"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginStart="8dp"
@@ -19,30 +19,30 @@
         app:srcCompat="@mipmap/nekretnine_logo" />
 
     <TextView
-        android:id="@+id/rvRealEstate_tvLocation"
+        android:id="@+id/rvBuilding_tvLocation"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-        app:layout_constraintEnd_toStartOf="@+id/rvRealEstate_ibSynchronize"
-        app:layout_constraintStart_toEndOf="@+id/rvRealEstate_ivRealEstate"
+        app:layout_constraintEnd_toStartOf="@+id/rvBuilding_ibSynchronize"
+        app:layout_constraintStart_toEndOf="@+id/rvBuilding_ivBuilding"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/rvRealEstate_tvDate"
+        android:id="@+id/rvBuilding_tvDate"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="2dp"
-        app:layout_constraintEnd_toStartOf="@+id/rvRealEstate_ibEdit"
-        app:layout_constraintStart_toEndOf="@+id/rvRealEstate_ivRealEstate"
-        app:layout_constraintTop_toBottomOf="@+id/rvRealEstate_tvLocation" />
+        app:layout_constraintEnd_toStartOf="@+id/rvBuilding_ibEdit"
+        app:layout_constraintStart_toEndOf="@+id/rvBuilding_ivBuilding"
+        app:layout_constraintTop_toBottomOf="@+id/rvBuilding_tvLocation" />
 
     <ImageButton
-        android:id="@+id/rvRealEstate_ibSynchronize"
+        android:id="@+id/rvBuilding_ibSynchronize"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginEnd="8dp"
@@ -53,33 +53,25 @@
         app:srcCompat="@android:drawable/ic_popup_sync" />
 
     <ImageButton
-        android:id="@+id/rvRealEstate_ibEdit"
+        android:id="@+id/rvBuilding_ibEdit"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/edit_btn_background"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rvRealEstate_ibSynchronize"
+        app:layout_constraintTop_toBottomOf="@+id/rvBuilding_ibSynchronize"
         app:srcCompat="@android:drawable/ic_menu_edit" />
 
     <TextView
-        android:id="@+id/rvRealEstate_tvSynchronized"
+        android:id="@+id/rvBuilding_tvSynchronized"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:text="@string/tvSynchronized"
-        app:layout_constraintStart_toEndOf="@+id/rvRealEstate_ivRealEstate"
-        app:layout_constraintTop_toBottomOf="@+id/rvRealEstate_tvDate" />
+        app:layout_constraintEnd_toStartOf="@+id/rvBuilding_ibEdit"
+        app:layout_constraintStart_toEndOf="@+id/rvBuilding_ivBuilding"
+        app:layout_constraintTop_toBottomOf="@+id/rvBuilding_tvDate" />
 
-    <ImageView
-        android:id="@+id/rvRealEstate_ivSynchronized"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/rvRealEstate_tvSynchronized"
-        app:layout_constraintStart_toEndOf="@+id/rvRealEstate_tvSynchronized"
-        app:layout_constraintTop_toTopOf="@+id/rvRealEstate_tvSynchronized"
-        android:background="@android:color/holo_green_light" />
 </android.support.constraint.ConstraintLayout>
