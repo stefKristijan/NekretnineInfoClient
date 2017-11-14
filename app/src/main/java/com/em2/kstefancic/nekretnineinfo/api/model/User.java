@@ -20,6 +20,7 @@ public class User implements Serializable{
     private String password;
     private String email;
     private Role role =Role.USER;
+    private boolean enabled=true;
 
     public User(){}
 
@@ -59,6 +60,14 @@ public class User implements Serializable{
     @Override
     public int hashCode() {
         return uId.hashCode();
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public Role getRole() {
