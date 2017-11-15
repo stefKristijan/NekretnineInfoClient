@@ -52,6 +52,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import static com.em2.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.BASE_URL;
 import static com.em2.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.FIRST_LOGIN;
+import static com.em2.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.USER;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setUpActivity();
-        this.mUser = (User) getIntent().getExtras().getSerializable(LoginActivity.USER);
+        this.mUser = (User) getIntent().getExtras().getSerializable(USER);
 
         if(getIntent().getExtras().getBoolean(FIRST_LOGIN)){
             Log.d("GET BUILDINGS", "getting buildings from server");
@@ -97,7 +98,10 @@ public class MainActivity extends AppCompatActivity{
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO start BuildingActivity for update or insert a building
+                Intent buildingIntent = new Intent(MainActivity.this,BuildingActivity.class);
+                buildingIntent.putExtra(USER, mUser);
+                buildingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(buildingIntent);
             }
         });
     }

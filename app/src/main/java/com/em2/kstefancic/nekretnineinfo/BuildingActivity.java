@@ -1,6 +1,9 @@
 package com.em2.kstefancic.nekretnineinfo;
 
 import android.Manifest;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -14,13 +17,26 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 
 import com.em2.kstefancic.nekretnineinfo.api.model.Building;
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.CeilingMaterial;
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.ConstructionSystem;
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Position;
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Purpose;
+import com.em2.kstefancic.nekretnineinfo.api.model.User;
 import com.em2.kstefancic.nekretnineinfo.api.service.BuildingService;
-import com.em2.kstefancic.nekretnineinfo.views.BuildingAdapter;
+import com.em2.kstefancic.nekretnineinfo.buildinginsert.AddressInformationFragment;
+import com.em2.kstefancic.nekretnineinfo.buildinginsert.DimensionsFragment;
+import com.em2.kstefancic.nekretnineinfo.buildinginsert.OtherInformationFragment;
+import com.em2.kstefancic.nekretnineinfo.buildinginsert.PicturesFragment;
+import com.em2.kstefancic.nekretnineinfo.helper.SessionManager;
 
 import java.io.File;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,20 +48,52 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 
-public class BuildingActivity extends AppCompatActivity {
+import static com.em2.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.BASE_URL;
+import static com.em2.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.USER;
+
+public class BuildingActivity extends AppCompatActivity implements AddressInformationFragment.AddressInformationInserted,DimensionsFragment.DimensionsInserted,OtherInformationFragment.OtherInformationInserted, PicturesFragment.PictureChoosen{
+
+    private static final String ADDRESS_INFO_FR = "address_info_fragment";
 
     private Retrofit mRetrofit;
+    private Building building;
+    private User mUser;
+    private SessionManager mSessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building);
-
+        this.mUser = (User) getIntent().getExtras().getSerializable(USER);
+        building=new Building();
+        building.setDate(new Timestamp(System.currentTimeMillis()));
+        building.setYearOfBuild("1994.");
+        building.setUser(mUser);
+        building.setId((long) 25);
+        mSessionManager = new SessionManager(this);
+        setUpFragment();
 
         if(ContextCompat.checkSelfPermission(BuildingActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(BuildingActivity.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},100);
         }
+    }
+
+    private void setRetrofit() {
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(JacksonConverterFactory.create());
+
+        mRetrofit = builder.build();
+
+    }
+
+    private void setUpFragment() {
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.activityBuilding_fl, new AddressInformationFragment(), ADDRESS_INFO_FR);
+            fragmentTransaction.commit();
     }
 
     @Override
@@ -61,34 +109,6 @@ public class BuildingActivity extends AppCompatActivity {
         }
     }
 
-    private void uploadToServer() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        File pictureDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        String picturesDirectoryPath = pictureDirectory.getPath();
-
-        Uri data = Uri.parse(picturesDirectoryPath);
-
-        intent.setDataAndType(data,"image/*");
-
-        startActivityForResult(intent, 10);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 10 && resultCode == RESULT_OK && data != null) {
-            ClipData clipData = data.getClipData();
-            ArrayList<Uri> fileUris = new ArrayList<>();
-
-            for (int i = 0; i < clipData.getItemCount(); i++) {
-                ClipData.Item item = clipData.getItemAt(i);
-                Uri uri = item.getUri();
-                Log.d("URI", uri.toString());
-                fileUris.add(uri);
-            }
-            uploadAlbum(fileUris);
-        }
-    }
 
     public String getRealPathFromURI(Context context, Uri contentUri) {
         Cursor cursor = null;
@@ -108,6 +128,7 @@ public class BuildingActivity extends AppCompatActivity {
     }
 
     private void uploadAlbum(ArrayList<Uri> fileUris) {
+        setRetrofit();
         BuildingService buildingService = mRetrofit.create(BuildingService.class);
 
         List<MultipartBody.Part> parts = new ArrayList<>();
@@ -115,10 +136,8 @@ public class BuildingActivity extends AppCompatActivity {
         for(int i=0; i< fileUris.size();i++){
             parts.add(prepareFilePart("files",fileUris.get(i)));
         }
-
-
-
-       /* Call<ResponseBody> call = buildingService.uploadBuilding(setAuthenticationHeader(),mUser.getUsername(),parts,building);
+        Log.d("BEFORE UPLOAD",setAuthenticationHeader()+"\n"+mUser.toString()+"\n"+parts.size()+"\n"+building.toString());
+        Call<ResponseBody> call = buildingService.uploadBuilding(setAuthenticationHeader(),mUser.getUsername(),parts,building);
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -130,7 +149,7 @@ public class BuildingActivity extends AppCompatActivity {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("Error", t.toString());
             }
-        });*/
+        });
     }
 
     @NonNull
@@ -145,4 +164,50 @@ public class BuildingActivity extends AppCompatActivity {
         Log.d("MULTIPARTBODY",part.body().contentType().toString());
         return part;
     }
+
+    private String setAuthenticationHeader() {
+        String base = mUser.getUsername()+":"+this.mSessionManager.getPassword();
+        return "Basic "+ Base64.encodeToString(base.getBytes(), Base64.NO_WRAP);
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.activityBuilding_fl, fragment);
+        fragmentTransaction.commit();
+    }
+
+
+    /*
+    FRAGMENT INTERFACES CALLBACKS
+     */
+    @Override
+    public void onAddressInformationInserted(String street, int streetNum, char streetChar, String city, String state, String cadastralParticle, Building.Orientation orientation, Position position) {
+        building.setLocation(cadastralParticle,street,streetNum,streetChar,city,state,orientation,position);
+        replaceFragment(new DimensionsFragment());
+    }
+
+    @Override
+    public void onDimensionsInformationInserted(double length, double width, double brutoArea, double floorArea, double fullHeight, double floorHeight, int numOfFloors) {
+        building.setDimensions(width,length,floorArea,brutoArea,floorHeight,fullHeight,numOfFloors);
+        replaceFragment(new OtherInformationFragment());
+    }
+
+
+    @Override
+    public void onOtherInformationInserted(Material wallMaterial, CeilingMaterial ceilingMaterial, ConstructionSystem constructionSystem, Purpose purpose, boolean properGroundPlan) {
+        building.setSynchronizedWithDatabase(false);
+        building.setConstructionSystem(constructionSystem);
+        building.setMaterial(wallMaterial);
+        building.setCeilingMaterial(ceilingMaterial);
+        building.setPurpose(purpose);
+        replaceFragment(new PicturesFragment());
+    }
+
+    @Override
+    public void onPictureChoosenListener(ArrayList<Uri> fileUris) {
+        uploadAlbum(fileUris);
+    }
+
+
 }

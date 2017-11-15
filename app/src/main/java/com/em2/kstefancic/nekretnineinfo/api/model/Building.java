@@ -16,7 +16,6 @@ import java.util.List;
 
 public class Building {
 
-
     private Long id;
 
     private Timestamp date;
@@ -41,7 +40,6 @@ public class Building {
     public enum Orientation {
         I_Z, S_J
     }
-
 
     private String cadastralParticle;
 

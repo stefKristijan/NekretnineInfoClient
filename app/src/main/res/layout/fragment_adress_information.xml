@@ -1,0 +1,206 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.em2.kstefancic.nekretnineinfo.buildinginsert.AddressInformationFragment">
+
+
+    <TextView
+        android:id="@+id/frAddressInfo_tvLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/tvAddressInfo"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_etStreet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_llNavigation"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <EditText
+        android:id="@+id/frAddressInfo_etStreet"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/edit_text"
+        android:ems="10"
+        android:hint="@string/etStreetHint"
+        android:inputType="textPersonName"
+        android:padding="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_etCity"
+        app:layout_constraintEnd_toStartOf="@+id/frAddressInfo_etStreetNum"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_tvLocation" />
+
+    <EditText
+        android:id="@+id/frAddressInfo_etStreetNum"
+        android:layout_width="35dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/edit_text"
+        android:hint="@string/etStreetNumHint"
+        android:inputType="number"
+        android:maxEms="4"
+        android:padding="5dp"
+        app:layout_constraintEnd_toStartOf="@+id/frAddressInfo_etStreetChar"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/frAddressInfo_etStreet"
+        app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_tvLocation" />
+
+    <EditText
+        android:id="@+id/frAddressInfo_etStreetChar"
+        android:layout_width="35dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/edit_text"
+        android:ems="10"
+        android:hint="@string/etStreetCharHint"
+        android:inputType="textPersonName"
+        android:padding="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/frAddressInfo_etStreetNum"
+        app:layout_constraintTop_toTopOf="@+id/frAddressInfo_etStreetNum" />
+
+    <EditText
+        android:id="@+id/frAddressInfo_etCity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/edit_text"
+        android:ems="10"
+        android:hint="@string/etCityHint"
+        android:inputType="textPersonName"
+        android:padding="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_etCadastralPart"
+        app:layout_constraintEnd_toStartOf="@+id/frAddressInfo_etState"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_etStreet" />
+
+    <EditText
+        android:id="@+id/frAddressInfo_etState"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="4dp"
+        android:background="@drawable/edit_text"
+        android:ems="10"
+        android:hint="@string/etStateHint"
+        android:inputType="textPersonName"
+        android:padding="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/frAddressInfo_etCity"
+        app:layout_constraintTop_toTopOf="@+id/frAddressInfo_etCity" />
+
+    <EditText
+        android:id="@+id/frAddressInfo_etCadastralPart"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/edit_text"
+        android:ems="10"
+        android:hint="@string/etCadastralParticleHint"
+        android:inputType="textPersonName"
+        android:padding="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_spOrientation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_etCity" />
+
+    <Spinner
+        android:id="@+id/frAddressInfo_spOrientation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_spPosition"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/textView3"
+        app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_etCadastralPart" />
+
+    <Spinner
+        android:id="@+id/frAddressInfo_spPosition"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_btnNext"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_spOrientation" />
+
+    <Button
+        android:id="@+id/frAddressInfo_btnNext"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/button_shape"
+        android:text="@string/btnNext"
+        android:textColor="@color/colorWhite"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_spPosition" />
+
+    <LinearLayout
+        android:id="@+id/frAddressInfo_llNavigation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_delete" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/tvOrientation"
+        app:layout_constraintEnd_toStartOf="@+id/frAddressInfo_spOrientation"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/frAddressInfo_spOrientation" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/tvPosition"
+        app:layout_constraintEnd_toStartOf="@+id/frAddressInfo_spPosition"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/frAddressInfo_spPosition" />
+
+</android.support.constraint.ConstraintLayout>

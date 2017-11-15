@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_delete" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/frDims_etLength"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:hint="@string/etLengthHint"
+        android:background="@drawable/edit_text"
+        android:padding="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/frDims_etBrutoArea"
+        app:layout_constraintEnd_toStartOf="@+id/frDims_etWidth"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <EditText
+        android:id="@+id/frDims_etWidth"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="@string/etWidthHint"
+        android:background="@drawable/edit_text"
+        android:padding="5dp"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/frDims_etLength"
+        app:layout_constraintTop_toTopOf="@+id/frDims_etLength" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/tvDimensions"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        app:layout_constraintBottom_toTopOf="@+id/frDims_etLength"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <EditText
+        android:id="@+id/frDims_etBrutoArea"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/etBrutoAreaHint"
+        android:background="@drawable/edit_text"
+        android:padding="5dp"
+        android:inputType="numberDecimal"
+        app:layout_constraintBottom_toTopOf="@+id/frDims_etFullHeight"
+        app:layout_constraintEnd_toStartOf="@+id/frDims_etFloorArea"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frDims_etLength" />
+
+    <EditText
+        android:id="@+id/frDims_etFloorArea"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/etFloorAreaHint"
+        android:background="@drawable/edit_text"
+        android:padding="5dp"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/frDims_etBrutoArea"
+        app:layout_constraintTop_toTopOf="@+id/frDims_etBrutoArea" />
+
+    <EditText
+        android:id="@+id/frDims_etFullHeight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/etFullHeightHint"
+        android:background="@drawable/edit_text"
+        android:padding="5dp"
+        android:inputType="numberDecimal"
+        app:layout_constraintBottom_toTopOf="@+id/frDims_etNumOfFloors"
+        app:layout_constraintEnd_toStartOf="@+id/frDims_etFloorHeight"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frDims_etBrutoArea" />
+
+    <EditText
+        android:id="@+id/frDims_etFloorHeight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:ems="10"
+        android:hint="@string/etFloorHeightHint"
+        android:background="@drawable/edit_text"
+        android:padding="5dp"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/frDims_etFullHeight"
+        app:layout_constraintTop_toTopOf="@+id/frDims_etFullHeight" />
+
+    <EditText
+        android:id="@+id/frDims_etNumOfFloors"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/etNumOfFloorsHint"
+        android:background="@drawable/edit_text"
+        android:padding="5dp"
+        android:inputType="number"
+        app:layout_constraintBottom_toTopOf="@+id/frDims_btnNext"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frDims_etFullHeight" />
+
+    <Button
+        android:id="@+id/frDims_btnNext"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/btnNext"
+        android:textColor="@color/colorWhite"
+        android:background="@drawable/button_shape"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frDims_etNumOfFloors" />
+</android.support.constraint.ConstraintLayout>

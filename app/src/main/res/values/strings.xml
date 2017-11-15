@@ -14,4 +14,34 @@
     <string name="tvLoginText"><u>Prijavi se</u></string>
     <string name="action_log_out">Odjava</string>
     <string name="tvSynchronized">Sinkronizirano</string>
+
+
+    <string name="tvAddressInfo">Lokacija</string>
+    <string name="etStreetHint">Ulica</string>
+    <string name="etStreetCharHint">A,B</string>
+    <string name="etStreetNumHint">Br</string>
+    <string name="etCityHint">Grad</string>
+    <string name="etStateHint">Županija</string>
+    <string name="etCadastralParticleHint">Katastarska čestica</string>
+    <string name="btnNext">Dalje</string>
+    <string name="tvDimensions">Dimenzije</string>
+    <string name="etLengthHint">Duljina</string>
+    <string name="etWidthHint">Širina</string>
+    <string name="etBrutoAreaHint">Bruto površina</string>
+    <string name="etFloorAreaHint">Površina kata</string>
+    <string name="etFullHeightHint">Ukupna visina</string>
+    <string name="etFloorHeightHint">Visina kata</string>
+    <string name="etNumOfFloorsHint">Broj katova</string>
+    <string name="tvMaterial">Materijal</string>
+    <string name="tvOrientation">Orijentacija:</string>
+    <string name="tvPosition">Pozicija:</string>
+    <string name="tvWallsMaterial">Materijal zidova:</string>
+    <string name="tvCeilingMaterial">Krovni materijal:</string>
+    <string name="tvDetails">Detalji</string>
+    <string name="tvProperGroundPlan">Pravilan tlocrt:</string>
+    <string name="cbProperGroundPlan">Pravilan tlocrt</string>
+    <string name="tvConstructionSystem">Konstrukcijski sustav:</string>
+    <string name="btnBrowse">Otvori</string>
+    <string name="btnFinish">Kreiraj</string>
+    <string name="tvPurpose">Namjena:</string>
 </resources>

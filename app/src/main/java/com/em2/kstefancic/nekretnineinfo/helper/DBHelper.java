@@ -242,6 +242,7 @@ public class DBHelper extends SQLiteOpenHelper {
     POSITION QUERIES
     - insertPosition(Position position)
     - getPositionById(int positionId)
+    - getAllPositions()
      */
     public void insertPosition(Position position){
         ContentValues contentValues = new ContentValues();
@@ -267,11 +268,30 @@ public class DBHelper extends SQLiteOpenHelper {
         return positionObj;
     }
 
+    public List<Position> getAllPositions(){
+        List<Position> positions = new ArrayList<>();
+        String getPositionQuery = "SELECT * FROM "+Schema.TABLE_POSITION;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor positionCursor = wdb.rawQuery(getPositionQuery,null);
+        if(positionCursor.moveToFirst()){
+            do{
+                int id = positionCursor.getInt(0);
+                String position = positionCursor.getString(1);
+                Position positionObj=new Position(id,position);
+                positions.add(positionObj);
+            }while(positionCursor.moveToNext());
+        }
+        positionCursor.close();
+        wdb.close();
+        return positions;
+    }
+
 
     /*
         PURPOSE QUERIES
         - inserPurpose(Purpose purpose)
         - getPurposeById(int purposeId)
+        - getAllPurposes()
          */
     public void insertPurpose(Purpose purpose){
         ContentValues contentValues = new ContentValues();
@@ -297,10 +317,29 @@ public class DBHelper extends SQLiteOpenHelper {
         return purposeObj;
     }
 
+    public List<Purpose> getAllPurposes(){
+        List<Purpose> purposes = new ArrayList<>();
+        String getPurposesQ = "SELECT * FROM "+Schema.TABLE_PURPOSE;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor purposeCursor = wdb.rawQuery(getPurposesQ,null);
+        if(purposeCursor.moveToFirst()){
+            do{
+                int id = purposeCursor.getInt(0);
+                String purpose = purposeCursor.getString(1);
+                Purpose purposeObj =new Purpose(id,purpose);
+                purposes.add(purposeObj);
+            }while(purposeCursor.moveToNext());
+        }
+        purposeCursor.close();
+        wdb.close();
+        return purposes;
+    }
+
     /*
     MATERIAL QUERIES
     - insertMaterial(Material material)
     - getMaterialById(int materialId)
+    - getAllMaterials()
      */
 
     public void insertMaterial(Material material){
@@ -327,10 +366,29 @@ public class DBHelper extends SQLiteOpenHelper {
         return materialObj;
     }
 
+    public List<Material> getAllMaterials(){
+        List<Material> materials = new ArrayList<>();
+        String getMaterialsQ = "SELECT * FROM "+Schema.TABLE_MATERIAL;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor materialCursor = wdb.rawQuery(getMaterialsQ,null);
+        if(materialCursor.moveToFirst()){
+            do{
+                int id = materialCursor.getInt(0);
+                String material = materialCursor.getString(1);
+                Material materialObj=new Material(id,material);
+                materials.add(materialObj);
+            }while(materialCursor.moveToNext());
+        }
+        materialCursor.close();
+        wdb.close();
+        return materials;
+    }
+
     /*
     CONSTRUCTION SYSTEM QUERIES
     - insertConstructSys(ConstructionSystem constructionSystem)
     - getConstructionSystemById(int constructionSystemId
+    - getAllConstructionSystems()
      */
 
     public void insertConstructSys(ConstructionSystem constructionSystem){
@@ -357,10 +415,29 @@ public class DBHelper extends SQLiteOpenHelper {
         return constrSystObj;
     }
 
+    public List<ConstructionSystem> getAllConstructionSystems(){
+        List<ConstructionSystem> constructionSystems = new ArrayList<>();
+        String getConstrSysQ = "SELECT * FROM "+Schema.TABLE_CONSTUCT_SYS;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor constSysCursor = wdb.rawQuery(getConstrSysQ,null);
+        if(constSysCursor.moveToFirst()){
+            do{
+                int id = constSysCursor.getInt(0);
+                String constructionSys = constSysCursor.getString(1);
+                ConstructionSystem constSysObj=new ConstructionSystem(id,constructionSys);
+                constructionSystems.add(constSysObj);
+            }while(constSysCursor.moveToNext());
+        }
+        constSysCursor.close();
+        wdb.close();
+        return constructionSystems;
+    }
+
     /*
      CEILING MATERIAL QUERIES
      - insertCeilingMaterial(CeilingMaterial ceilingMaterial)
      - getCeilingMaterialById(int ceilingMaterialId)
+     - getAllCeilingMaterials()
      */
     public void insertCeilingMaterial(CeilingMaterial ceilingMaterial){
         ContentValues contentValues = new ContentValues();
@@ -384,6 +461,24 @@ public class DBHelper extends SQLiteOpenHelper {
         ceilingMaterialCursor.close();
         wdb.close();
         return ceilingMaterialObj;
+    }
+
+    public List<CeilingMaterial> getAllCeilingMaterials(){
+        List<CeilingMaterial> ceilingMaterials = new ArrayList<>();
+        String getCeilingMatQ = "SELECT * FROM "+Schema.TABLE_POSITION;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor ceilingMatCursor = wdb.rawQuery(getCeilingMatQ,null);
+        if(ceilingMatCursor.moveToFirst()){
+            do{
+                int id = ceilingMatCursor.getInt(0);
+                String ceilingMaterial = ceilingMatCursor.getString(1);
+                CeilingMaterial ceilingMatObj=new CeilingMaterial(id,ceilingMaterial);
+                ceilingMaterials.add(ceilingMatObj);
+            }while(ceilingMatCursor.moveToNext());
+        }
+        ceilingMatCursor.close();
+        wdb.close();
+        return ceilingMaterials;
     }
 
     /*
