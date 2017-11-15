@@ -15,6 +15,10 @@ import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Position;
 import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Purpose;
 import com.em2.kstefancic.nekretnineinfo.api.model.User;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by user on 3.11.2017..
  */
@@ -23,43 +27,43 @@ public class DBHelper extends SQLiteOpenHelper {
 
     //CREATING TABLES
     private static final String CREATE_TABLE_USER =
-            "CREATE TABLE IF NOT EXISTS " + Schema.TABLE_USER + " (" +
+            "CREATE TABLE " + Schema.TABLE_USER + " (" +
                                             Schema.USER_ID+" INTEGER PRIMARY KEY," +
-                                            Schema.USER_UNIQID+" VARCHAR(60),"+
+                                            Schema.USER_UNIQID+" VARCHAR(255),"+
                                             Schema.USERNAME+" VARCHAR(50),"+
-                                            Schema.PASSWORD+" VARCHAR(50),"+
+                                            Schema.PASSWORD+" VARCHAR(255),"+
                                             Schema.FIRST_NAME+" VARCHAR(50),"+
                                             Schema.LAST_NAME+" VARCHAR(50),"+
                                             Schema.EMAIL+" VARCHAR(100),"+
                                             Schema.ENABLED+" BOOLEAN);";
 
     private static final String CREATE_TABLE_POSITION =
-            "CREATE TABLE IF NOT EXISTS " + Schema.TABLE_POSITION + " (" +
+            "CREATE TABLE " + Schema.TABLE_POSITION + " (" +
                                             Schema.POSITION_ID+" INTEGER PRIMARY KEY," +
                                             Schema.POSITION+" VARCHAR(50));";
 
     private static final String CREATE_TABLE_MATERIAL =
-            "CREATE TABLE IF NOT EXISTS " + Schema.TABLE_MATERIAL + " (" +
+            "CREATE TABLE " + Schema.TABLE_MATERIAL + " (" +
                                             Schema.MATERIAL_ID+" INTEGER PRIMARY KEY," +
                                             Schema.MATERIAL+" VARCHAR(50));";
 
     private static final String CREATE_TABLE_PURPOSE =
-            "CREATE TABLE IF NOT EXISTS " + Schema.TABLE_PURPOSE + " (" +
+            "CREATE TABLE " + Schema.TABLE_PURPOSE + " (" +
                                             Schema.PURPOSE_ID+" INTEGER PRIMARY KEY," +
                                             Schema.PURPOSE+" VARCHAR(50));";
 
     private static final String CREATE_TABLE_CONSTRUCT_SYS =
-            "CREATE TABLE IF NOT EXISTS " + Schema.TABLE_CONSTUCT_SYS + " (" +
+            "CREATE TABLE " + Schema.TABLE_CONSTUCT_SYS + " (" +
                                             Schema.CONSTR_SYS_ID+" INTEGER PRIMARY KEY," +
                                             Schema.CONSTR_SYS+" VARCHAR(50));";
 
     private static final String CREATE_TABLE_CEILING_MATERIAL=
-            "CREATE TABLE IF NOT EXISTS " + Schema.TABLE_CEILING_MATERIAL + " (" +
+            "CREATE TABLE " + Schema.TABLE_CEILING_MATERIAL + " (" +
                                             Schema.CEILING_MATERIAL_ID+" INTEGER PRIMARY KEY," +
                                             Schema.CEILING_MATERIAL+" VARCHAR(50));";
 
     private static final String CREATE_TABLE_BUILDING=
-            "CREATE TABLE IF NOT EXISTS "+ Schema.TABLE_BUILDING + " ("+
+            "CREATE TABLE "+ Schema.TABLE_BUILDING + " ("+
                                             Schema.BUILDING_ID +" BIGINT PRIMARY KEY,"+
                                             Schema.BRUTO_AREA + " DOUBLE,"+
                                             Schema.CADASTRAL_PARTICLE +" VARCHAR(10),"+
@@ -70,7 +74,7 @@ public class DBHelper extends SQLiteOpenHelper {
                                             Schema.FULL_HEIGHT+" DOUBLE,"+
                                             Schema.LENGTH +" DOUBLE,"+
                                             Schema.NUMBER_OF_FLOORS +" INTEGER,"+
-                                            Schema.ORIENTATION +" INTEGER,"+
+                                            Schema.ORIENTATION +" VARCHAR(10),"+
                                             Schema.PROPER_GROUND_PLAN+" BOOLEAN,"+
                                             Schema.STATE +" VARCHAR(100),"+
                                             Schema.STREET +" VARCHAR(150),"+
@@ -82,7 +86,7 @@ public class DBHelper extends SQLiteOpenHelper {
                                             Schema.B_CEILING_MATERIAL_ID +" INTEGER,"+
                                             Schema.B_CONSTRUCT_SYS_ID +" INTEGER,"+
                                             Schema.B_MATERIAL_ID+" INTEGER,"+
-                                            Schema.B_POSITION_ID +" BIGINT,"+
+                                            Schema.B_POSITION_ID +" INTEGER,"+
                                             Schema.B_PURPOSE_ID +" INTEGER,"+
                                             Schema.B_USER_ID+" BIGINT," +
                                             "CONSTRAINT building_user_fk FOREIGN KEY("+Schema.B_USER_ID+") REFERENCES "+Schema.TABLE_USER+"("+Schema.USER_ID+"),"+
@@ -94,7 +98,7 @@ public class DBHelper extends SQLiteOpenHelper {
                                             "CONSTRAINT unique_building UNIQUE ("+Schema.STREET+", "+Schema.STREET_NUM+", "+Schema.STREET_CHAR+", "+Schema.CADASTRAL_PARTICLE+"));";
 
     private static final String CREATE_TABLE_IMAGE_PATH=
-            "CREATE TABLE IF NOT EXISTS " + Schema.TABLE_IMAGES + " (" +
+            "CREATE TABLE " + Schema.TABLE_IMAGES + " (" +
                     Schema.IMAGE_ID +" INTEGER PRIMARY KEY," +
                     Schema.IMAGE_PATH+" VARCHAR(255),"+
                     Schema.IMAGE+" BLOB,"+
@@ -110,8 +114,18 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DROP_TABLE_CEILING_MATERIAL = "DROP TABLE IF EXISTS "+ Schema.TABLE_CEILING_MATERIAL;
     private static final String DROP_TABLE_BUILDING = "DROP TABLE IF EXISTS " + Schema.TABLE_BUILDING;
 
+    //DELETING DATA
+    private static final String DELETE_TABLE_USER = "DELETE FROM "+ Schema.TABLE_USER;
+    private static final String DELETE_TABLE_PURPOSE = "DELETE FROM "+ Schema.TABLE_PURPOSE;
+    private static final String DELETE_TABLE_POSITION = "DELETE FROM "+ Schema.TABLE_POSITION;
+    private static final String DELETE_TABLE_MATERIAL ="DELETE FROM "+ Schema.TABLE_MATERIAL;
+    private static final String DELETE_TABLE_CONSTRUCT_SYS = "DELETE FROM "+ Schema.TABLE_CONSTUCT_SYS;
+    private static final String DELETE_TABLE_CEILING_MATERIAL = "DELETE FROM "+ Schema.TABLE_CEILING_MATERIAL;
+    private static final String DELETE_TABLE_BUILDING = "DELETE FROM " + Schema.TABLE_BUILDING;
+
     //SELECTING TABLES
     private static final String SELECT_USER = "SELECT * FROM " + Schema.TABLE_USER;
+    private static final String SELECT_BUILDINGS = "SELECT * FROM " + Schema.TABLE_BUILDING;
 
 
     private static DBHelper mDbHelper = null;
@@ -157,7 +171,6 @@ public class DBHelper extends SQLiteOpenHelper {
     - insertUser(User user)
     - deleteUserTable()
     - getUser()
-
      */
     public void insertUser(User user){
         ContentValues contentValues = new ContentValues();
@@ -180,6 +193,18 @@ public class DBHelper extends SQLiteOpenHelper {
         wdb.close();
     }
 
+    public void deleteAllTables(){
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        sqLiteDatabase.execSQL(DELETE_TABLE_USER);
+        sqLiteDatabase.execSQL(DELETE_TABLE_POSITION);
+        sqLiteDatabase.execSQL(DELETE_TABLE_PURPOSE);
+        sqLiteDatabase.execSQL(DELETE_TABLE_MATERIAL);
+        sqLiteDatabase.execSQL(DELETE_TABLE_CONSTRUCT_SYS);
+        sqLiteDatabase.execSQL(DELETE_TABLE_BUILDING);
+        sqLiteDatabase.execSQL(DELETE_TABLE_CEILING_MATERIAL);
+        sqLiteDatabase.close();
+    }
+
     public User getUser(){
         User user = null;
         SQLiteDatabase wdb = this.getWritableDatabase();
@@ -192,6 +217,7 @@ public class DBHelper extends SQLiteOpenHelper {
             String firstName = userCursor.getString(4);
             String lastName = userCursor.getString(5);
             String email = userCursor.getString(6);
+            boolean enabled = userCursor.getInt(7) > 0;
             user = new User(uniqId,firstName,lastName,username,password,email);
             user.setId(id);
         }
@@ -204,6 +230,7 @@ public class DBHelper extends SQLiteOpenHelper {
     /*
     POSITION QUERIES
     - insertPosition(Position position)
+    - getPositionById(int positionId)
      */
     public void insertPosition(Position position){
         ContentValues contentValues = new ContentValues();
@@ -213,9 +240,27 @@ public class DBHelper extends SQLiteOpenHelper {
         wdb.insert(Schema.TABLE_POSITION,null,contentValues);
         wdb.close();
     }
+
+    public Position getPositionById(int positionId){
+        String getPositionQuery = "SELECT * FROM "+Schema.TABLE_POSITION+" WHERE "+Schema.POSITION_ID+"="+positionId;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor positionCursor = wdb.rawQuery(getPositionQuery,null);
+        Position positionObj = null;
+        if(positionCursor.moveToFirst()){
+            int id = positionCursor.getInt(0);
+            String position = positionCursor.getString(1);
+            positionObj=new Position(id,position);
+        }
+        positionCursor.close();
+        wdb.close();
+        return positionObj;
+    }
+
+
     /*
         PURPOSE QUERIES
         - inserPurpose(Purpose purpose)
+        - getPurposeById(int purposeId)
          */
     public void insertPurpose(Purpose purpose){
         ContentValues contentValues = new ContentValues();
@@ -226,9 +271,25 @@ public class DBHelper extends SQLiteOpenHelper {
         wdb.close();
     }
 
+    public Purpose getPurposeById(int purposeId){
+        String getPurposeQuery = "SELECT * FROM "+Schema.TABLE_PURPOSE+" WHERE "+Schema.PURPOSE_ID+"="+purposeId;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor purposeCursor = wdb.rawQuery(getPurposeQuery,null);
+        Purpose purposeObj = null;
+        if(purposeCursor.moveToFirst()){
+            int id = purposeCursor.getInt(0);
+            String purpose = purposeCursor.getString(1);
+            purposeObj=new Purpose(id,purpose);
+        }
+        purposeCursor.close();
+        wdb.close();
+        return purposeObj;
+    }
+
     /*
     MATERIAL QUERIES
     - insertMaterial(Material material)
+    - getMaterialById(int materialId)
      */
 
     public void insertMaterial(Material material){
@@ -240,9 +301,25 @@ public class DBHelper extends SQLiteOpenHelper {
         wdb.close();
     }
 
+    public Material getMaterialById(int materialId){
+        String getMaterialQuery = "SELECT * FROM "+Schema.TABLE_MATERIAL+" WHERE "+Schema.MATERIAL_ID+"="+materialId;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor materialCursor = wdb.rawQuery(getMaterialQuery,null);
+        Material materialObj = null;
+        if(materialCursor.moveToFirst()){
+            int id = materialCursor.getInt(0);
+            String material = materialCursor.getString(1);
+            materialObj=new Material(id,material);
+        }
+        materialCursor.close();
+        wdb.close();
+        return materialObj;
+    }
+
     /*
     CONSTRUCTION SYSTEM QUERIES
     - insertConstructSys(ConstructionSystem constructionSystem)
+    - getConstructionSystemById(int constructionSystemId
      */
 
     public void insertConstructSys(ConstructionSystem constructionSystem){
@@ -254,9 +331,25 @@ public class DBHelper extends SQLiteOpenHelper {
         wdb.close();
     }
 
+    public ConstructionSystem getConstructionSystemById(int constructionSystemId){
+        String getConstrSystQuery = "SELECT * FROM "+Schema.TABLE_CONSTUCT_SYS+" WHERE "+Schema.CONSTR_SYS_ID+"="+constructionSystemId;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor constrSysCursor = wdb.rawQuery(getConstrSystQuery,null);
+        ConstructionSystem constrSystObj = null;
+        if(constrSysCursor.moveToFirst()){
+            int id = constrSysCursor.getInt(0);
+            String constrSyst = constrSysCursor.getString(1);
+            constrSystObj=new ConstructionSystem(id,constrSyst);
+        }
+        constrSysCursor.close();
+        wdb.close();
+        return constrSystObj;
+    }
+
     /*
      CEILING MATERIAL QUERIES
      - insertCeilingMaterial(CeilingMaterial ceilingMaterial)
+     - getCeilingMaterialById(int ceilingMaterialId)
      */
     public void insertCeilingMaterial(CeilingMaterial ceilingMaterial){
         ContentValues contentValues = new ContentValues();
@@ -267,9 +360,25 @@ public class DBHelper extends SQLiteOpenHelper {
         wdb.close();
     }
 
+    public CeilingMaterial getCeilingMaterialById(int ceilingMaterialId){
+        String getCeilingMaterialQuery = "SELECT * FROM "+Schema.TABLE_CEILING_MATERIAL+" WHERE "+Schema.CEILING_MATERIAL_ID+"="+ceilingMaterialId;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor ceilingMaterialCursor = wdb.rawQuery(getCeilingMaterialQuery,null);
+        CeilingMaterial ceilingMaterialObj = null;
+        if(ceilingMaterialCursor.moveToFirst()){
+            int id = ceilingMaterialCursor.getInt(0);
+            String ceilingMaterial = ceilingMaterialCursor.getString(1);
+            ceilingMaterialObj=new CeilingMaterial(id,ceilingMaterial);
+        }
+        ceilingMaterialCursor.close();
+        wdb.close();
+        return ceilingMaterialObj;
+    }
+
     /*
     BUILDING QUERIES
     - insertBuilding(Building building)
+    - getAllBuildings()
      */
 
     public void insertBuilding(Building building){
@@ -302,7 +411,53 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase wdb = this.getWritableDatabase();
         wdb.insert(Schema.TABLE_BUILDING,null,contentValues);
         wdb.close();
+    }
 
+    public List<Building> getAllBuildings(){
+        List<Building> buildings = new ArrayList<>();
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor buildingCursor = wdb.rawQuery(SELECT_BUILDINGS,null);
+        if(buildingCursor.moveToFirst()){
+            Long id = buildingCursor.getLong(0);
+            double brutoArea= buildingCursor.getDouble(1);
+            String cadastralParticle = buildingCursor.getString(2);
+            String city = buildingCursor.getString(3);
+            Timestamp date = Timestamp.valueOf(buildingCursor.getString(4));
+            double floorArea = buildingCursor.getDouble(5);
+            double floorHeight = buildingCursor.getDouble(6);
+            double fullHeight= buildingCursor.getDouble(7);
+            double length= buildingCursor.getDouble(8);
+            int numberOfFloors= buildingCursor.getInt(9);
+            Building.Orientation orientation= Building.Orientation.valueOf(buildingCursor.getString(10));
+            boolean properGroundPlan = buildingCursor.getInt(11) > 0;
+            String state = buildingCursor.getString(12);
+            String street = buildingCursor.getString(13);
+            int streetNum= buildingCursor.getInt(14);
+            char streetChar =buildingCursor.getString(15).charAt(0);
+            boolean isSynchronized=buildingCursor.getInt(16) > 0;
+            double width= buildingCursor.getDouble(17);
+            String yearOfBuild = buildingCursor.getString(18);
+            int ceilingMatId= buildingCursor.getInt(19);
+            int constrSysId= buildingCursor.getInt(20);
+            int materialId= buildingCursor.getInt(21);
+            int positionId= buildingCursor.getInt(22);
+            int purposeId= buildingCursor.getInt(23);
+            long userId=buildingCursor.getLong(24);
+            Building building = new Building(date,yearOfBuild,properGroundPlan);
+            building.setDimensions(width,length,floorArea,brutoArea,floorHeight,fullHeight,numberOfFloors);
+            building.setLocation(cadastralParticle,street,streetNum,streetChar,city,state,orientation,this.getPositionById(positionId));
+            building.setCeilingMaterial(this.getCeilingMaterialById(ceilingMatId));
+            building.setPurpose(this.getPurposeById(purposeId));
+            building.setUser(this.getUser());
+            building.setMaterial(this.getMaterialById(materialId));
+            building.setConstructionSystem(this.getConstructionSystemById(constrSysId));
+            building.setSynchronizedWithDatabase(isSynchronized);
+            building.setId(id);
+            buildings.add(building);
+        }
+        buildingCursor.close();
+        wdb.close();
+        return buildings;
     }
 
     /*
@@ -325,7 +480,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static class Schema{
 
-        private static final int SCHEMA_VERSION = 8;
+        private static final int SCHEMA_VERSION = 2;
         private static final String DATABASE_NAME = "nekretnine_info.db";
 
         //USER table

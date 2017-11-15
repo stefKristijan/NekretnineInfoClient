@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.em2.kstefancic.nekretnineinfo.MainActivity;
 import com.em2.kstefancic.nekretnineinfo.R;
 import com.em2.kstefancic.nekretnineinfo.api.exceptionutils.ErrorUtils;
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.CeilingMaterial;
 import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.ConstructionSystem;
 import com.em2.kstefancic.nekretnineinfo.api.model.ExceptionResponse;
 import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
@@ -39,6 +40,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
     private static final String REGISTRATION_SUCCESS = "Uspješno ste kreirali korisnički račun. Sada se možete prijaviti.";
     private static final String DEFAULT_ERROR = "Došlo je do pogreške. Pokušajte ponovno kasnije.";
     public static final String USER = "user";
+    public static final String FIRST_LOGIN = "first_login";
     private Retrofit mRetrofit;
     private SessionManager mSessionManager;
 
@@ -53,17 +55,18 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 
     private void checkIfLoggedIn() {
         this.mSessionManager = new SessionManager(this);
-        //this.mSessionManager.setLogin(false,null);
+        /*this.mSessionManager.setLogin(false,null);
+        DBHelper.getInstance(this).deleteAllTables();*/
         if(this.mSessionManager.isLoggedIn()){
             User user = DBHelper.getInstance(this).getUser();
-            startMainActivity(user);
+            startMainActivity(user, false);
         }
     }
 
     private void setUpFragment() {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.activityLogin_fl, new LogInFragment(), this.LOGIN_FRAGMENT);
+        fragmentTransaction.add(R.id.activityLogin_fl, new LogInFragment(), LOGIN_FRAGMENT);
         fragmentTransaction.commit();
     }
 
@@ -123,9 +126,9 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
                 if(response.isSuccessful()){
                     User user = response.body();
                     DBHelper.getInstance(getApplicationContext()).insertUser(user);
-                    getMultiChoiceDataAndSaveToLocalDatabase(user);
                     mSessionManager.setLogin(true,password);
-                    startMainActivity(user);
+                    getMultiChoiceDataAndSaveToLocalDatabase(user);
+                    startMainActivity(user, true);
                 }else {
                    showErrorResponse(response);
                 }
@@ -146,7 +149,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
     private void getMultiChoiceDataAndSaveToLocalDatabase(User user) {
         MultiChoiceDataService multiChoiceDataClient = mRetrofit.create(MultiChoiceDataService.class);
 
-        String base = user.getUsername()+":"+user.getPassword();
+        String base = user.getUsername()+":"+mSessionManager.getPassword();
         String authHeader = "Basic "+ Base64.encodeToString(base.getBytes(), Base64.NO_WRAP);
 
         final Call<MultiChoiceDataResponse> getMultiChoiceCall = multiChoiceDataClient.getMultiChoiceData(authHeader);
@@ -154,20 +157,32 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
             @Override
             public void onResponse(Call<MultiChoiceDataResponse> call, Response<MultiChoiceDataResponse> response) {
                 if (response.isSuccessful()){
+
                     insertPositionsInLocalDatabase(response.body().getPosition());
                     insertMaterialsInLocalDatabase(response.body().getMaterial());
                     insertConstructionSystemsInLocalDatabase(response.body().getConstructionSystem());
                     insertPurposesInLocalDatabase(response.body().getPurpose());
+                    insertCeilingMaterialsInLocalDatabase(response.body().getCeilingMaterial());
                 }else{
+                    Log.e("MULTICHOICE DATA RESP", response.body().toString());
                     showErrorResponse(response);
                 }
             }
 
             @Override
             public void onFailure(Call<MultiChoiceDataResponse> call, Throwable t) {
+                Log.e("MULTICHOICE DATA RESP", t.toString());
                 showDefaultError();
             }
         });
+    }
+
+    private void insertCeilingMaterialsInLocalDatabase(List<CeilingMaterial> ceilingMaterials) {
+
+        for(CeilingMaterial ceilingMaterial : ceilingMaterials) {
+            DBHelper.getInstance(this).insertCeilingMaterial(ceilingMaterial);
+            Log.d("Inserting CEILING MAT", ceilingMaterial.toString());
+        }
     }
 
     private void showErrorResponse(Response<?> response) {
@@ -203,9 +218,10 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
         }
     }
 
-    private void startMainActivity(User user) {
+    private void startMainActivity(User user, boolean firstLogin) {
         Intent mainIntent = new Intent(LoginActivity.this,MainActivity.class);
         mainIntent.putExtra(USER, user);
+        mainIntent.putExtra(FIRST_LOGIN, firstLogin);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
     }

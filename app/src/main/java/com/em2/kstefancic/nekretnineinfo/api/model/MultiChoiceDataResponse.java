@@ -1,5 +1,6 @@
 package com.em2.kstefancic.nekretnineinfo.api.model;
 
+import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.CeilingMaterial;
 import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.ConstructionSystem;
 import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
 import com.em2.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Position;
@@ -17,15 +18,25 @@ public class MultiChoiceDataResponse {
     private List<Material> material;
     private List<Position> position;
     private List<Purpose> purpose;
+    private List<CeilingMaterial> ceilingMaterial;
 
     public MultiChoiceDataResponse() {
     }
 
-    public MultiChoiceDataResponse(List<ConstructionSystem> constructionSystem, List<Material> material, List<Position> position, List<Purpose> purpose) {
+    public MultiChoiceDataResponse(List<ConstructionSystem> constructionSystem, List<Material> material, List<Position> position, List<Purpose> purpose, List<CeilingMaterial> ceilingMaterial) {
         this.constructionSystem = constructionSystem;
         this.material = material;
         this.position = position;
         this.purpose = purpose;
+        this.ceilingMaterial=ceilingMaterial;
+    }
+
+    public List<CeilingMaterial> getCeilingMaterial() {
+        return ceilingMaterial;
+    }
+
+    public void setCeilingMaterials(List<CeilingMaterial> ceilingMaterial) {
+        this.ceilingMaterial = ceilingMaterial;
     }
 
     public List<ConstructionSystem> getConstructionSystem() {

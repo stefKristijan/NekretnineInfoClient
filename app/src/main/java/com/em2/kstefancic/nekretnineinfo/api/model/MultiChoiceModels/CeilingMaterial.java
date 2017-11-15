@@ -17,6 +17,14 @@ public class CeilingMaterial {
     public CeilingMaterial() {
     }
 
+    @Override
+    public String toString() {
+        return "CeilingMaterial{" +
+                "id=" + id +
+                ", ceilingMaterial='" + ceilingMaterial + '\'' +
+                '}';
+    }
+
     public int getId() {
         return id;
     }

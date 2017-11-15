@@ -1,31 +1,21 @@
 package com.em2.kstefancic.nekretnineinfo;
 
-import android.Manifest;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
-import android.view.View;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.em2.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity;
@@ -36,14 +26,8 @@ import com.em2.kstefancic.nekretnineinfo.helper.DBHelper;
 import com.em2.kstefancic.nekretnineinfo.helper.SessionManager;
 import com.em2.kstefancic.nekretnineinfo.views.BuildingAdapter;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -51,33 +35,42 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import static com.em2.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.BASE_URL;
+import static com.em2.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.FIRST_LOGIN;
 
 public class MainActivity extends AppCompatActivity{
 
     private User mUser;
     private SessionManager mSessionManager;
     private Retrofit mRetrofit;
-    private Building building;
     private RecyclerView recyclerView;
     private BuildingAdapter buildingAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.ItemDecoration itemDecoration;
+    private List<Building> buildings;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        setUpActivity();
         this.mUser = (User) getIntent().getExtras().getSerializable(LoginActivity.USER);
-        this.mSessionManager = new SessionManager(this);
 
-        getRealEstatesFromDatabase();
+        if(getIntent().getExtras().getBoolean(FIRST_LOGIN)){
+            Log.d("GET BUILDINGS", "getting buildings from server");
 
-
-        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},100);
+            getBuildingsFromServer();
+        }else{
+            Log.d("GET BUILDINGS", "getting buildings from local database");
+            getBuildingsFromLocalDatabase();
         }
+
+
+    }
+
+    private void setUpActivity() {
+        setRetrofit();
+        this.mSessionManager = new SessionManager(this);
 
         this.recyclerView = findViewById(R.id.rvBuilding);
 
@@ -88,28 +81,17 @@ public class MainActivity extends AppCompatActivity{
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getRealEstatesFromDatabase();
+                //TODO start BuildingActivity for update or insert a building
             }
         });
-
     }
 
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 100:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                } else {
-
-                }
-                return;
-        }
+    private void getBuildingsFromLocalDatabase() {
+        buildings = DBHelper.getInstance(this).getAllBuildings();
+        setRecyclerView(buildings);
     }
 
-    private void getRealEstatesFromDatabase() {
-        setRetrofit();
+    private void getBuildingsFromServer() {
         BuildingService client = mRetrofit.create(BuildingService.class);
         Call<List<Building>> call = client.getBuildings(setAuthenticationHeader(),mUser.getUsername());
 
@@ -118,11 +100,12 @@ public class MainActivity extends AppCompatActivity{
           public void onResponse(Call<List<Building>> call, Response<List<Building>> response) {
               if(response.isSuccessful()){
                   Log.d("ON BUILDING RESPONSE", response.body().toString());
-                  //Toast.makeText(getApplicationContext(),response.body().get(0).toString(),Toast.LENGTH_LONG).show();
-                  List<Building> buildings = response.body();
+                  buildings = response.body();
+                  for(Building building : buildings){
+                      DBHelper.getInstance(getApplicationContext()).insertBuilding(building);
+                  }
                   Log.d("BUILDING",buildings.get(0).toString());
                   setRecyclerView(buildings);
-                  //uploadToServer();
               }else {
                   Log.e("ON BUILDING RESPONSE", response.raw().toString());
               }
@@ -149,94 +132,9 @@ public class MainActivity extends AppCompatActivity{
         this.recyclerView.setAdapter(this.buildingAdapter);
     }
 
-    private void uploadToServer() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        File pictureDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        String picturesDirectoryPath = pictureDirectory.getPath();
-
-        Uri data = Uri.parse(picturesDirectoryPath);
-
-        intent.setDataAndType(data,"image/*");
-
-        startActivityForResult(intent, 10);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 10 && resultCode == RESULT_OK && data != null) {
-            ClipData clipData = data.getClipData();
-            ArrayList<Uri> fileUris = new ArrayList<>();
-
-            for (int i = 0; i < clipData.getItemCount(); i++) {
-                ClipData.Item item = clipData.getItemAt(i);
-                Uri uri = item.getUri();
-                Log.d("URI", uri.toString());
-                fileUris.add(uri);
-            }
-            uploadAlbum(fileUris);
-        }
-    }
-
-    public String getRealPathFromURI(Context context, Uri contentUri) {
-        Cursor cursor = null;
-        try {
-            String[] proj = { MediaStore.Images.Media.DATA };
-            cursor = context.getContentResolver().query(contentUri, proj, null,
-                    null, null);
-            int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-    }
-
-    private void uploadAlbum(ArrayList<Uri> fileUris) {
-        BuildingService buildingService = mRetrofit.create(BuildingService.class);
-
-        List<MultipartBody.Part> parts = new ArrayList<>();
-        Log.d("fileURIs size",String.valueOf(fileUris.size()));
-        for(int i=0; i< fileUris.size();i++){
-            parts.add(prepareFilePart("files",fileUris.get(i)));
-        }
-
-
-
-        Call<ResponseBody> call = buildingService.uploadBuilding(setAuthenticationHeader(),mUser.getUsername(),parts,building);
-
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.d("GOOD",response.toString());
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("Error", t.toString());
-            }
-        });
-    }
-
     private String setAuthenticationHeader() {
         String base = mUser.getUsername()+":"+this.mSessionManager.getPassword();
         return "Basic "+ Base64.encodeToString(base.getBytes(), Base64.NO_WRAP);
-    }
-
-    @NonNull
-    private MultipartBody.Part prepareFilePart(String partName, Uri fileUri){
-        String imagePath = getRealPathFromURI(this, fileUri);
-        Log.d("IMAGE PATH",imagePath);
-        File imageFile = new File(imagePath);
-
-        RequestBody requestFile = RequestBody.create(MediaType.parse(getContentResolver().getType(fileUri)),imageFile);
-
-        MultipartBody.Part part = MultipartBody.Part.createFormData(partName, imageFile.getName(), requestFile);
-        Log.d("MULTIPARTBODY",part.body().contentType().toString());
-        return part;
     }
 
     private void setRetrofit() {
@@ -287,7 +185,7 @@ public class MainActivity extends AppCompatActivity{
 
     private void signOut() {
         this.mSessionManager.setLogin(false,"");
-        DBHelper.getInstance(this).deleteUserTable();
+        DBHelper.getInstance(this).deleteAllTables();
         Intent loginIntent = new Intent(MainActivity.this,LoginActivity.class);
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);

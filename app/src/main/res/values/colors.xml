@@ -7,10 +7,10 @@
     <color name="btnCenterColor">#0B55DF</color>
     <color name="btnStartColor">#0097F6</color>
     <color name="btnEndColor">#0097F6</color>
-    <color name="btnEditCenterColor">#0B55DF</color>
-    <color name="btnEditStartColor">#0097F6</color>
-    <color name="btnEditEndColor">#0097F6</color>
-    <color name="btnSynchronizeCenterColor">#0B55DF</color>
-    <color name="btnSynchronizeStartColor">#0097F6</color>
-    <color name="btnSynchronizeEndColor">#0097F6</color>
+    <color name="btnEditCenterColor">#FC7C00</color>
+    <color name="btnEditStartColor">#FC9900</color>
+    <color name="btnEditEndColor">#FC9900</color>
+    <color name="btnSynchronizeCenterColor">#36C50A</color>
+    <color name="btnSynchronizeStartColor">#3ADE0A</color>
+    <color name="btnSynchronizeEndColor">#3ADE0A</color>
 </resources>
