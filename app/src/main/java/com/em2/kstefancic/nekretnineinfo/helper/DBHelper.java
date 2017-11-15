@@ -5,6 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
+import android.widget.ImageView;
 
 import com.em2.kstefancic.nekretnineinfo.api.model.Building;
 import com.em2.kstefancic.nekretnineinfo.api.model.ImagePath;
@@ -18,6 +22,7 @@ import com.em2.kstefancic.nekretnineinfo.api.model.User;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SimpleTimeZone;
 
 /**
  * Created by user on 3.11.2017..
@@ -97,9 +102,9 @@ public class DBHelper extends SQLiteOpenHelper {
                                             "CONSTRAINT building_purpose_fk FOREIGN KEY("+Schema.B_PURPOSE_ID+") REFERENCES "+Schema.TABLE_USER+"("+Schema.PURPOSE_ID+"),"+
                                             "CONSTRAINT unique_building UNIQUE ("+Schema.STREET+", "+Schema.STREET_NUM+", "+Schema.STREET_CHAR+", "+Schema.CADASTRAL_PARTICLE+"));";
 
-    private static final String CREATE_TABLE_IMAGE_PATH=
+    private static final String CREATE_TABLE_IMAGES =
             "CREATE TABLE " + Schema.TABLE_IMAGES + " (" +
-                    Schema.IMAGE_ID +" INTEGER PRIMARY KEY," +
+                    Schema.IMAGE_ID +" INTEGER PRIMARY KEY AUTOINCREMENT," +
                     Schema.IMAGE_PATH+" VARCHAR(255),"+
                     Schema.IMAGE+" BLOB,"+
                     Schema.IP_BUILDING_ID+ " BIGINT,"+
@@ -113,6 +118,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DROP_TABLE_CONSTRUCT_SYS = "DROP TABLE IF EXISTS "+ Schema.TABLE_CONSTUCT_SYS;
     private static final String DROP_TABLE_CEILING_MATERIAL = "DROP TABLE IF EXISTS "+ Schema.TABLE_CEILING_MATERIAL;
     private static final String DROP_TABLE_BUILDING = "DROP TABLE IF EXISTS " + Schema.TABLE_BUILDING;
+    private static final String DROP_TABLE_IMAGES = "DROP TABLE IF EXISTS "+Schema.TABLE_IMAGES;
 
     //DELETING DATA
     private static final String DELETE_TABLE_USER = "DELETE FROM "+ Schema.TABLE_USER;
@@ -122,10 +128,12 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DELETE_TABLE_CONSTRUCT_SYS = "DELETE FROM "+ Schema.TABLE_CONSTUCT_SYS;
     private static final String DELETE_TABLE_CEILING_MATERIAL = "DELETE FROM "+ Schema.TABLE_CEILING_MATERIAL;
     private static final String DELETE_TABLE_BUILDING = "DELETE FROM " + Schema.TABLE_BUILDING;
+    private static final String DELETE_TABLE_IMAGES = "DELETE FROM "+Schema.TABLE_IMAGES;
 
     //SELECTING TABLES
     private static final String SELECT_USER = "SELECT * FROM " + Schema.TABLE_USER;
     private static final String SELECT_BUILDINGS = "SELECT * FROM " + Schema.TABLE_BUILDING;
+
 
 
     private static DBHelper mDbHelper = null;
@@ -151,6 +159,7 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_TABLE_CONSTRUCT_SYS);
         sqLiteDatabase.execSQL(CREATE_TABLE_BUILDING);
         sqLiteDatabase.execSQL(CREATE_TABLE_CEILING_MATERIAL);
+        sqLiteDatabase.execSQL(CREATE_TABLE_IMAGES);
     }
 
     @Override
@@ -162,6 +171,7 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DROP_TABLE_CONSTRUCT_SYS);
         sqLiteDatabase.execSQL(DROP_TABLE_BUILDING);
         sqLiteDatabase.execSQL(DROP_TABLE_CEILING_MATERIAL);
+        sqLiteDatabase.execSQL(DROP_TABLE_IMAGES);
         this.onCreate(sqLiteDatabase);
     }
 
@@ -202,6 +212,7 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DELETE_TABLE_CONSTRUCT_SYS);
         sqLiteDatabase.execSQL(DELETE_TABLE_BUILDING);
         sqLiteDatabase.execSQL(DELETE_TABLE_CEILING_MATERIAL);
+        sqLiteDatabase.execSQL(DELETE_TABLE_IMAGES);
         sqLiteDatabase.close();
     }
 
@@ -418,42 +429,44 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase wdb = this.getWritableDatabase();
         Cursor buildingCursor = wdb.rawQuery(SELECT_BUILDINGS,null);
         if(buildingCursor.moveToFirst()){
-            Long id = buildingCursor.getLong(0);
-            double brutoArea= buildingCursor.getDouble(1);
-            String cadastralParticle = buildingCursor.getString(2);
-            String city = buildingCursor.getString(3);
-            Timestamp date = Timestamp.valueOf(buildingCursor.getString(4));
-            double floorArea = buildingCursor.getDouble(5);
-            double floorHeight = buildingCursor.getDouble(6);
-            double fullHeight= buildingCursor.getDouble(7);
-            double length= buildingCursor.getDouble(8);
-            int numberOfFloors= buildingCursor.getInt(9);
-            Building.Orientation orientation= Building.Orientation.valueOf(buildingCursor.getString(10));
-            boolean properGroundPlan = buildingCursor.getInt(11) > 0;
-            String state = buildingCursor.getString(12);
-            String street = buildingCursor.getString(13);
-            int streetNum= buildingCursor.getInt(14);
-            char streetChar =buildingCursor.getString(15).charAt(0);
-            boolean isSynchronized=buildingCursor.getInt(16) > 0;
-            double width= buildingCursor.getDouble(17);
-            String yearOfBuild = buildingCursor.getString(18);
-            int ceilingMatId= buildingCursor.getInt(19);
-            int constrSysId= buildingCursor.getInt(20);
-            int materialId= buildingCursor.getInt(21);
-            int positionId= buildingCursor.getInt(22);
-            int purposeId= buildingCursor.getInt(23);
-            long userId=buildingCursor.getLong(24);
-            Building building = new Building(date,yearOfBuild,properGroundPlan);
-            building.setDimensions(width,length,floorArea,brutoArea,floorHeight,fullHeight,numberOfFloors);
-            building.setLocation(cadastralParticle,street,streetNum,streetChar,city,state,orientation,this.getPositionById(positionId));
-            building.setCeilingMaterial(this.getCeilingMaterialById(ceilingMatId));
-            building.setPurpose(this.getPurposeById(purposeId));
-            building.setUser(this.getUser());
-            building.setMaterial(this.getMaterialById(materialId));
-            building.setConstructionSystem(this.getConstructionSystemById(constrSysId));
-            building.setSynchronizedWithDatabase(isSynchronized);
-            building.setId(id);
-            buildings.add(building);
+            do{
+                Long id = buildingCursor.getLong(0);
+                double brutoArea= buildingCursor.getDouble(1);
+                String cadastralParticle = buildingCursor.getString(2);
+                String city = buildingCursor.getString(3);
+                Timestamp date = Timestamp.valueOf(buildingCursor.getString(4));
+                double floorArea = buildingCursor.getDouble(5);
+                double floorHeight = buildingCursor.getDouble(6);
+                double fullHeight= buildingCursor.getDouble(7);
+                double length= buildingCursor.getDouble(8);
+                int numberOfFloors= buildingCursor.getInt(9);
+                Building.Orientation orientation= Building.Orientation.valueOf(buildingCursor.getString(10));
+                boolean properGroundPlan = buildingCursor.getInt(11) > 0;
+                String state = buildingCursor.getString(12);
+                String street = buildingCursor.getString(13);
+                int streetNum= buildingCursor.getInt(14);
+                char streetChar =buildingCursor.getString(15).charAt(0);
+                boolean isSynchronized=buildingCursor.getInt(16) > 0;
+                double width= buildingCursor.getDouble(17);
+                String yearOfBuild = buildingCursor.getString(18);
+                int ceilingMatId= buildingCursor.getInt(19);
+                int constrSysId= buildingCursor.getInt(20);
+                int materialId= buildingCursor.getInt(21);
+                int positionId= buildingCursor.getInt(22);
+                int purposeId= buildingCursor.getInt(23);
+                long userId=buildingCursor.getLong(24);
+                Building building = new Building(date,yearOfBuild,properGroundPlan);
+                building.setDimensions(width,length,floorArea,brutoArea,floorHeight,fullHeight,numberOfFloors);
+                building.setLocation(cadastralParticle,street,streetNum,streetChar,city,state,orientation,this.getPositionById(positionId));
+                building.setCeilingMaterial(this.getCeilingMaterialById(ceilingMatId));
+                building.setPurpose(this.getPurposeById(purposeId));
+                building.setUser(this.getUser());
+                building.setMaterial(this.getMaterialById(materialId));
+                building.setConstructionSystem(this.getConstructionSystemById(constrSysId));
+                building.setSynchronizedWithDatabase(isSynchronized);
+                building.setId(id);
+                buildings.add(building);
+            }while(buildingCursor.moveToNext());
         }
         buildingCursor.close();
         wdb.close();
@@ -463,6 +476,7 @@ public class DBHelper extends SQLiteOpenHelper {
     /*
     IMAGE PATH QUERIES
     - insertImage()
+    - getImagesByBuildingId(long buildingId)
      */
 
     public void insertImage(ImagePath imagePath, byte[] imageBytes, long buildingId){
@@ -476,11 +490,29 @@ public class DBHelper extends SQLiteOpenHelper {
         wdb.close();
     }
 
+    public List<Bitmap> getImagesByBuildingId(long buildingId){
+
+        String imageQuery = "SELECT "+Schema.IMAGE+" FROM "+Schema.TABLE_IMAGES+ " WHERE "+Schema.IP_BUILDING_ID+"="+buildingId;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor imageCursor = wdb.rawQuery(imageQuery,null);
+        List<Bitmap> images= new ArrayList<>();
+        if(imageCursor.moveToFirst()){
+            do{
+                byte[] imgBytes = imageCursor.getBlob(0);
+                Bitmap imgBitmap = BitmapFactory.decodeByteArray(imgBytes,0,imgBytes.length);
+                images.add(imgBitmap);
+            }while (imageCursor.moveToNext());
+        }
+        imageCursor.close();
+        wdb.close();
+        return images;
+    }
+
 
 
     public static class Schema{
 
-        private static final int SCHEMA_VERSION = 2;
+        private static final int SCHEMA_VERSION = 3;
         private static final String DATABASE_NAME = "nekretnine_info.db";
 
         //USER table

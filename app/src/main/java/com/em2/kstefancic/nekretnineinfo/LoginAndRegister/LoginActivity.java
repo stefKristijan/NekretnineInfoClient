@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 
     private void checkIfLoggedIn() {
         this.mSessionManager = new SessionManager(this);
-        /*this.mSessionManager.setLogin(false,null);
+       /* this.mSessionManager.setLogin(false,null);
         DBHelper.getInstance(this).deleteAllTables();*/
         if(this.mSessionManager.isLoggedIn()){
             User user = DBHelper.getInstance(this).getUser();

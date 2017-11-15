@@ -3,6 +3,9 @@ package com.em2.kstefancic.nekretnineinfo;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -16,16 +19,29 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.em2.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity;
 import com.em2.kstefancic.nekretnineinfo.api.model.Building;
+import com.em2.kstefancic.nekretnineinfo.api.model.ImagePath;
 import com.em2.kstefancic.nekretnineinfo.api.model.User;
 import com.em2.kstefancic.nekretnineinfo.api.service.BuildingService;
 import com.em2.kstefancic.nekretnineinfo.helper.DBHelper;
 import com.em2.kstefancic.nekretnineinfo.helper.SessionManager;
 import com.em2.kstefancic.nekretnineinfo.views.BuildingAdapter;
+import com.fasterxml.jackson.core.util.ByteArrayBuilder;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 
 import retrofit2.Call;
@@ -103,9 +119,9 @@ public class MainActivity extends AppCompatActivity{
                   buildings = response.body();
                   for(Building building : buildings){
                       DBHelper.getInstance(getApplicationContext()).insertBuilding(building);
+                      insertPicturesIntoDatabase(building);
                   }
-                  Log.d("BUILDING",buildings.get(0).toString());
-                  setRecyclerView(buildings);
+
               }else {
                   Log.e("ON BUILDING RESPONSE", response.raw().toString());
               }
@@ -118,6 +134,52 @@ public class MainActivity extends AppCompatActivity{
               Log.e("REAL_ESTATE",t.toString());
           }
         });
+    }
+
+    private void insertPicturesIntoDatabase(final Building building) {
+        for(final ImagePath imagePath : building.getImagePaths()){
+
+            Picasso.with(this)
+                    .load(BASE_URL+imagePath.getImagePath())
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG,100,outputStream);
+                            byte[] imageBytes = outputStream.toByteArray();
+                            Log.d("INSERTING IMAGE",imagePath.getImagePath());
+                            DBHelper.getInstance(getApplicationContext()).insertImage(imagePath,imageBytes,building.getId());
+                            getBuildingsFromLocalDatabase();
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                            Log.d("FAIL INSERTING IMAGE",imagePath.getImagePath());
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                            Log.d("PREPARE INSERTING IMAGE",imagePath.getImagePath());
+                        }
+                    });
+
+           /* try {
+                URL imageUrl = new URL(BASE_URL+imagePath.getImagePath());
+                URLConnection connection = imageUrl.openConnection();
+
+                InputStream inputStream = connection.getInputStream();
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+
+                ByteArray
+
+            } catch (MalformedURLException e) {
+                Toast.makeText(this,"Nešto je pošlo po zlu prilikom preuzimanja slika.",Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            } catch (IOException e) {
+                Toast.makeText(this,"Nije moguće stvoriti vezu sa slikom.",Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }*/
+        }
     }
 
     private void setRecyclerView(List<Building> buildings) {

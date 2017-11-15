@@ -1,6 +1,7 @@
 package com.em2.kstefancic.nekretnineinfo.views;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.em2.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity;
 import com.em2.kstefancic.nekretnineinfo.R;
 import com.em2.kstefancic.nekretnineinfo.api.model.Building;
+import com.em2.kstefancic.nekretnineinfo.helper.DBHelper;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -47,13 +49,17 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         Building building = this.buildings.get(position);
 
-        Log.d("IMAGE PATH",LoginActivity.BASE_URL+building.getImagePaths().get(0).getImagePath());
+        List<Bitmap> images = DBHelper.getInstance(context).getImagesByBuildingId(building.getId());
+
+        holder.ivBuilding.setImageBitmap(images.get(0));
+
+       /* Log.d("IMAGE PATH",LoginActivity.BASE_URL+building.getImagePaths().get(0).getImagePath());
 
         Picasso.with(context)
                 .load(LoginActivity.BASE_URL+building.getImagePaths().get(0).getImagePath())
                 .fit()
                 .centerCrop()
-                .into(holder.ivBuilding);
+                .into(holder.ivBuilding);*/
 
         holder.tvLocation.setText(building.getStreet()+" "+building.getStreetNumber()+building.getStreetNumberChar()+", "+building.getCity());
 
