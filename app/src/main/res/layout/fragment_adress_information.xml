@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.em2.kstefancic.nekretnineinfo.buildinginsert.AddressInformationFragment">
+    tools:context="com.kstefancic.nekretnineinfo.buildinginsert.AddressInformationFragment">
 
 
     <TextView
@@ -173,10 +173,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_delete" />
+            android:src="@android:drawable/ic_delete"
+            android:background="@color/colorPrimary"
+            android:id="@+id/frAddressInfo_ibCancel"/>
     </LinearLayout>
 
     <TextView
