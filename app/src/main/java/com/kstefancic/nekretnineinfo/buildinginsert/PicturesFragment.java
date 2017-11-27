@@ -2,7 +2,7 @@ package com.kstefancic.nekretnineinfo.buildinginsert;
 
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -67,15 +67,6 @@ public class PicturesFragment extends Fragment{
             @Override
             public void onClick(View view) {
               pictureChoosenListener.onPictureChoosenListener(fileUris);
-            }
-        });
-        this.ibCancel=layout.findViewById(R.id.frPictures_ibCancel);
-        this.ibCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent returnIntent = new Intent();
-                getActivity().setResult(Activity.RESULT_CANCELED, returnIntent);
-                getActivity().finish();
             }
         });
 

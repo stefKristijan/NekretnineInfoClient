@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity{
 
         if(getIntent().getExtras().getBoolean(FIRST_LOGIN)){
             Log.d("GET BUILDINGS", "getting buildings from server");
-
             getBuildingsFromServer();
         }else{
             Log.d("GET BUILDINGS", "getting buildings from local database");
@@ -103,8 +102,7 @@ public class MainActivity extends AppCompatActivity{
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent buildingIntent = new Intent(MainActivity.this,BuildingActivity.class);
-                buildingIntent.putExtra(USER, mUser);
+                Intent buildingIntent = new Intent(MainActivity.this,BuildingDataActivity.class);
                 startActivityForResult(buildingIntent, NEW_BUILDING_RQST);
             }
         });

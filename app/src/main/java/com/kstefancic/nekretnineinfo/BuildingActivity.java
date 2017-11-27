@@ -27,7 +27,7 @@ import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Purpose;
 import com.kstefancic.nekretnineinfo.api.model.User;
 import com.kstefancic.nekretnineinfo.buildinginsert.AddressInformationFragment;
 import com.kstefancic.nekretnineinfo.buildinginsert.DimensionsFragment;
-import com.kstefancic.nekretnineinfo.buildinginsert.OtherInformationFragment;
+import com.kstefancic.nekretnineinfo.buildinginsert.BuildingDetailsFragment;
 import com.kstefancic.nekretnineinfo.buildinginsert.PicturesFragment;
 import com.kstefancic.nekretnineinfo.helper.DBHelper;
 import com.kstefancic.nekretnineinfo.helper.SessionManager;
@@ -42,7 +42,7 @@ import java.util.Random;
 import static com.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.USER;
 import static com.kstefancic.nekretnineinfo.MainActivity.BUILDING_DATA;
 
-public class BuildingActivity extends AppCompatActivity implements AddressInformationFragment.AddressInformationInserted,DimensionsFragment.DimensionsInserted,OtherInformationFragment.OtherInformationInserted, PicturesFragment.PictureChoosen{
+public class BuildingActivity{// extends AppCompatActivity implements AddressInformationFragment.AddressInformationInserted,DimensionsFragment.DimensionsInserted,BuildingDetailsFragment.OtherInformationInserted, PicturesFragment.PictureChoosen {
 
     private static final String ADDRESS_INFO_FR = "address_info_fragment";
 
@@ -50,68 +50,68 @@ public class BuildingActivity extends AppCompatActivity implements AddressInform
     private User mUser;
     private SessionManager mSessionManager;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_building);
-        this.mUser = (User) getIntent().getExtras().getSerializable(USER);
-        building=new Building();
-        Random random = new Random();
-        long rndId = random.nextLong();
-        building.setId(rndId);
-        mSessionManager = new SessionManager(this);
-        setUpFragment();
+    /* @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_building);
+         this.mUser = (User) getIntent().getExtras().getSerializable(USER);
+         building=new Building();
+         Random random = new Random();
+         long rndId = random.nextLong();
+         building.setId(rndId);
+         mSessionManager = new SessionManager(this);
+         setUpFragment();
 
-        if(ContextCompat.checkSelfPermission(BuildingActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(BuildingActivity.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},100);
-        }
-    }
-
-
-    private void setUpFragment() {
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.activityBuilding_fl, new AddressInformationFragment(), ADDRESS_INFO_FR);
-            fragmentTransaction.commit();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 100:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                } else {
-
-                }
-                return;
-        }
-    }
+         if(ContextCompat.checkSelfPermission(BuildingActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+             ActivityCompat.requestPermissions(BuildingActivity.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},100);
+         }
+     }
 
 
+     private void setUpFragment() {
+             FragmentManager fragmentManager = getFragmentManager();
+             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+             fragmentTransaction.add(R.id.activityBuilding_fl, new AddressInformationFragment(), ADDRESS_INFO_FR);
+             fragmentTransaction.commit();
+     }
+
+     @Override
+     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+         switch (requestCode) {
+             case 100:
+                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                 } else {
+
+                 }
+                 return;
+         }
+     }
 
 
-    private void replaceFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.activityBuilding_fl, fragment);
-        fragmentTransaction.commit();
-    }
 
 
-    /*
-    FRAGMENT INTERFACES CALLBACKS
-     */
+     private void replaceFragment(Fragment fragment) {
+         FragmentManager fragmentManager = getFragmentManager();
+         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+         fragmentTransaction.replace(R.id.activityBuilding_fl, fragment);
+         fragmentTransaction.commit();
+     }
+
+
+     /*
+     FRAGMENT INTERFACES CALLBACKS
+
     @Override
     public void onAddressInformationInserted(String street, int streetNum, char streetChar, String city, String state, String cadastralParticle, Position position) {
         /*building.setLocation(cadastralParticle,street,streetNum,streetChar,city,state,orientation,position);
-        replaceFragment(new DimensionsFragment());*/
+        replaceFragment(new DimensionsFragment());
     }
 
     @Override
     public void onDimensionsInformationInserted(double length, double width, double brutoArea, double floorArea, double fullHeight, double floorHeight, int numOfFloors) {
        /* building.setDimensions(width,length,floorArea,brutoArea,floorHeight,fullHeight,numOfFloors);
-        replaceFragment(new OtherInformationFragment());*/
+        replaceFragment(new BuildingDetailsFragment());
     }
 
 
@@ -190,5 +190,5 @@ public class BuildingActivity extends AppCompatActivity implements AddressInform
         DBHelper.getInstance(this).insertBuilding(building);
     }
 
-
+*/
 }

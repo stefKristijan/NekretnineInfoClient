@@ -12,13 +12,14 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="@string/tvAddressInfo"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_etStreet"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_llNavigation"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <EditText
@@ -162,24 +163,6 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_spPosition" />
-
-    <LinearLayout
-        android:id="@+id/frAddressInfo_llNavigation"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_delete"
-            android:background="@color/colorPrimary"
-            android:id="@+id/frAddressInfo_ibCancel"/>
-    </LinearLayout>
 
     <TextView
         android:id="@+id/textView3"

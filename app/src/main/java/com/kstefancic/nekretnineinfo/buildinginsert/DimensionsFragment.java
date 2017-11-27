@@ -1,7 +1,7 @@
 package com.kstefancic.nekretnineinfo.buildinginsert;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -53,15 +53,6 @@ public class DimensionsFragment extends Fragment {
                 double floorHeight = Double.parseDouble(etFloorHeight.getText().toString());
                 int numOfFloors = Integer.parseInt(etNumberOfFloors.getText().toString());
                 dimensionsInsertedListener.onDimensionsInformationInserted(length,width,brutoArea,floorArea,fullHeight,floorHeight,numOfFloors);
-            }
-        });
-        this.ibCancel=layout.findViewById(R.id.frDims_ibCancel);
-        this.ibCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent returnIntent = new Intent();
-                getActivity().setResult(Activity.RESULT_CANCELED, returnIntent);
-                getActivity().finish();
             }
         });
 

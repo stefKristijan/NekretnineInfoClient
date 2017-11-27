@@ -1,7 +1,7 @@
 package com.kstefancic.nekretnineinfo.buildinginsert;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -66,15 +66,6 @@ public class AddressInformationFragment extends Fragment {
                 String cadastralParticle= etCadastralParticle.getText().toString();
                 Position position = positions.get((int) spPosition.getSelectedItemId());
                 addressInformationInsertedListener.onAddressInformationInserted(street,streetNum,streetChar,city,state,cadastralParticle,position);
-            }
-        });
-        this.ibCancel=layout.findViewById(R.id.frAddressInfo_ibCancel);
-        this.ibCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent returnIntent = new Intent();
-                getActivity().setResult(Activity.RESULT_CANCELED, returnIntent);
-                getActivity().finish();
             }
         });
 

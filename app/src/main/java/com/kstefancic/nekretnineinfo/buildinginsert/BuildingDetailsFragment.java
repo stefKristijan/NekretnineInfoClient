@@ -1,10 +1,11 @@
 package com.kstefancic.nekretnineinfo.buildinginsert;
 
 import android.app.Activity;
-import android.app.Fragment;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,7 @@ import java.util.List;
  * Created by user on 15.11.2017..
  */
 
-public class OtherInformationFragment extends Fragment {
+public class BuildingDetailsFragment extends Fragment {
     private Button btnNext;
     private ImageButton ibCancel;
     private Spinner spMaterial, spCeilingMaterial, spConstructionSystem, spPurpose;
@@ -43,7 +44,7 @@ public class OtherInformationFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.fragment_other_info,null);
+        View layout = inflater.inflate(R.layout.fragment_building_details,null);
         setUI(layout);
         return layout;
     }
@@ -65,15 +66,6 @@ public class OtherInformationFragment extends Fragment {
                 ConstructionSystem constructionSystem = constructionSystems.get(spConstructionSystem.getSelectedItemPosition());
                 boolean properGroundPlan = cbProperGroundPlan.isChecked();
                 otherInformationInserted.onOtherInformationInserted(material,ceilingMaterial,constructionSystem, purpose, properGroundPlan);
-            }
-        });
-        this.ibCancel=layout.findViewById(R.id.frOther_ibCancel);
-        this.ibCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent returnIntent = new Intent();
-                getActivity().setResult(Activity.RESULT_CANCELED, returnIntent);
-                getActivity().finish();
             }
         });
 
