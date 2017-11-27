@@ -103,15 +103,15 @@ public class BuildingActivity extends AppCompatActivity implements AddressInform
     FRAGMENT INTERFACES CALLBACKS
      */
     @Override
-    public void onAddressInformationInserted(String street, int streetNum, char streetChar, String city, String state, String cadastralParticle, Building.Orientation orientation, Position position) {
-        building.setLocation(cadastralParticle,street,streetNum,streetChar,city,state,orientation,position);
-        replaceFragment(new DimensionsFragment());
+    public void onAddressInformationInserted(String street, int streetNum, char streetChar, String city, String state, String cadastralParticle, Position position) {
+        /*building.setLocation(cadastralParticle,street,streetNum,streetChar,city,state,orientation,position);
+        replaceFragment(new DimensionsFragment());*/
     }
 
     @Override
     public void onDimensionsInformationInserted(double length, double width, double brutoArea, double floorArea, double fullHeight, double floorHeight, int numOfFloors) {
-        building.setDimensions(width,length,floorArea,brutoArea,floorHeight,fullHeight,numOfFloors);
-        replaceFragment(new OtherInformationFragment());
+       /* building.setDimensions(width,length,floorArea,brutoArea,floorHeight,fullHeight,numOfFloors);
+        replaceFragment(new OtherInformationFragment());*/
     }
 
 

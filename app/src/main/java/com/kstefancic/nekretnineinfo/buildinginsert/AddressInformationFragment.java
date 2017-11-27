@@ -64,9 +64,8 @@ public class AddressInformationFragment extends Fragment {
                 String state = etState.getText().toString();
                 String city = etCity.getText().toString();
                 String cadastralParticle= etCadastralParticle.getText().toString();
-                Building.Orientation orientation= Building.Orientation.valueOf(spOrientation.getSelectedItem().toString());
                 Position position = positions.get((int) spPosition.getSelectedItemId());
-                addressInformationInsertedListener.onAddressInformationInserted(street,streetNum,streetChar,city,state,cadastralParticle,orientation,position);
+                addressInformationInsertedListener.onAddressInformationInserted(street,streetNum,streetChar,city,state,cadastralParticle,position);
             }
         });
         this.ibCancel=layout.findViewById(R.id.frAddressInfo_ibCancel);
@@ -90,8 +89,7 @@ public class AddressInformationFragment extends Fragment {
         }
 
         List<String> orientations = new ArrayList<>();
-        orientations.add(Building.Orientation.I_Z.toString());
-        orientations.add(Building.Orientation.S_J.toString());
+
 
         ArrayAdapter<String> orientationAdapter = new ArrayAdapter<>(this.getActivity(),R.layout.support_simple_spinner_dropdown_item,orientations);
         orientationAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
@@ -123,7 +121,7 @@ public class AddressInformationFragment extends Fragment {
     public interface AddressInformationInserted{
         void onAddressInformationInserted(String street, int streetNum, char streetChar, String city,
                                           String state, String cadastralParticle,
-                                          Building.Orientation orientation, Position position);
+                                          Position position);
     }
 
 

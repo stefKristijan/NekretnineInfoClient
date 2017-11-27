@@ -5,6 +5,7 @@ import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.ConstructionSys
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Position;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Purpose;
+import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Roof;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -17,50 +18,35 @@ import java.util.List;
 public class Building implements Serializable{
 
     private Long id;
-
     private Timestamp date;
 
+    // DETAILS PROPERTIES
     private String yearOfBuild;
-    private boolean properGroundPlan;
-
     private User user;
-
     private Purpose purpose;
-
     private Material material;
-
     private CeilingMaterial ceilingMaterial;
-
     private ConstructionSystem constructionSystem;
-
+    private Roof roof;
     private List<ImagePath> imagePaths;
     private boolean synchronizedWithDatabase;
 
-    // LOCATION PROPERTIES
-    public enum Orientation {
-        I_Z, S_J
-    }
+    // LOCATION PROPERTY
+    private List<BuildingLocation> locations;
 
-    private String cadastralParticle;
-
-    private String street;
-
-    private int streetNumber;
-
-    private char streetNumberChar;
-    private String city;
-    private String state;
-    private Orientation orientation;
     private Position position;
 
     // DIMENSION PROPERTIES
     private double width;
     private double length;
-    private double floorArea;
     private double brutoArea;
+    private double residentialBrutoArea;
+    private double businessBrutoArea;
+    private double basementBrutoArea;
     private double floorHeight;
     private double fullHeight;
     private int numberOfFloors;
+    private boolean properGroundPlan;
 
     public Building() {
     }
@@ -72,96 +58,62 @@ public class Building implements Serializable{
         this.properGroundPlan = properGroundPlan;
     }
 
-    @Override
-    public String toString() {
-        return "Building [id=" + id + ", date=" + date + ", yearOfBuild=" + yearOfBuild + ", properGroundPlan="
-                + properGroundPlan + ", user=" + user + ", purpose=" + purpose + ", material=" + material
-                + ", ceilingMaterial=" + ceilingMaterial + ", constructionSystem=" + constructionSystem
-                + ", imagePaths=" + imagePaths + ", synchronizedWithDatabase=" + synchronizedWithDatabase
-                + ", cadastralParticle=" + cadastralParticle + ", street=" + street + ", streetNumber=" + streetNumber
-                + ", streetNumberChar=" + streetNumberChar + ", city=" + city + ", state=" + state + ", orientation="
-                + orientation + ", position=" + position + ", width=" + width + ", length=" + length + ", floorArea="
-                + floorArea + ", brutoArea=" + brutoArea + ", floorHeight=" + floorHeight + ", fullHeight=" + fullHeight
-                + ", numberOfFloors=" + numberOfFloors + "]";
+    public double getResidentialBrutoArea() {
+        return residentialBrutoArea;
     }
 
-    public void setDimensions(double width, double length, double floorArea, double brutoArea, double floorHeight,
-                              double fullHeight, int numberOfFloors) {
+    public void setResidentialBrutoArea(double residentialBrutoArea) {
+        this.residentialBrutoArea = residentialBrutoArea;
+    }
+
+    public double getBusinessBrutoArea() {
+        return businessBrutoArea;
+    }
+
+    public void setBusinessBrutoArea(double businessBrutoArea) {
+        this.businessBrutoArea = businessBrutoArea;
+    }
+
+    public double getBasementBrutoArea() {
+        return basementBrutoArea;
+    }
+
+    public void setBasementBrutoArea(double basementBrutoArea) {
+        this.basementBrutoArea = basementBrutoArea;
+    }
+
+    public List<BuildingLocation> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(List<BuildingLocation> locations) {
+        this.locations = locations;
+    }
+
+    public Roof getRoof() {
+        return roof;
+    }
+
+    public void setRoof(Roof roof) {
+        this.roof = roof;
+    }
+
+    public void setDimensions(double width, double length, double brutoArea, double floorHeight, double fullHeight,
+                              int numberOfFloors, double residentialBrutoArea, double basementBrutoArea, double businessBrutoArea) {
         this.width = width;
         this.length = length;
-        this.floorArea = floorArea;
         this.floorHeight = floorHeight;
         this.brutoArea = brutoArea;
         this.fullHeight = fullHeight;
         this.numberOfFloors = numberOfFloors;
+        this.residentialBrutoArea = residentialBrutoArea;
+        this.basementBrutoArea = basementBrutoArea;
+        this.businessBrutoArea = businessBrutoArea;
     }
 
-    public void setLocation(String cadastralParticle, String street, int streetNumber, char streetNumberChar,
-                            String city, String state, Orientation orientation, Position position) {
-        this.cadastralParticle = cadastralParticle;
-        this.state = state;
-        this.street = street;
-        this.streetNumber = streetNumber;
-        this.streetNumberChar = streetNumberChar;
-        this.city = city;
-        this.orientation = orientation;
+    public void setLocation(List<BuildingLocation> locations, Position position) {
+        this.locations = locations;
         this.position = position;
-    }
-
-    public String getCadastralParticle() {
-        return cadastralParticle;
-    }
-
-    public void setCadastralParticle(String cadastralParticle) {
-        this.cadastralParticle = cadastralParticle;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public int getStreetNumber() {
-        return streetNumber;
-    }
-
-    public void setStreetNumber(int streetNumber) {
-        this.streetNumber = streetNumber;
-    }
-
-    public char getStreetNumberChar() {
-        return streetNumberChar;
-    }
-
-    public void setStreetNumberChar(char streetNumberChar) {
-        this.streetNumberChar = streetNumberChar;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public Orientation getOrientation() {
-        return orientation;
-    }
-
-    public void setOrientation(Orientation orientation) {
-        this.orientation = orientation;
     }
 
     public Position getPosition() {
@@ -188,13 +140,13 @@ public class Building implements Serializable{
         this.length = length;
     }
 
-    public double getFloorArea() {
-        return floorArea;
-    }
-
-    public void setFloorArea(double floorArea) {
-        this.floorArea = floorArea;
-    }
+    // public double getFloorArea() {
+    // return floorArea;
+    // }
+    //
+    // public void setFloorArea(double floorArea) {
+    // this.floorArea = floorArea;
+    // }
 
     public double getBrutoArea() {
         return brutoArea;

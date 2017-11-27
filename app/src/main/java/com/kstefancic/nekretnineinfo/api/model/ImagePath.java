@@ -13,15 +13,15 @@ public class ImagePath implements Serializable {
 
     private String imagePath;
 
-    private Building realEstate;
+    private Building building;
 
     public ImagePath() {
     }
 
-    public ImagePath(String imagePath, Building realEstate) {
+    public ImagePath(String imagePath, Building building) {
         super();
         this.imagePath = imagePath;
-        this.realEstate = realEstate;
+        this.building = building;
     }
 
     public int getId() {

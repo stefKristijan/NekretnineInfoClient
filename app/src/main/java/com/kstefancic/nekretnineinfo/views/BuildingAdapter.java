@@ -73,7 +73,7 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
         holder.ivBuilding.setImageBitmap(images.get(0).getImage());
 
 
-        holder.tvLocation.setText(building.getStreet()+" "+building.getStreetNumber()+building.getStreetNumberChar()+", "+building.getCity());
+        holder.tvLocation.setText(building.getLocations().get(0).getStreet()+" "+building.getLocations().get(0).getStreetNumber()+building.getLocations().get(0).getStreetNumberChar()+", "+building.getLocations().get(0).getCity());
 
         if(building.isSynchronizedWithDatabase()){
             holder.tvSynchronized.setText("Sinkronizirano");

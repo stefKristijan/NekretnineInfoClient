@@ -12,6 +12,6 @@ import retrofit2.http.Header;
 
 public interface MultiChoiceDataService {
 
-    @GET("/api/multichoice-data")
+    @GET("/multichoice-data")
     Call<MultiChoiceDataResponse> getMultiChoiceData(@Header("Authorization") String authorization);
 }

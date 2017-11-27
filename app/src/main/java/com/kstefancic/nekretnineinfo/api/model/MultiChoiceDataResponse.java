@@ -5,6 +5,8 @@ import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.ConstructionSys
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Position;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Purpose;
+import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Roof;
+import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Sector;
 
 import java.util.List;
 
@@ -19,16 +21,39 @@ public class MultiChoiceDataResponse {
     private List<Position> position;
     private List<Purpose> purpose;
     private List<CeilingMaterial> ceilingMaterial;
+    private List<Roof> roofs;
+    private List<Sector> sectors;
 
     public MultiChoiceDataResponse() {
     }
 
-    public MultiChoiceDataResponse(List<ConstructionSystem> constructionSystem, List<Material> material, List<Position> position, List<Purpose> purpose, List<CeilingMaterial> ceilingMaterial) {
+    public MultiChoiceDataResponse(List<ConstructionSystem> constructionSystem, List<Material> material, List<Position> position, List<Purpose> purpose, List<CeilingMaterial> ceilingMaterial, List<Sector> sectors) {
+        this.sectors=sectors;
         this.constructionSystem = constructionSystem;
         this.material = material;
         this.position = position;
         this.purpose = purpose;
         this.ceilingMaterial=ceilingMaterial;
+    }
+
+    public List<Roof> getRoofs() {
+        return roofs;
+    }
+
+    public void setRoofs(List<Roof> roofs) {
+        this.roofs = roofs;
+    }
+
+    public void setCeilingMaterial(List<CeilingMaterial> ceilingMaterial) {
+        this.ceilingMaterial = ceilingMaterial;
+    }
+
+    public List<Sector> getSectors() {
+        return sectors;
+    }
+
+    public void setSectors(List<Sector> sectors) {
+        this.sectors = sectors;
     }
 
     public List<CeilingMaterial> getCeilingMaterial() {
