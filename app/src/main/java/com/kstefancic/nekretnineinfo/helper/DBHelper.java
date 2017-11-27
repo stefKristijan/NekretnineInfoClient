@@ -35,90 +35,91 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_USER =
             "CREATE TABLE " + Schema.TABLE_USER + " (" +
                                             Schema.USER_ID+" BIGINT PRIMARY KEY," +
-                                            Schema.USER_UNIQID+" VARCHAR(255),"+
-                                            Schema.USERNAME+" VARCHAR(50),"+
-                                            Schema.PASSWORD+" VARCHAR(255),"+
-                                            Schema.FIRST_NAME+" VARCHAR(50),"+
-                                            Schema.LAST_NAME+" VARCHAR(50),"+
-                                            Schema.EMAIL+" VARCHAR(100),"+
-                                            Schema.ENABLED+" BOOLEAN);";
+                                            Schema.USER_UNIQID+" VARCHAR(255) NOT NULL UNIQUE,"+
+                                            Schema.USERNAME+" VARCHAR(50) NOT NULL,"+
+                                            Schema.PASSWORD+" VARCHAR(255) NOT NULL,"+
+                                            Schema.FIRST_NAME+" VARCHAR(50) NOT NULL,"+
+                                            Schema.LAST_NAME+" VARCHAR(50) NOT NULL,"+
+                                            Schema.EMAIL+" VARCHAR(100) NOT NULL,"+
+                                            Schema.ENABLED+" BOOLEAN  NOT NULL);";
 
     private static final String CREATE_TABLE_POSITION =
             "CREATE TABLE " + Schema.TABLE_POSITION + " (" +
                                             Schema.POSITION_ID+" INTEGER PRIMARY KEY," +
-                                            Schema.POSITION+" VARCHAR(50));";
+                                            Schema.POSITION+" VARCHAR(50) NOT NULL);";
 
     private static final String CREATE_TABLE_MATERIAL =
             "CREATE TABLE " + Schema.TABLE_MATERIAL + " (" +
                                             Schema.MATERIAL_ID+" INTEGER PRIMARY KEY," +
-                                            Schema.MATERIAL+" VARCHAR(50));";
+                                            Schema.MATERIAL+" VARCHAR(50) NOT NULL);";
 
     private static final String CREATE_TABLE_SECTOR=
             "CREATE TABLE " + Schema.TABLE_SECTOR + " (" +
                                             Schema.SECTOR_ID+" INTEGER PRIMARY KEY," +
-                                            Schema.SECTOR_NAME+" VARCHAR(100));";
+                                            Schema.SECTOR_NAME+" VARCHAR(100) NOT NULL);";
 
     private static final String CREATE_TABLE_ROOF=
             "CREATE TABLE " + Schema.TABLE_ROOF + " (" +
                     Schema.ROOF_ID+" INTEGER PRIMARY KEY," +
-                    Schema.ROOF_TYPE+" VARCHAR(100));";
+                    Schema.ROOF_TYPE+" VARCHAR(100) NOT NULL);";
 
     private static final String CREATE_TABLE_PURPOSE =
             "CREATE TABLE " + Schema.TABLE_PURPOSE + " (" +
                                             Schema.PURPOSE_ID+" INTEGER PRIMARY KEY," +
-                                            Schema.PURPOSE+" VARCHAR(50)," +
-                                            Schema.P_SECTOR_ID+" INTEGER," +
+                                            Schema.PURPOSE+" VARCHAR(50) NOT NULL," +
+                                            Schema.P_SECTOR_ID+" INTEGER NOT NULL," +
                                             "CONSTRAINT purpose_sector_fk FOREIGN KEY("+Schema.P_SECTOR_ID+") REFERENCES "+Schema.TABLE_SECTOR+"("+Schema.SECTOR_ID+"))";
 
 
     private static final String CREATE_TABLE_CONSTRUCT_SYS =
             "CREATE TABLE " + Schema.TABLE_CONSTUCT_SYS + " (" +
                                             Schema.CONSTR_SYS_ID+" INTEGER PRIMARY KEY," +
-                                            Schema.CONSTR_SYS+" VARCHAR(100));";
+                                            Schema.CONSTR_SYS+" VARCHAR(100) NOT NULL);";
 
     private static final String CREATE_TABLE_CEILING_MATERIAL=
             "CREATE TABLE " + Schema.TABLE_CEILING_MATERIAL + " (" +
                                             Schema.CEILING_MATERIAL_ID+" INTEGER PRIMARY KEY," +
-                                            Schema.CEILING_MATERIAL+" VARCHAR(50));";
+                                            Schema.CEILING_MATERIAL+" VARCHAR(50) NOT NULL);";
 
     private static final String CREATE_TABLE_BUILDING_LOCATION=
             "CREATE TABLE "+ Schema.TABLE_BUILDING_LOCATION + " ("+
                     Schema.LOCATION_ID +" BIGINT PRIMARY KEY,"+
-                    Schema.STREET + " VARCHAR(150),"+
-                    Schema.STREET_NUM+" INTEGER,"+
+                    Schema.STREET + " VARCHAR(150) NOT NULL,"+
+                    Schema.STREET_NUM+" INTEGER NOT NULL,"+
                     Schema.STREET_CHAR+ " CHAR,"+
-                    Schema.CITY+" VARCHAR(100),"+
-                    Schema.STATE+" VARCHAR(100),"+
-                    Schema.CADASTRAL_PARTICLE+" VARCHAR(11),"+
-                    Schema.LOC_BUILDING_ID+ " BIGINT,"+
+                    Schema.CITY+" VARCHAR(100) NOT NULL,"+
+                    Schema.STATE+" VARCHAR(100) NOT NULL,"+
+                    Schema.CADASTRAL_PARTICLE+" VARCHAR(11) NOT NULL,"+
+                    Schema.LOC_BUILDING_ID+ " BIGINT NOT NULL,"+
                     "CONSTRAINT location_building_fk FOREIGN KEY ("+Schema.LOC_BUILDING_ID+") REFERENCES "+Schema.TABLE_BUILDING+"("+Schema.BUILDING_ID+"),"+
                     "CONSTRAINT unique_location UNIQUE ("+Schema.STREET+", "+Schema.STREET_NUM+", "+Schema.STREET_CHAR+", "+Schema.CADASTRAL_PARTICLE+"));";
 
     private static final String CREATE_TABLE_BUILDING=
             "CREATE TABLE "+ Schema.TABLE_BUILDING + " ("+
                                             Schema.BUILDING_ID +" BIGINT PRIMARY KEY,"+
-                                            Schema.BRUTO_AREA + " DOUBLE,"+
+                                            Schema.BUILDING_UID +" VARCHAR(255) NOT NULL UNIQUE,"+
+                                            Schema.BRUTO_AREA + " DOUBLE NOT NULL,"+
                                             Schema.BASEMENT_BRUTO_AREA + " DOUBLE,"+
                                             Schema.RESIDENTIAL_BRUTO_AREA + " DOUBLE,"+
                                             Schema.BUSINESS_BRUTO_AREA + " DOUBLE,"+
-                                            Schema.DATE+" TIMESTAMP,"+
-                                            Schema.FLOOR_AREA+ " DOUBLE,"+
-                                            Schema.FLOOR_HEIGHT +" DOUBLE,"+
-                                            Schema.FULL_HEIGHT+" DOUBLE,"+
-                                            Schema.LENGTH +" DOUBLE,"+
-                                            Schema.NUMBER_OF_FLOORS +" INTEGER,"+
-                                            Schema.ORIENTATION +" VARCHAR(10),"+
-                                            Schema.PROPER_GROUND_PLAN+" BOOLEAN,"+
-                                            Schema.SYNCHRONIZED +" BOOLEAN,"+
-                                            Schema.WIDTH +" DOUBLE,"+
-                                            Schema.YEAR_OF_BUILD +" VARCHAR(10),"+
-                                            Schema.B_CEILING_MATERIAL_ID +" INTEGER,"+
-                                            Schema.B_CONSTRUCT_SYS_ID +" INTEGER,"+
-                                            Schema.B_MATERIAL_ID+" INTEGER,"+
-                                            Schema.B_POSITION_ID +" INTEGER,"+
-                                            Schema.B_PURPOSE_ID +" INTEGER,"+
-                                            Schema.B_ROOF_ID +" INTEGER,"+
-                                            Schema.B_USER_ID+" BIGINT," +
+                                            Schema.DATE+" TIMESTAMP NOT NULL,"+
+                                            Schema.FLOOR_AREA+ " DOUBLE NOT NULL,"+
+                                            Schema.FLOOR_HEIGHT +" DOUBLE NOT NULL,"+
+                                            Schema.FULL_HEIGHT+" DOUBLE NOT NULL,"+
+                                            Schema.LENGTH +" DOUBLE NOT NULL,"+
+                                            Schema.NUMBER_OF_FLOORS +" INTEGER NOT NULL,"+
+                                            Schema.ORIENTATION +" VARCHAR(10) NOT NULL,"+
+                                            Schema.PROPER_GROUND_PLAN+" BOOLEAN NOT NULL,"+
+                                            Schema.SYNCHRONIZED +" BOOLEAN NOT NULL,"+
+                                            Schema.WIDTH +" DOUBLE NOT NULL,"+
+                                            Schema.YEAR_OF_BUILD +" VARCHAR(10) NOT NULL,"+
+                                            Schema.B_CEILING_MATERIAL_ID +" INTEGER NOT NULL,"+
+                                            Schema.B_CONSTRUCT_SYS_ID +" INTEGER NOT NULL,"+
+                                            Schema.B_MATERIAL_ID+" INTEGER NOT NULL,"+
+                                            Schema.B_POSITION_ID +" INTEGER NOT NULL,"+
+                                            Schema.B_PURPOSE_ID +" INTEGER NOT NULL,"+
+                                            Schema.B_ROOF_ID +" INTEGER NOT NULL,"+
+                                            Schema.B_USER_ID+" BIGINT NOT NULL," +
                                             "CONSTRAINT building_user_fk FOREIGN KEY("+Schema.B_USER_ID+") REFERENCES "+Schema.TABLE_USER+"("+Schema.USER_ID+"),"+
                                             "CONSTRAINT building_roof_fk FOREIGN KEY("+Schema.B_ROOF_ID+") REFERENCES "+Schema.TABLE_ROOF+"("+Schema.ROOF_ID+"),"+
                                             "CONSTRAINT building_material_fk FOREIGN KEY("+Schema.B_MATERIAL_ID+") REFERENCES "+Schema.TABLE_USER+"("+Schema.MATERIAL_ID+"),"+
@@ -130,9 +131,9 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_IMAGES =
             "CREATE TABLE " + Schema.TABLE_IMAGES + " (" +
                     Schema.IMAGE_ID +" INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    Schema.IMAGE_PATH+" VARCHAR(255),"+
-                    Schema.IMAGE+" BLOB,"+
-                    Schema.IP_BUILDING_ID+ " BIGINT,"+
+                    Schema.IMAGE_PATH+" VARCHAR(255) NOT NULL,"+
+                    Schema.IMAGE+" BLOB NOT NULL,"+
+                    Schema.IP_BUILDING_ID+ " BIGINT NOT NULL,"+
                     "CONSTRAINT image_building FOREIGN KEY("+Schema.IP_BUILDING_ID+") REFERENCES "+Schema.TABLE_BUILDING+"("+Schema.BUILDING_ID+"));";
 
     //DROPING TABLES
@@ -636,6 +637,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.d("DB_INSERT_BUILD",building.toString());
         ContentValues contentValues = new ContentValues();
         contentValues.put(Schema.BUILDING_ID, building.getId());
+        contentValues.put(Schema.BUILDING_UID, building.getuId());
         contentValues.put(Schema.BRUTO_AREA, building.getBrutoArea());
         contentValues.put(Schema.DATE, String.valueOf(building.getDate()));
         contentValues.put(Schema.FLOOR_HEIGHT, building.getFloorHeight());
@@ -668,11 +670,12 @@ public class DBHelper extends SQLiteOpenHelper {
         if(buildingCursor.moveToFirst()){
             do{
                 Long id = buildingCursor.getLong(0);
-                double brutoArea= buildingCursor.getDouble(1);
-                double basementBrutoArea= buildingCursor.getDouble(2);
-                double residentialBrutoArea= buildingCursor.getDouble(3);
-                double businessBrutoArea= buildingCursor.getDouble(4);
-                Timestamp date = Timestamp.valueOf(buildingCursor.getString(5));
+                String uId = buildingCursor.getString(1);
+                double brutoArea= buildingCursor.getDouble(2);
+                double basementBrutoArea= buildingCursor.getDouble(3);
+                double residentialBrutoArea= buildingCursor.getDouble(4);
+                double businessBrutoArea= buildingCursor.getDouble(5);
+                Timestamp date = Timestamp.valueOf(buildingCursor.getString(6));
                 double floorHeight = buildingCursor.getDouble(7);
                 double fullHeight= buildingCursor.getDouble(8);
                 double length= buildingCursor.getDouble(9);
@@ -688,7 +691,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 int purposeId= buildingCursor.getInt(19);
                 int roofId= buildingCursor.getInt(20);
                 long userId=buildingCursor.getLong(21);
-                Building building = new Building(date,yearOfBuild,properGroundPlan);
+                Building building = new Building(uId,date,yearOfBuild,properGroundPlan);
                 building.setCeilingMaterial(this.getCeilingMaterialById(ceilingMatId));
                 building.setDimensions(width,length,brutoArea,floorHeight,fullHeight,numberOfFloors,residentialBrutoArea,basementBrutoArea,businessBrutoArea);
                 building.setPurpose(this.getPurposeById(purposeId));
@@ -753,7 +756,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static class Schema{
 
-        private static final int SCHEMA_VERSION = 2;
+        private static final int SCHEMA_VERSION = 3;
         private static final String DATABASE_NAME = "nekretnine_info.db";
 
         //USER table
@@ -807,6 +810,7 @@ public class DBHelper extends SQLiteOpenHelper {
         //BUILDING table;
         static final String TABLE_BUILDING = "buildings";
         static final String BUILDING_ID = "building_id";
+        public static String BUILDING_UID = "unique_id";
         static final String DATE = "date";
         static final String YEAR_OF_BUILD = "year_of_build";
         static final String PROPER_GROUND_PLAN="proper_ground_plan";
@@ -847,6 +851,7 @@ public class DBHelper extends SQLiteOpenHelper {
         static final String IMAGE_PATH = "image_path";
         static final String IMAGE = "image";
         static final String IP_BUILDING_ID ="building_id";
+
 
     }
 }

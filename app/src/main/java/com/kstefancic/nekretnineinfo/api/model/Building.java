@@ -18,6 +18,7 @@ import java.util.List;
 public class Building implements Serializable{
 
     private Long id;
+    private String uId;
     private Timestamp date;
 
     // DETAILS PROPERTIES
@@ -48,14 +49,68 @@ public class Building implements Serializable{
     private int numberOfFloors;
     private boolean properGroundPlan;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Building building = (Building) o;
+
+        return uId.equals(building.uId);
+    }
+
+    @Override
+    public int hashCode() {
+        return uId.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Building{" +
+                "id=" + id +
+                ", uId='" + uId + '\'' +
+                ", date=" + date +
+                ", yearOfBuild='" + yearOfBuild + '\'' +
+                ", user=" + user +
+                ", purpose=" + purpose +
+                ", material=" + material +
+                ", ceilingMaterial=" + ceilingMaterial +
+                ", constructionSystem=" + constructionSystem +
+                ", roof=" + roof +
+                ", imagePaths=" + imagePaths +
+                ", synchronizedWithDatabase=" + synchronizedWithDatabase +
+                ", locations=" + locations +
+                ", position=" + position +
+                ", width=" + width +
+                ", length=" + length +
+                ", brutoArea=" + brutoArea +
+                ", residentialBrutoArea=" + residentialBrutoArea +
+                ", businessBrutoArea=" + businessBrutoArea +
+                ", basementBrutoArea=" + basementBrutoArea +
+                ", floorHeight=" + floorHeight +
+                ", fullHeight=" + fullHeight +
+                ", numberOfFloors=" + numberOfFloors +
+                ", properGroundPlan=" + properGroundPlan +
+                '}';
+    }
+
     public Building() {
     }
 
-    public Building(Timestamp date, String yearOfBuild, boolean properGroundPlan) {
+    public Building(String uId, Timestamp date, String yearOfBuild, boolean properGroundPlan) {
         super();
+        this.uId = uId;
         this.date = date;
         this.yearOfBuild = yearOfBuild;
         this.properGroundPlan = properGroundPlan;
+    }
+
+    public String getuId() {
+        return uId;
+    }
+
+    public void setuId(String uId) {
+        this.uId = uId;
     }
 
     public double getResidentialBrutoArea() {

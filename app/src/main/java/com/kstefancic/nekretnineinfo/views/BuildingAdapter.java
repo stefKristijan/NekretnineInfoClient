@@ -18,6 +18,7 @@ import com.kstefancic.nekretnineinfo.api.model.Building;
 import com.kstefancic.nekretnineinfo.api.model.localDBdto.LocalImage;
 import com.kstefancic.nekretnineinfo.api.service.BuildingService;
 import com.kstefancic.nekretnineinfo.helper.DBHelper;
+import com.kstefancic.nekretnineinfo.helper.RetrofitSingleton;
 import com.kstefancic.nekretnineinfo.helper.SessionManager;
 
 import java.io.File;
@@ -35,7 +36,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-import static com.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.BASE_URL;
 
 /**
  * Created by user on 14.11.2017..
@@ -45,7 +45,6 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     private List<Building> buildings;
     private Context context;
-    private Retrofit mRetrofit;
     private SessionManager mSessionManager;
 
     public BuildingAdapter(List<Building> buildings, Context context, SessionManager sessionManager) {
@@ -103,18 +102,8 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
         return this.buildings.size();
     }
 
-    private void setRetrofit() {
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(JacksonConverterFactory.create());
-
-        mRetrofit = builder.build();
-
-    }
 
     private void uploadAlbum(List<String> imagePaths, final int position) {
-        setRetrofit();
-        final BuildingService buildingService = mRetrofit.create(BuildingService.class);
 
         List<MultipartBody.Part> parts = new ArrayList<>();
         Log.d("fileURIs size",String.valueOf(imagePaths.size()));
@@ -122,7 +111,7 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
             parts.add(prepareFilePart("files",imagePaths.get(i)));
         }
         Log.d("BEFORE UPLOAD",setAuthenticationHeader(position)+"\n"+buildings.get(position).getUser().toString()+"\n"+parts.size()+"\n"+buildings.get(position).toString());
-        Call<ResponseBody> call = buildingService.uploadBuilding(setAuthenticationHeader(position),buildings.get(position).getUser().getUsername(),parts,buildings.get(position));
+        Call<ResponseBody> call = RetrofitSingleton.getBuildingService().uploadBuilding(setAuthenticationHeader(position),buildings.get(position).getUser().getUsername(),parts,buildings.get(position));
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override

@@ -24,8 +24,8 @@ import com.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity;
 import com.kstefancic.nekretnineinfo.api.model.Building;
 import com.kstefancic.nekretnineinfo.api.model.ImagePath;
 import com.kstefancic.nekretnineinfo.api.model.User;
-import com.kstefancic.nekretnineinfo.api.service.BuildingService;
 import com.kstefancic.nekretnineinfo.helper.DBHelper;
+import com.kstefancic.nekretnineinfo.helper.RetrofitSingleton;
 import com.kstefancic.nekretnineinfo.helper.SessionManager;
 import com.kstefancic.nekretnineinfo.views.BuildingAdapter;
 import com.squareup.picasso.Picasso;
@@ -37,12 +37,10 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
-import static com.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.BASE_URL;
 import static com.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.FIRST_LOGIN;
 import static com.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.USER;
+import static com.kstefancic.nekretnineinfo.helper.RetrofitSingleton.BASE_URL;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -50,7 +48,6 @@ public class MainActivity extends AppCompatActivity{
     public static final String BUILDING_DATA = "building";
     private User mUser;
     private SessionManager mSessionManager;
-    private Retrofit mRetrofit;
     private RecyclerView recyclerView;
     private BuildingAdapter buildingAdapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -95,7 +92,6 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void setUpActivity() {
-        setRetrofit();
         this.mSessionManager = new SessionManager(this);
 
         this.recyclerView = findViewById(R.id.rvBuilding);
@@ -120,8 +116,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void getBuildingsFromServer() {
-        BuildingService client = mRetrofit.create(BuildingService.class);
-        Call<List<Building>> call = client.getBuildings(setAuthenticationHeader(),mUser.getUsername());
+        Call<List<Building>> call = RetrofitSingleton.getBuildingService().getBuildings(setAuthenticationHeader(),mUser.getUsername());
 
         call.enqueue(new Callback<List<Building>>() {
           @Override
@@ -193,14 +188,6 @@ public class MainActivity extends AppCompatActivity{
         return "Basic "+ Base64.encodeToString(base.getBytes(), Base64.NO_WRAP);
     }
 
-    private void setRetrofit() {
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(JacksonConverterFactory.create());
-
-        mRetrofit = builder.build();
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -23,6 +23,7 @@ import com.kstefancic.nekretnineinfo.api.model.User;
 import com.kstefancic.nekretnineinfo.api.service.MultiChoiceDataService;
 import com.kstefancic.nekretnineinfo.api.service.UserClient;
 import com.kstefancic.nekretnineinfo.helper.DBHelper;
+import com.kstefancic.nekretnineinfo.helper.RetrofitSingleton;
 import com.kstefancic.nekretnineinfo.helper.SessionManager;
 
 import java.util.List;
@@ -36,12 +37,10 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public class LoginActivity extends AppCompatActivity implements RegisterFragment.UserDataInsertedListener, LogInFragment.CredentialsInserted{
 
     private static final String LOGIN_FRAGMENT = "login";
-    public static final String BASE_URL = "http://10.0.2.2:8080";
     private static final String REGISTRATION_SUCCESS = "Uspješno ste kreirali korisnički račun. Sada se možete prijaviti.";
     private static final String DEFAULT_ERROR = "Došlo je do pogreške. Pokušajte ponovno kasnije.";
     public static final String USER = "user";
     public static final String FIRST_LOGIN = "first_login";
-    private Retrofit mRetrofit;
     private SessionManager mSessionManager;
 
     @Override
@@ -50,7 +49,6 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
         setContentView(R.layout.activity_login);
         checkIfLoggedIn();
         setUpFragment();
-        setRetrofit();
     }
 
     private void checkIfLoggedIn() {
@@ -78,8 +76,8 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
     }
 
     private void registerNetworkRequest(User user) {
-        UserClient client = mRetrofit.create(UserClient.class);
-        Call<User> call = client.createAccount(user);
+
+        Call<User> call = RetrofitSingleton.getUserClient().createAccount(user);
 
         call.enqueue(new Callback<User>() {
             @Override
@@ -102,14 +100,6 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
         });
     }
 
-    private void setRetrofit() {
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(JacksonConverterFactory.create());
-
-        mRetrofit = builder.build();
-
-    }
 
     @Override
     public void onCredentialInserted(String username, String password) {
@@ -117,8 +107,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
     }
 
     private void loginNetworkRequest(String username, final String password) {
-        UserClient client = mRetrofit.create(UserClient.class);
-        Call<User> call = client.login(username,password);
+        Call<User> call = RetrofitSingleton.getUserClient().login(username,password);
 
         call.enqueue(new Callback<User>() {
             @Override
@@ -147,12 +136,11 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
     }
 
     private void getMultiChoiceDataAndSaveToLocalDatabase(User user) {
-        MultiChoiceDataService multiChoiceDataClient = mRetrofit.create(MultiChoiceDataService.class);
 
         String base = user.getUsername()+":"+mSessionManager.getPassword();
         String authHeader = "Basic "+ Base64.encodeToString(base.getBytes(), Base64.NO_WRAP);
 
-        final Call<MultiChoiceDataResponse> getMultiChoiceCall = multiChoiceDataClient.getMultiChoiceData(authHeader);
+        final Call<MultiChoiceDataResponse> getMultiChoiceCall = RetrofitSingleton.getMultiChoiceDataService().getMultiChoiceData(authHeader);
         getMultiChoiceCall.enqueue(new Callback<MultiChoiceDataResponse>() {
             @Override
             public void onResponse(Call<MultiChoiceDataResponse> call, Response<MultiChoiceDataResponse> response) {
@@ -186,7 +174,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
     }
 
     private void showErrorResponse(Response<?> response) {
-        ExceptionResponse exceptionResponse = ErrorUtils.parseError(response,mRetrofit);
+        ExceptionResponse exceptionResponse = ErrorUtils.parseError(response,RetrofitSingleton.getRetrofitInstance());
         Toast.makeText(getApplicationContext(),exceptionResponse.getMessage(),Toast.LENGTH_SHORT).show();
     }
 
