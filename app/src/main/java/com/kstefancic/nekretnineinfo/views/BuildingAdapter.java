@@ -155,11 +155,11 @@ class ViewHolder extends RecyclerView.ViewHolder{
 
     public ViewHolder(View itemView) {
         super(itemView);
-        this.tvDate = itemView.findViewById(R.id.rvBuilding_tvDate);
+       /* this.tvDate = itemView.findViewById(R.id.rvBuilding_tvDate);
         this.tvLocation = itemView.findViewById(R.id.rvBuilding_tvLocation);
         this.tvSynchronized = itemView.findViewById(R.id.rvBuilding_tvSynchronized);
         this.ibEdit = itemView.findViewById(R.id.rvBuilding_ibEdit);
         this.ibSynchronize = itemView.findViewById(R.id.rvBuilding_ibSynchronize);
-        this.ivBuilding = itemView.findViewById(R.id.rvBuilding_ivBuilding);
+        this.ivBuilding = itemView.findViewById(R.id.rvBuilding_ivBuilding);*/
     }
 }

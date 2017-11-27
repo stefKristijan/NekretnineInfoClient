@@ -16,7 +16,7 @@
     <string name="tvSynchronized">Sinkronizirano</string>
 
 
-    <string name="tvAddressInfo">Lokacija</string>
+    <string name="tvAddressInfo"><u>Lokacija</u></string>
     <string name="etStreetHint">Ulica</string>
     <string name="etStreetCharHint">A,B</string>
     <string name="etStreetNumHint">Br</string>
@@ -44,4 +44,8 @@
     <string name="btnBrowse">Otvori</string>
     <string name="btnFinish">Kreiraj</string>
     <string name="tvPurpose">Namjena:</string>
+    <string name="tvStreet">Ulica:</string>
+    <string name="tvStreetNumber">Kućni broj:</string>
+    <string name="tvCity">Grad:</string>
+    <string name="tvCadastralParticle">Katastarska čestica:</string>
 </resources>

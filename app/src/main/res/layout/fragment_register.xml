@@ -1,124 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+   >
 
-    <EditText
-        android:id="@+id/registerFr_etFirstName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginStart="8dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="@string/etFirstName"
-        app:layout_constraintBottom_toTopOf="@+id/registerFr_etUsername"
-        app:layout_constraintEnd_toStartOf="@+id/registerFr_etLastName"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        android:background="@drawable/edit_text"
-        android:paddingLeft="5dp"/>
-
-    <EditText
-        android:id="@+id/registerFr_etLastName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="4dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="@string/etLastName"
-        app:layout_constraintBottom_toBottomOf="@+id/registerFr_etFirstName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/registerFr_etFirstName"
-        app:layout_constraintTop_toTopOf="@+id/registerFr_etFirstName"
-        android:background="@drawable/edit_text"
-        android:paddingLeft="5dp"/>
-
-    <EditText
-        android:id="@+id/registerFr_etUsername"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="@string/etUsernameHint"
-        app:layout_constraintBottom_toTopOf="@+id/registerFr_etPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/registerFr_etFirstName"
-        android:background="@drawable/edit_text"
-        android:paddingLeft="5dp"/>
-
-    <EditText
-        android:id="@+id/registerFr_etPassword"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginStart="8dp"
-        android:ems="10"
-        android:inputType="textPassword"
-        android:hint="@string/etPasswordHint"
-        app:layout_constraintBottom_toTopOf="@+id/registerFr_etEmail"
-        app:layout_constraintEnd_toStartOf="@+id/registerFr_etConfirmPass"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/registerFr_etUsername"
-        android:background="@drawable/edit_text"
-        android:paddingLeft="5dp"/>
-
-    <EditText
-        android:id="@+id/registerFr_etConfirmPass"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="4dp"
-        android:ems="10"
-        android:inputType="textPassword"
-        android:hint="@string/etConfirmPass"
-        app:layout_constraintBottom_toBottomOf="@+id/registerFr_etPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/registerFr_etPassword"
-        app:layout_constraintTop_toTopOf="@+id/registerFr_etPassword"
-        android:background="@drawable/edit_text"
-        android:paddingLeft="5dp"/>
-
-    <EditText
-        android:id="@+id/registerFr_etEmail"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:ems="10"
-        android:inputType="textEmailAddress"
-        android:hint="@string/etEmailHint"
-        app:layout_constraintBottom_toTopOf="@+id/registerFr_btnRegister"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/registerFr_etPassword"
-        android:background="@drawable/edit_text"
-        android:paddingLeft="5dp"/>
+<android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:layout_editor_absoluteY="25dp">
 
     <Button
         android:id="@+id/registerFr_btnRegister"
         android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="24dp"
+        android:layout_height="35dp"
         android:layout_marginEnd="32dp"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/button_shape"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
@@ -127,13 +26,14 @@
         app:layout_constraintBottom_toTopOf="@+id/registerFr_tvHaveAcc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/registerFr_etEmail" />
+        app:layout_constraintTop_toBottomOf="@+id/registerFr_tilEmail" />
 
     <TextView
         android:id="@+id/registerFr_tvHaveAcc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginTop="8dp"
         android:text="@string/tvHaveAccount"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/registerFr_tvLogin"
@@ -146,13 +46,148 @@
         android:id="@+id/registerFr_tvLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="2dp"
         android:text="@string/tvLoginText"
-        android:textStyle="bold"
         android:textColor="@android:color/holo_blue_light"
-        app:layout_constraintBottom_toBottomOf="@+id/registerFr_tvHaveAcc"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/registerFr_tvHaveAcc"
         app:layout_constraintTop_toTopOf="@+id/registerFr_tvHaveAcc" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/registerFr_tilFirstName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/registerFr_tilUsername"
+        app:layout_constraintEnd_toStartOf="@+id/registerFr_tilLastName"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed">
+        <EditText
+            android:id="@+id/registerFr_etFirstName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/etFirstName"
+            android:background="@drawable/edit_text"
+            android:padding="5dp"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/registerFr_tilLastName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/registerFr_tilFirstName"
+        app:layout_constraintTop_toTopOf="@+id/registerFr_tilFirstName">
+
+        <EditText
+            android:id="@+id/registerFr_etLastName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text"
+            android:hint="@string/etLastName"
+            android:padding="5dp" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/registerFr_tilUsername"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/registerFr_tilPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registerFr_tilFirstName">
+
+        <EditText
+            android:id="@+id/registerFr_etUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text"
+            android:hint="@string/etUsernameHint"
+            android:padding="5dp" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/registerFr_tilPassword"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/registerFr_tilEmail"
+        app:layout_constraintEnd_toStartOf="@+id/registerFr_tilConfirmPass"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registerFr_tilUsername"
+        app:passwordToggleEnabled="true">
+
+        <EditText
+            android:id="@+id/registerFr_etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:background="@drawable/edit_text"
+            android:hint="@string/etPasswordHint"
+            android:inputType="textPassword"
+            android:padding="5dp" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/registerFr_tilConfirmPass"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/registerFr_tilPassword"
+        app:layout_constraintTop_toTopOf="@+id/registerFr_tilPassword"
+        app:passwordToggleEnabled="true">
+
+        <EditText
+            android:id="@+id/registerFr_etConfirmPass"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:background="@drawable/edit_text"
+            android:hint="@string/etConfirmPass"
+            android:inputType="textPassword"
+            android:padding="5dp" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/registerFr_tilEmail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/registerFr_btnRegister"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registerFr_tilPassword">
+
+        <EditText
+            android:id="@+id/registerFr_etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text"
+            android:hint="@string/etEmailHint"
+            android:inputType="textEmailAddress"
+            android:padding="5dp" />
+    </android.support.design.widget.TextInputLayout>
+
 </android.support.constraint.ConstraintLayout>
+
+
+
+    </ScrollView>
