@@ -1,171 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:layout_editor_absoluteY="25dp">
 
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/frOther_tvMaterial"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/tvMaterial"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        app:layout_constraintBottom_toTopOf="@+id/frOther_spMaterials"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/buildingDetailsFr_tilFirstname"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_tvPurpose"
+            app:layout_constraintEnd_toStartOf="@+id/buildingDetailsFr_swithFormat"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed">
 
-    <TextView
-        android:id="@+id/frOther_tvWallMaterial"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:layout_marginStart="8dp"
-        android:text="@string/tvWallsMaterial"
-        app:layout_constraintEnd_toStartOf="@+id/frOther_spMaterials"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/frOther_spMaterials" />
+                <EditText
+                    android:id="@+id/buildingDetailsFr_etYearOfBuild"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_text"
+                    android:hint="@string/etYearOfBuildHint"
+                    android:padding="5dp" />
+        </android.support.design.widget.TextInputLayout>
 
-    <Spinner
-        android:id="@+id/frOther_spMaterials"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/frOther_spCeilingMaterials"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/frOther_tvWallMaterial"
-        app:layout_constraintTop_toBottomOf="@+id/frOther_tvMaterial" />
+        <TextView
+            android:id="@+id/buildingDetailsFr_tvWallMaterial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tvWallsMaterial"
+            android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info"
+            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_spMaterials"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_elvPurpose" />
 
-    <Spinner
-        android:id="@+id/frOther_spCeilingMaterials"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/frOther_tvDetails"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/frOther_tvCeilingMaterial"
-        app:layout_constraintTop_toBottomOf="@+id/frOther_spMaterials" />
+        <Spinner
+            android:id="@+id/buildingDetailsFr_spMaterials"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_tvCeilingMaterial"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_tvWallMaterial" />
 
-    <TextView
-        android:id="@+id/frOther_tvCeilingMaterial"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:layout_marginStart="8dp"
-        android:text="@string/tvCeilingMaterial"
-        app:layout_constraintEnd_toStartOf="@+id/frOther_spCeilingMaterials"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/frOther_spCeilingMaterials" />
+        <Spinner
+            android:id="@+id/buildingDetailsFr_spCeilingMaterials"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_tvConstrSys"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_tvCeilingMaterial" />
 
-    <TextView
-        android:id="@+id/frOther_tvDetails"
-        android:layout_width="58dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/tvDetails"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        app:layout_constraintBottom_toTopOf="@+id/frOther_spConstrSys"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frOther_spCeilingMaterials" />
+        <TextView
+            android:id="@+id/buildingDetailsFr_tvCeilingMaterial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tvCeilingMaterial"
+            android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info"
+            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_spCeilingMaterials"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_spMaterials" />
 
-    <Spinner
-        android:id="@+id/frOther_spConstrSys"
-        android:layout_width="0dp"
-        android:layout_height="22dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/frOther_spPurpose"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/frOther_tvConstrSys"
-        app:layout_constraintTop_toBottomOf="@+id/frOther_tvDetails" />
+        <Spinner
+            android:id="@+id/buildingDetailsFr_spConstrSys"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_btnNext"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_tvConstrSys" />
 
-    <TextView
-        android:id="@+id/frOther_tvConstrSys"
-        android:layout_width="wrap_content"
-        android:layout_height="22dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginStart="8dp"
-        android:text="@string/tvConstructionSystem"
-        app:layout_constraintEnd_toStartOf="@+id/frOther_spConstrSys"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/frOther_spConstrSys" />
+        <TextView
+            android:id="@+id/buildingDetailsFr_tvConstrSys"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tvConstructionSystem"
+            android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info"
+            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_spConstrSys"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_spCeilingMaterials" />
 
-    <CheckBox
-        android:id="@+id/frOther_cbProperGroundPlan"
-        android:layout_width="304dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/cbProperGroundPlan"
-        app:layout_constraintBottom_toTopOf="@+id/frOther_btnNext"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frOther_spPurpose" />
+        <Button
+            android:id="@+id/buildingDetailsFr_btnNext"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/button_shape"
+            android:text="@string/btnNext"
+            android:textColor="@color/colorWhite"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_spConstrSys" />
 
-    <Button
-        android:id="@+id/frOther_btnNext"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/button_shape"
-        android:text="@string/btnNext"
-        android:textColor="@color/colorWhite"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frOther_cbProperGroundPlan" />
+        <Switch
+            android:id="@+id/buildingDetailsFr_swithFormat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="4dp"
+            android:text="@string/switchDateFormat"
+            app:layout_constraintBottom_toBottomOf="@+id/buildingDetailsFr_tilFirstname"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/buildingDetailsFr_tilFirstname"
+            app:layout_constraintTop_toTopOf="@+id/buildingDetailsFr_tilFirstname" />
 
-    <Spinner
-        android:id="@+id/frOther_spPurpose"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/frOther_cbProperGroundPlan"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/frOther_tvPurpose"
-        app:layout_constraintTop_toBottomOf="@+id/frOther_spConstrSys" />
+        <Spinner
+            android:id="@+id/buildingDetailsFr_spYears"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/buildingDetailsFr_tilFirstname"
+            app:layout_constraintEnd_toStartOf="@+id/buildingDetailsFr_swithFormat"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/buildingDetailsFr_tilFirstname" />
 
-    <TextView
-        android:id="@+id/frOther_tvPurpose"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:layout_marginStart="8dp"
-        android:text="@string/tvPurpose"
-        app:layout_constraintEnd_toStartOf="@+id/frOther_spPurpose"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/frOther_spPurpose" />
-</android.support.constraint.ConstraintLayout>
+        <com.kstefancic.nekretnineinfo.views.NonScrollExpandableListView
+            android:id="@+id/buildingDetailsFr_elvPurpose"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_tvWallMaterial"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_tvPurpose" />
+
+        <TextView
+            android:id="@+id/buildingDetailsFr_tvPurpose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/tvPurpose"
+            android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info"
+            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_elvPurpose"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_tilFirstname" />
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

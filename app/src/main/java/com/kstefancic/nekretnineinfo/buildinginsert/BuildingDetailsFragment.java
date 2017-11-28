@@ -1,9 +1,6 @@
 package com.kstefancic.nekretnineinfo.buildinginsert;
 
-import android.app.Activity;
-
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,9 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ImageButton;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.kstefancic.nekretnineinfo.R;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.CeilingMaterial;
@@ -22,6 +20,7 @@ import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.ConstructionSys
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Purpose;
 import com.kstefancic.nekretnineinfo.helper.DBHelper;
+import com.kstefancic.nekretnineinfo.helper.PurposeExpandableListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,14 +31,13 @@ import java.util.List;
 
 public class BuildingDetailsFragment extends Fragment {
     private Button btnNext;
-    private ImageButton ibCancel;
-    private Spinner spMaterial, spCeilingMaterial, spConstructionSystem, spPurpose;
-    private CheckBox cbProperGroundPlan;
+    private Spinner spMaterial, spCeilingMaterial, spConstructionSystem;
     private List<Material> materials;
     private List<CeilingMaterial> ceilingMaterials;
     private List<ConstructionSystem> constructionSystems;
-    private List<Purpose> purposes;
     private OtherInformationInserted otherInformationInserted;
+    private PurposeExpandableListAdapter purposeExpandableListAdapter;
+    private ExpandableListView expandableListView;
 
 
     @Override
@@ -50,31 +48,37 @@ public class BuildingDetailsFragment extends Fragment {
     }
 
     private void setUI(View layout) {
-        this.spMaterial = layout.findViewById(R.id.frOther_spMaterials);
-        this.spCeilingMaterial =layout.findViewById(R.id.frOther_spCeilingMaterials);
-        this.spConstructionSystem =layout.findViewById(R.id.frOther_spConstrSys);
-        this.spPurpose = layout.findViewById(R.id.frOther_spPurpose);
-        this.btnNext=layout.findViewById(R.id.frOther_btnNext);
-        this.cbProperGroundPlan = layout.findViewById(R.id.frOther_cbProperGroundPlan);
+        this.spMaterial = layout.findViewById(R.id.buildingDetailsFr_spMaterials);
+        this.spCeilingMaterial =layout.findViewById(R.id.buildingDetailsFr_spCeilingMaterials);
+        this.spConstructionSystem =layout.findViewById(R.id.buildingDetailsFr_spConstrSys);
+        this.btnNext=layout.findViewById(R.id.buildingDetailsFr_btnNext);
+        this.expandableListView = layout.findViewById(R.id.buildingDetailsFr_elvPurpose);
+        this.expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long l) {
+                Toast.makeText(getActivity(),materials.get(childPosition).getMaterial() ,Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
         setUpSpinners();
+        setUpPurposeELV();
         this.btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Material material = materials.get(spMaterial.getSelectedItemPosition());
                 CeilingMaterial ceilingMaterial = ceilingMaterials.get(spCeilingMaterial.getSelectedItemPosition());
-                Purpose purpose = purposes.get(spPurpose.getSelectedItemPosition());
                 ConstructionSystem constructionSystem = constructionSystems.get(spConstructionSystem.getSelectedItemPosition());
-                boolean properGroundPlan = cbProperGroundPlan.isChecked();
-                otherInformationInserted.onOtherInformationInserted(material,ceilingMaterial,constructionSystem, purpose, properGroundPlan);
             }
         });
 
     }
 
-    private void setUpSpinners() {
+    private void setUpPurposeELV() {
+        this.purposeExpandableListAdapter= new PurposeExpandableListAdapter(getActivity());
+        this.expandableListView.setAdapter(purposeExpandableListAdapter);
+    }
 
-        List<String> purposeSpinnerItems = setUpPurposeSpinnerItems();
-        inflateSpinnerWithList(purposeSpinnerItems,spPurpose);
+    private void setUpSpinners() {
 
         List<String> constSysSpinnerItems = setUpConstrSysSpinnerItems();
         inflateSpinnerWithList(constSysSpinnerItems,spConstructionSystem);
@@ -121,16 +125,6 @@ public class BuildingDetailsFragment extends Fragment {
     }
 
 
-    private List<String> setUpPurposeSpinnerItems() {
-        List<String> purposeTexts = new ArrayList<>();
-        purposes = DBHelper.getInstance(getActivity()).getAllPurposes();
-
-        for(Purpose purpose: purposes){
-            purposeTexts.add(purpose.getPurpose());
-        }
-
-       return  purposeTexts;
-    }
 
     private void inflateSpinnerWithList(List<String> spinnerItems, Spinner spinner) {
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this.getActivity(),R.layout.support_simple_spinner_dropdown_item,spinnerItems);

@@ -51,4 +51,8 @@
     <string name="title_activity_building_data">BuildingDataActivity</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="etYearOfBuildHint">Godina izgradnje</string>
+    <string name="tbDateFormat">GGGG.</string>
+    <string name="tbDateFormat2">GGGG.-GGGG.</string>
+    <string name="switchDateFormat">Format</string>
 </resources>

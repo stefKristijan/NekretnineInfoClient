@@ -19,6 +19,7 @@ import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceDataResponse;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Position;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Purpose;
+import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Sector;
 import com.kstefancic.nekretnineinfo.api.model.User;
 import com.kstefancic.nekretnineinfo.api.service.MultiChoiceDataService;
 import com.kstefancic.nekretnineinfo.api.service.UserClient;
@@ -145,12 +146,12 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
             @Override
             public void onResponse(Call<MultiChoiceDataResponse> call, Response<MultiChoiceDataResponse> response) {
                 if (response.isSuccessful()){
-
                     insertPositionsInLocalDatabase(response.body().getPosition());
                     insertMaterialsInLocalDatabase(response.body().getMaterial());
                     insertConstructionSystemsInLocalDatabase(response.body().getConstructionSystem());
                     insertPurposesInLocalDatabase(response.body().getPurpose());
                     insertCeilingMaterialsInLocalDatabase(response.body().getCeilingMaterial());
+                    insertSectorsInLocalDatabase(response.body().getSectors());
                 }else{
                     Log.e("MULTICHOICE DATA RESP", response.body().toString());
                     showErrorResponse(response);
@@ -203,6 +204,13 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
         for(Position position : positions){
             DBHelper.getInstance(this).insertPosition(position);
             Log.d("Inserting POSITIONS",position.toString());
+        }
+    }
+
+    private void insertSectorsInLocalDatabase(List<Sector> sectors) {
+        for(Sector sector : sectors){
+            DBHelper.getInstance(this).insertSector(sector);
+            Log.d("Inserting SECTORS",sector.toString());
         }
     }
 

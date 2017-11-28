@@ -425,6 +425,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 Sector sector = this.getSectorById(sectorId);
                 Purpose purposeObj=new Purpose(id,purpose);
                 purposeObj.setSector(sector);
+                purposes.add(purposeObj);
             }while(purposeCursor.moveToNext());
         }
         purposeCursor.close();

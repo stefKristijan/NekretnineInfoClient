@@ -46,6 +46,10 @@ public class BuildingDataActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private TabLayout tabLayout;
     private int[] tabIcons={
+          /*  R.drawable.ic_business_black_48dp,
+            R.drawable.ic_place_black_48dp,
+            R.drawable.ic_straighten_black_48dp,
+            R.drawable.ic_photo_library_black_48dp*/
             R.mipmap.building,
             R.mipmap.location,
             R.mipmap.dimension,

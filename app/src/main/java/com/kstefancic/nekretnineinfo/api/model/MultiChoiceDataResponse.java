@@ -34,6 +34,7 @@ public class MultiChoiceDataResponse {
         this.position = position;
         this.purpose = purpose;
         this.ceilingMaterial=ceilingMaterial;
+        this.sectors = sectors;
     }
 
     public List<Roof> getRoofs() {

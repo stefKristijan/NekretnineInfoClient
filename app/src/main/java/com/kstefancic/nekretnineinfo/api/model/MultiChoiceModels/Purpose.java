@@ -6,6 +6,15 @@ public class Purpose {
 	private String purpose;
 	private Sector sector;
 
+	@Override
+	public String toString() {
+		return "Purpose{" +
+				"id=" + id +
+				", purpose='" + purpose + '\'' +
+				", sector=" + sector +
+				'}';
+	}
+
 	public Purpose() {
 	}
 
