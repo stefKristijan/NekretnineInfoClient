@@ -17,6 +17,9 @@ import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Position;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Purpose;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Roof;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Sector;
+import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.addressMultichoiceData.City;
+import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.addressMultichoiceData.State;
+import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.addressMultichoiceData.Street;
 import com.kstefancic.nekretnineinfo.api.model.User;
 import com.kstefancic.nekretnineinfo.api.model.localDBdto.LocalImage;
 
@@ -134,7 +137,27 @@ public class DBHelper extends SQLiteOpenHelper {
                     Schema.IMAGE_PATH+" VARCHAR(255) NOT NULL,"+
                     Schema.IMAGE+" BLOB NOT NULL,"+
                     Schema.IP_BUILDING_ID+ " BIGINT NOT NULL,"+
-                    "CONSTRAINT image_building FOREIGN KEY("+Schema.IP_BUILDING_ID+") REFERENCES "+Schema.TABLE_BUILDING+"("+Schema.BUILDING_ID+"));";
+                    "CONSTRAINT image_building_fk FOREIGN KEY("+Schema.IP_BUILDING_ID+") REFERENCES "+Schema.TABLE_BUILDING+"("+Schema.BUILDING_ID+"));";
+
+
+    private static final String CREATE_TABLE_STATES=
+            "CREATE TABLE " + Schema.TABLE_STATES + " (" +
+                    Schema.STATE_ID +" INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    Schema.STATE_NAME+" VARCHAR(100) NOT NULL)";
+
+    private static final String CREATE_TABLE_CITIES=
+            "CREATE TABLE " + Schema.TABLE_CITY + " (" +
+                    Schema.CITY_ID +" INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    Schema.CITY_NAME+" VARCHAR(255) NOT NULL,"+
+                    Schema.CITY_STATE_ID+" INTEGER NOT NULL,"+
+                    "CONSTRAINT city_state_fk FOREIGN KEY("+Schema.CITY_STATE_ID+") REFERENCES "+Schema.TABLE_STATES+"("+Schema.STATE_ID+"));";
+
+    private static final String CREATE_TABLE_STREETS=
+            "CREATE TABLE " + Schema.TABLE_STREET + " (" +
+                    Schema.STREET_ID +" INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    Schema.STREET_NAME+" VARCHAR(255) NOT NULL,"+
+                    Schema.STREET_CITY_ID+" INTEGER NOT NULL,"+
+                    "CONSTRAINT street_city_fk FOREIGN KEY("+Schema.STREET_CITY_ID+") REFERENCES "+Schema.TABLE_CITY+"("+Schema.CITY_ID+"));";
 
     //DROPING TABLES
     private static final String DROP_TABLE_USER = "DROP TABLE IF EXISTS "+ Schema.TABLE_USER;
@@ -148,6 +171,9 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DROP_TABLE_SECTOR = "DROP TABLE IF EXISTS " +Schema.TABLE_SECTOR;
     private static final String DROP_TABLE_LOCATION = "DROP TABLE IF EXISTS "+Schema.TABLE_BUILDING_LOCATION;
     private static final String DROP_TABLE_ROOF = "DROP TABLE IF EXISTS "+Schema.TABLE_ROOF;
+    private static final String DROP_TABLE_STATES = "DROP TABLE IF EXISTS "+Schema.TABLE_STATES;
+    private static final String DROP_TABLE_STREETS = "DROP TABLE IF EXISTS "+Schema.TABLE_STREET;
+    private static final String DROP_TABLE_CITIES = "DROP TABLE IF EXISTS "+Schema.TABLE_CITY;
 
 
     //DELETING DATA
@@ -162,6 +188,9 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DELETE_TABLE_SECTOR = "DELETE FROM "+Schema.TABLE_SECTOR;
     private static final String DELETE_TABLE_LOCATIONS = "DELETE FROM "+Schema.TABLE_BUILDING_LOCATION;
     private static final String DELETE_TABLE_ROOF = "DELETE FROM "+Schema.TABLE_ROOF;
+    private static final String DELETE_TABLE_CITY = "DELETE FROM "+Schema.TABLE_CITY;
+    private static final String DELETE_TABLE_STREET = "DELETE FROM "+Schema.TABLE_STREET;
+    private static final String DELETE_TABLE_STATES = "DELETE FROM "+Schema.TABLE_STATES;
 
     //SELECTING TABLES
     private static final String SELECT_USER = "SELECT * FROM " + Schema.TABLE_USER;
@@ -196,6 +225,9 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_TABLE_SECTOR);
         sqLiteDatabase.execSQL(CREATE_TABLE_BUILDING_LOCATION);
         sqLiteDatabase.execSQL(CREATE_TABLE_ROOF);
+        sqLiteDatabase.execSQL(CREATE_TABLE_STATES);
+        sqLiteDatabase.execSQL(CREATE_TABLE_CITIES);
+        sqLiteDatabase.execSQL(CREATE_TABLE_STREETS);
     }
 
     @Override
@@ -211,6 +243,9 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DROP_TABLE_SECTOR);
         sqLiteDatabase.execSQL(DROP_TABLE_LOCATION);
         sqLiteDatabase.execSQL(DROP_TABLE_ROOF);
+        sqLiteDatabase.execSQL(DROP_TABLE_STATES);
+        sqLiteDatabase.execSQL(DROP_TABLE_STREETS);
+        sqLiteDatabase.execSQL(DROP_TABLE_CITIES);
         this.onCreate(sqLiteDatabase);
     }
 
@@ -255,6 +290,9 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DELETE_TABLE_SECTOR);
         sqLiteDatabase.execSQL(DELETE_TABLE_LOCATIONS);
         sqLiteDatabase.execSQL(DELETE_TABLE_ROOF);
+        sqLiteDatabase.execSQL(DELETE_TABLE_STREET);
+        sqLiteDatabase.execSQL(DELETE_TABLE_STATES);
+        sqLiteDatabase.execSQL(DELETE_TABLE_CITY);
         sqLiteDatabase.close();
     }
 
@@ -629,6 +667,109 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /*
+    STATE QUERIES
+    - insertState(State state)
+    - getAllStates()
+     */
+    public void insertState(State state){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Schema.STATE_ID, state.getId());
+        contentValues.put(Schema.STATE_NAME, state.getStateName());
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        wdb.insert(Schema.TABLE_STATES,null,contentValues);
+        wdb.close();
+    }
+
+
+    public List<State> getAllStates(){
+        List<State> states = new ArrayList<>();
+        String getStatesQ = "SELECT * FROM "+Schema.TABLE_STATES;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor stateCursor = wdb.rawQuery(getStatesQ,null);
+        if(stateCursor.moveToFirst()){
+            do{
+                int id = stateCursor.getInt(0);
+                String stateName = stateCursor.getString(1);
+                State state=new State(id,stateName);
+                states.add(state);
+            }while(stateCursor.moveToNext());
+        }
+        stateCursor.close();
+        wdb.close();
+        return states;
+    }
+
+    /*
+    CITY QUERIES
+   - insertCity(City city)
+   - getAllCities()
+    */
+    public void insertCity(City city){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Schema.CITY_ID, city.getId());
+        contentValues.put(Schema.CITY_NAME, city.getCityName());
+        contentValues.put(Schema.CITY_STATE_ID, city.getStateId());
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        wdb.insert(Schema.TABLE_CITY,null,contentValues);
+        wdb.close();
+    }
+
+
+    public List<City> getAllCities(){
+        List<City> cities = new ArrayList<>();
+        String getCityQ = "SELECT * FROM "+Schema.TABLE_CITY;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor cityCursor = wdb.rawQuery(getCityQ,null);
+        if(cityCursor.moveToFirst()){
+            do{
+                int id = cityCursor.getInt(0);
+                String cityName = cityCursor.getString(1);
+                int stateId = cityCursor.getInt(2);
+                City city = new City(id,cityName,stateId);
+                cities.add(city);
+            }while(cityCursor.moveToNext());
+        }
+        cityCursor.close();
+        wdb.close();
+        return cities;
+    }
+
+    /*
+    STREET QUERIES
+   - insertStreet(Street street)
+   - getAllStreets()
+    */
+    public void insertStreet(Street street){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Schema.STREET_ID, street.getId());
+        contentValues.put(Schema.STREET_NAME, street.getStreetName());
+        contentValues.put(Schema.STREET_CITY_ID, street.getCityId());
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        wdb.insert(Schema.TABLE_STREET,null,contentValues);
+        wdb.close();
+    }
+
+
+    public List<Street> getAllStreets(){
+        List<Street> streets = new ArrayList<>();
+        String getStreetsQ = "SELECT * FROM "+Schema.TABLE_CITY;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor streetCursor = wdb.rawQuery(getStreetsQ,null);
+        if(streetCursor.moveToFirst()){
+            do{
+                int id = streetCursor.getInt(0);
+                String streetName = streetCursor.getString(1);
+                int cityId = streetCursor.getInt(2);
+                Street street= new Street(id,streetName,cityId);
+                streets.add(street);
+            }while(streetCursor.moveToNext());
+        }
+        streetCursor.close();
+        wdb.close();
+        return streets;
+    }
+
+    /*
     BUILDING QUERIES
     - insertBuilding(Building building)
     - getAllBuildings()
@@ -757,7 +898,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static class Schema{
 
-        private static final int SCHEMA_VERSION = 3;
+        private static final int SCHEMA_VERSION = 1;
         private static final String DATABASE_NAME = "nekretnine_info.db";
 
         //USER table
@@ -852,6 +993,23 @@ public class DBHelper extends SQLiteOpenHelper {
         static final String IMAGE_PATH = "image_path";
         static final String IMAGE = "image";
         static final String IP_BUILDING_ID ="building_id";
+
+        //STATE table
+        static final String TABLE_STATES = "states";
+        static final String STATE_ID= "state_id";
+        static final String STATE_NAME = "state_name";
+
+        //CITY table
+        static final String TABLE_CITY = "cities";
+        static final String CITY_ID= "city_id";
+        static final String CITY_NAME = "city_name";
+        static final String CITY_STATE_ID = "state_id";
+
+        //STREET table
+        static final String TABLE_STREET = "streets";
+        static final String STREET_ID= "id";
+        static final String STREET_NAME = "street_name";
+        static final String STREET_CITY_ID = "city_id";
 
 
     }

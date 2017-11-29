@@ -6,38 +6,37 @@ package com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.addressMultich
 
 public class Street {
 
-    int id;
+    long id;
     String streetName;
-    City city;
+    int cityId;
 
-    public Street(int id, String streetName, City city) {
-        this.city=city;
+    public Street(long id, String streetName, int cityId) {
+        this.cityId = cityId;
         this.id = id;
         this.streetName = streetName;
     }
 
+    public Street() {
+    }
+
     @Override
     public String toString() {
-        return "Street{" +
-                "id=" + id +
-                ", streetName='" + streetName + '\'' +
-                ", city=" + city +
-                '}';
+        return "Street{" + "id=" + id + ", streetName='" + streetName + '\'' + ", city=" + cityId + '}';
     }
 
-    public City getCity() {
-        return city;
+    public int getCityId() {
+        return cityId;
     }
 
-    public void setCity(City city) {
-        this.city = city;
+    public void setCityId(int cityId) {
+        this.cityId = cityId;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

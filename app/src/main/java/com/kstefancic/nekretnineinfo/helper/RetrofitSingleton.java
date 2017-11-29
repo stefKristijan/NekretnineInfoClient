@@ -1,5 +1,6 @@
 package com.kstefancic.nekretnineinfo.helper;
 
+import com.kstefancic.nekretnineinfo.api.model.MultichoiceLocationDataResponse;
 import com.kstefancic.nekretnineinfo.api.model.User;
 import com.kstefancic.nekretnineinfo.api.service.BuildingService;
 import com.kstefancic.nekretnineinfo.api.service.MultiChoiceDataService;

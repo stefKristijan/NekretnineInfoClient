@@ -8,22 +8,25 @@ public class City {
 
     int id;
     String cityName;
-    State state;
+    int stateId;
 
     @Override
     public String toString() {
         return "City{" +
                 "id=" + id +
                 ", cityName='" + cityName + '\'' +
-                ", state=" + state +
+                ", state=" + stateId +
                 '}';
     }
 
-    public City(int id, String cityName, State state) {
+    public City() {
+    }
+
+    public City(int id, String cityName, int stateId) {
 
         this.id = id;
         this.cityName = cityName;
-        this.state = state;
+        this.stateId = stateId;
     }
 
     public int getId() {
@@ -42,11 +45,11 @@ public class City {
         this.cityName = cityName;
     }
 
-    public State getState() {
-        return state;
+    public int getStateId() {
+        return stateId;
     }
 
-    public void setState(State state) {
-        this.state = state;
+    public void setStateId(int stateId) {
+        this.stateId = stateId;
     }
 }

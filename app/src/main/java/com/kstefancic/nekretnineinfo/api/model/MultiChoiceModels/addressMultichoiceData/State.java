@@ -16,6 +16,9 @@ public class State {
         this.stateName = stateName;
     }
 
+    public State() {
+    }
+
     @Override
     public String toString() {
         return "State{" +
