@@ -11,26 +11,25 @@
         android:layout_height="match_parent">
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/buildingDetailsFr_tilFirstname"
+            android:id="@+id/buildingDetailsFr_tilYear"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_tvPurpose"
-            app:layout_constraintEnd_toStartOf="@+id/buildingDetailsFr_swithFormat"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed">
 
-                <EditText
-                    android:id="@+id/buildingDetailsFr_etYearOfBuild"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/edit_text"
-                    android:hint="@string/etYearOfBuildHint"
-                    android:padding="5dp" />
+            <EditText
+                android:id="@+id/buildingDetailsFr_etYearOfBuild"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text"
+                android:hint="@string/etYearOfBuildHint"
+                android:padding="5dp" />
         </android.support.design.widget.TextInputLayout>
 
         <TextView
@@ -124,31 +123,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_spConstrSys" />
 
-        <Switch
-            android:id="@+id/buildingDetailsFr_swithFormat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="4dp"
-            android:text="@string/switchDateFormat"
-            app:layout_constraintBottom_toBottomOf="@+id/buildingDetailsFr_tilFirstname"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/buildingDetailsFr_tilFirstname"
-            app:layout_constraintTop_toTopOf="@+id/buildingDetailsFr_tilFirstname" />
-
-        <Spinner
-            android:id="@+id/buildingDetailsFr_spYears"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@+id/buildingDetailsFr_tilFirstname"
-            app:layout_constraintEnd_toStartOf="@+id/buildingDetailsFr_swithFormat"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/buildingDetailsFr_tilFirstname" />
-
         <com.kstefancic.nekretnineinfo.views.NonScrollExpandableListView
             android:id="@+id/buildingDetailsFr_elvPurpose"
             android:layout_width="0dp"
@@ -173,6 +147,6 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info"
             app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_elvPurpose"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_tilFirstname" />
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_tilYear" />
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

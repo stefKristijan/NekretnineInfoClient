@@ -1,6 +1,7 @@
 package com.kstefancic.nekretnineinfo.helper;
 
 import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,16 +28,15 @@ public class PurposeExpandableListAdapter extends BaseExpandableListAdapter {
     private HashMap<String, List<String>> purposeChildren;
     private Context context;
 
-    public PurposeExpandableListAdapter(Context context){
-        this.context=context;
+
+    public PurposeExpandableListAdapter(Context context, List<Sector> sectors, List<Purpose> purposes) {
+        this.context = context;
         this.sectorHeaders = new ArrayList<>();
         this.purposeChildren = new HashMap<>();
-        prepareData();
+        prepareData(sectors,purposes);
     }
 
-    private void prepareData() {
-        List<Purpose> purposes = DBHelper.getInstance(this.context).getAllPurposes();
-
+    private void prepareData(List<Sector> sectors, List<Purpose> purposes) {
         List<String> tempList = new ArrayList<>();
         String header = "";
         for (int i=0; i<purposes.size();i++) {
