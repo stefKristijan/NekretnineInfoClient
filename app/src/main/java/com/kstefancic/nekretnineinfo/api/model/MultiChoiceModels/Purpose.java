@@ -1,6 +1,8 @@
 package com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels;
 
-public class Purpose {
+import java.io.Serializable;
+
+public class Purpose implements Serializable {
 
 	private int id;
 	private String purpose;

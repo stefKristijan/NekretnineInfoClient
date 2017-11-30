@@ -1,7 +1,9 @@
 package com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels;
 
 
-public class Sector {
+import java.io.Serializable;
+
+public class Sector implements Serializable{
 
 	int id;
 	String sectorName;

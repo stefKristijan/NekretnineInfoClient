@@ -1,10 +1,12 @@
 package com.kstefancic.nekretnineinfo;
 
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Picture;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,23 +14,33 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
-import android.widget.TextView;
+import com.kstefancic.nekretnineinfo.api.model.Building;
+import com.kstefancic.nekretnineinfo.api.model.BuildingLocation;
+import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.CeilingMaterial;
+import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.ConstructionSystem;
+import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
+import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Position;
+import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Purpose;
+import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Roof;
+import com.kstefancic.nekretnineinfo.buildingdata.AddressInformationFragment;
+import com.kstefancic.nekretnineinfo.buildingdata.BuildingDetailsFragment;
+import com.kstefancic.nekretnineinfo.buildingdata.DimensionsFragment;
+import com.kstefancic.nekretnineinfo.buildingdata.PicturesFragment;
+import com.kstefancic.nekretnineinfo.helper.DBHelper;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
-import com.kstefancic.nekretnineinfo.buildinginsert.AddressInformationFragment;
-import com.kstefancic.nekretnineinfo.buildinginsert.BuildingDetailsFragment;
-import com.kstefancic.nekretnineinfo.buildinginsert.DimensionsFragment;
-import com.kstefancic.nekretnineinfo.buildinginsert.PicturesFragment;
-
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-public class BuildingDataActivity extends AppCompatActivity {
+import static com.kstefancic.nekretnineinfo.MainActivity.BUILDING_DATA;
+
+public class BuildingDataActivity extends AppCompatActivity implements BuildingDetailsFragment.BuildingDetailsInserted, AddressInformationFragment.AddressInformationInserted, DimensionsFragment.DimensionsInserted,PicturesFragment.PictureChoosen{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -56,6 +68,7 @@ public class BuildingDataActivity extends AppCompatActivity {
             R.mipmap.gallery
     };
 
+    private Building mBuilding;
 
 
     @Override
@@ -63,6 +76,11 @@ public class BuildingDataActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building_data);
 
+
+
+        mBuilding = new Building();
+        mBuilding.setId(DBHelper.getInstance(this).getMaxId()+1);
+        mBuilding.setuId(UUID.randomUUID().toString());
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         mViewPager = findViewById(R.id.container);
@@ -87,12 +105,11 @@ public class BuildingDataActivity extends AppCompatActivity {
     }
 
     private void setUpViewPager() {
-        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new BuildingDetailsFragment());
-        adapter.addFragment(new AddressInformationFragment());
-        adapter.addFragment(new DimensionsFragment());
-        adapter.addFragment(new PicturesFragment());
-        mViewPager.setAdapter(adapter);
+        mSectionsPagerAdapter.addFragment(new BuildingDetailsFragment());
+        mSectionsPagerAdapter.addFragment(new AddressInformationFragment());
+        mSectionsPagerAdapter.addFragment(new DimensionsFragment());
+        mSectionsPagerAdapter.addFragment(new PicturesFragment());
+        mViewPager.setAdapter(mSectionsPagerAdapter);
     }
 
 
@@ -116,6 +133,64 @@ public class BuildingDataActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDimensionsInformationInserted(double length, double width, double brutoArea, double basementArea, double residentalArea, double businessArea, double fullHeight, double floorHeight, int numOfFloors, boolean properGroundPlan) {
+        this.mBuilding.setDimensions(width,length,brutoArea,floorHeight,fullHeight,numOfFloors,residentalArea,basementArea,businessArea);
+        this.mBuilding.setProperGroundPlan(properGroundPlan);
+    }
+
+    @Override
+    public void onBuildingDetailsInserted(Material wallMaterial, CeilingMaterial ceilingMaterial, ConstructionSystem constructionSystem, Roof roof, Purpose purpose, String yearOfBuild) {
+        this.mBuilding.setMaterial(wallMaterial);
+        this.mBuilding.setCeilingMaterial(ceilingMaterial);
+        this.mBuilding.setConstructionSystem(constructionSystem);
+        this.mBuilding.setRoof(roof);
+        this.mBuilding.setPurpose(purpose);
+        this.mBuilding.setYearOfBuild(yearOfBuild);
+    }
+
+    @Override
+    public void onAddressInformationInserted(List<BuildingLocation> buildingLocations, Position position) {
+        this.mBuilding.setLocations(buildingLocations);
+        this.mBuilding.setPosition(position);
+    }
+
+    @Override
+    public void onPictureChoosenListener(ArrayList<Uri> imageUris) {
+
+        for (final Uri uri : imageUris) {
+            Picasso.with(getApplicationContext())
+                    .load(uri)
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            Log.d("INSERTING IMAGE", String.valueOf(mBuilding.getId()));
+                            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 60, outputStream);
+                            byte[] imageBytes = outputStream.toByteArray();
+                            DBHelper.getInstance(getApplicationContext()).insertImage(uri.toString(), imageBytes, mBuilding.getId());
+                            Intent returnIntent = new Intent();
+                            returnIntent.putExtra(BUILDING_DATA, mBuilding);
+                            setResult(RESULT_OK, returnIntent);
+                            Log.d("RESULT_OK", mBuilding.toString());
+                            finish();
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                            Log.d("FAIL INSERTING IMAGE", uri.toString());
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                            Log.d("PREPARE INSERTING IMAGE", uri.toString());
+                        }
+                    });
+        }
+
+
     }
 
     /**
@@ -142,6 +217,7 @@ public class BuildingDataActivity extends AppCompatActivity {
         public void addFragment(Fragment fragment){
             this.fragments.add(fragment);
         }
+        public Fragment getFragment(int position) {return this.fragments.get(position);}
 
         @Override
         public CharSequence getPageTitle(int position) {

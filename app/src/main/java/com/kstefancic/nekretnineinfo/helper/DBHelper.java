@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.kstefancic.nekretnineinfo.api.model.Building;
+import com.kstefancic.nekretnineinfo.api.model.BuildingLocation;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.CeilingMaterial;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.ConstructionSystem;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
@@ -23,6 +24,7 @@ import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.addressMulticho
 import com.kstefancic.nekretnineinfo.api.model.User;
 import com.kstefancic.nekretnineinfo.api.model.localDBdto.LocalImage;
 
+import java.nio.channels.SelectableChannel;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,12 +108,10 @@ public class DBHelper extends SQLiteOpenHelper {
                                             Schema.RESIDENTIAL_BRUTO_AREA + " DOUBLE,"+
                                             Schema.BUSINESS_BRUTO_AREA + " DOUBLE,"+
                                             Schema.DATE+" TIMESTAMP NOT NULL,"+
-                                            Schema.FLOOR_AREA+ " DOUBLE NOT NULL,"+
                                             Schema.FLOOR_HEIGHT +" DOUBLE NOT NULL,"+
                                             Schema.FULL_HEIGHT+" DOUBLE NOT NULL,"+
                                             Schema.LENGTH +" DOUBLE NOT NULL,"+
                                             Schema.NUMBER_OF_FLOORS +" INTEGER NOT NULL,"+
-                                            Schema.ORIENTATION +" VARCHAR(10) NOT NULL,"+
                                             Schema.PROPER_GROUND_PLAN+" BOOLEAN NOT NULL,"+
                                             Schema.SYNCHRONIZED +" BOOLEAN NOT NULL,"+
                                             Schema.WIDTH +" DOUBLE NOT NULL,"+
@@ -752,7 +752,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public List<Street> getAllStreets(){
         List<Street> streets = new ArrayList<>();
-        String getStreetsQ = "SELECT * FROM "+Schema.TABLE_CITY;
+        String getStreetsQ = "SELECT * FROM "+Schema.TABLE_STREET;
         SQLiteDatabase wdb = this.getWritableDatabase();
         Cursor streetCursor = wdb.rawQuery(getStreetsQ,null);
         if(streetCursor.moveToFirst()){
@@ -773,6 +773,7 @@ public class DBHelper extends SQLiteOpenHelper {
     BUILDING QUERIES
     - insertBuilding(Building building)
     - getAllBuildings()
+    - getMaxId()
      */
 
     public void insertBuilding(Building building){
@@ -803,6 +804,8 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase wdb = this.getWritableDatabase();
         wdb.insert(Schema.TABLE_BUILDING,null,contentValues);
         wdb.close();
+
+        insertBuildingLocations(building.getLocations(), building.getId());
     }
 
     public List<Building> getAllBuildings(){
@@ -851,6 +854,90 @@ public class DBHelper extends SQLiteOpenHelper {
         buildingCursor.close();
         wdb.close();
         return buildings;
+    }
+
+    public long getMaxId(){
+        String query="SELECT "+ Schema.BUILDING_ID+ " FROM "+ Schema.TABLE_BUILDING+
+                " ORDER BY " + Schema.BUILDING_ID+ " DESC LIMIT 1";
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor idCursor = wdb.rawQuery(query,null);
+        long id=0;
+        if(idCursor.moveToFirst()){
+           id = idCursor.getLong(0);
+        }
+        idCursor.close();
+        wdb.close();
+        return id;
+    }
+
+    /*
+    BUILDING LOCATION QUERIES
+    - insertBuildingLocation(BuildingLocation buildingLocation)
+    - insertBuildingLocations(List<BuildingLocation> locations, long buildingId)
+    - getBuildingLocationByBuildingId(long buildingID)
+     */
+
+    public void insertBuildingLocation(BuildingLocation buildingLocation){
+        ContentValues contentValues = new ContentValues();
+        Random random = new Random();
+        contentValues.put(Schema.LOCATION_ID,random.nextInt());
+        contentValues.put(Schema.STREET,buildingLocation.getStreet());
+        contentValues.put(Schema.STREET_NUM,buildingLocation.getStreetNumber());
+        contentValues.put(Schema.STREET_CHAR, String.valueOf(buildingLocation.getStreetNumberChar()));
+        contentValues.put(Schema.CADASTRAL_PARTICLE,buildingLocation.getCadastralParticle());
+        contentValues.put(Schema.CITY, buildingLocation.getCity());
+        contentValues.put(Schema.STATE,buildingLocation.getState());
+        contentValues.put(Schema.IP_BUILDING_ID,buildingLocation.getBuildingId());
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        wdb.insert(Schema.TABLE_BUILDING_LOCATION,null, contentValues);
+        wdb.close();
+    }
+
+    public void insertBuildingLocations(List<BuildingLocation> buildingLocations, long buildingId){
+        SQLiteDatabase wdb = this.getWritableDatabase();
+
+        for(BuildingLocation buildingLocation : buildingLocations){
+            ContentValues contentValues = new ContentValues();
+            Random random = new Random();
+            contentValues.put(Schema.LOCATION_ID,random.nextInt());
+            contentValues.put(Schema.STREET,buildingLocation.getStreet());
+            contentValues.put(Schema.STREET_NUM,buildingLocation.getStreetNumber());
+            contentValues.put(Schema.STREET_CHAR, String.valueOf(buildingLocation.getStreetNumberChar()));
+            contentValues.put(Schema.CADASTRAL_PARTICLE,buildingLocation.getCadastralParticle());
+            contentValues.put(Schema.CITY, buildingLocation.getCity());
+            contentValues.put(Schema.STATE,buildingLocation.getState());
+            contentValues.put(Schema.IP_BUILDING_ID,buildingId);
+            wdb.insert(Schema.TABLE_BUILDING_LOCATION,null, contentValues);
+
+        }
+        wdb.close();
+    }
+
+    public List<BuildingLocation> getBuildingLocationsByBuildingId(long buildingId){
+
+        String locationQ = "SELECT * FROM "+Schema.TABLE_BUILDING_LOCATION+ " WHERE "+Schema.LOC_BUILDING_ID+"="+buildingId;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor locationCursor = wdb.rawQuery(locationQ,null);
+        List<BuildingLocation> locations= new ArrayList<>();
+        if(locationCursor.moveToFirst()){
+            do{
+                long id = locationCursor.getLong(0);
+                String street= locationCursor.getString(1);
+                int streetNum = locationCursor.getInt(2);
+                char streetChar = locationCursor.getString(3).charAt(0);
+                String city = locationCursor.getString(4);
+                String state = locationCursor.getString(5);
+                String cadastralParticle = locationCursor.getString(6);
+                long buildingIdDB = locationCursor.getLong(7);
+                BuildingLocation buildingLocation = new BuildingLocation(street,streetNum,streetChar,city,state,cadastralParticle);
+                buildingLocation.setId(id);
+                Log.d("BUILDING LOC DB",buildingLocation.toString());
+                locations.add(buildingLocation);
+            }while (locationCursor.moveToNext());
+        }
+        locationCursor.close();
+        wdb.close();
+        return locations;
     }
 
     /*
@@ -952,7 +1039,7 @@ public class DBHelper extends SQLiteOpenHelper {
         //BUILDING table;
         static final String TABLE_BUILDING = "buildings";
         static final String BUILDING_ID = "building_id";
-        public static String BUILDING_UID = "unique_id";
+        static final String BUILDING_UID = "unique_id";
         static final String DATE = "date";
         static final String YEAR_OF_BUILD = "year_of_build";
         static final String PROPER_GROUND_PLAN="proper_ground_plan";
@@ -962,12 +1049,10 @@ public class DBHelper extends SQLiteOpenHelper {
         static final String B_MATERIAL_ID = "material_id";
         static final String B_CEILING_MATERIAL_ID = "ceiling_material_id";
         static final String B_CONSTRUCT_SYS_ID = "construction_sys_id";
-        public static final String B_ROOF_ID = "roof_id";
+        static final String B_ROOF_ID = "roof_id";
         static final String SYNCHRONIZED = "synchronized";
-        static final String ORIENTATION = "orientation";
         static final String WIDTH = "width";
         static final String LENGTH = "length";
-        static final String FLOOR_AREA = "floor_area";
         static final String BRUTO_AREA = "bruto_area";
         static final String RESIDENTIAL_BRUTO_AREA = "residential_bruto_area";
         static final String BASEMENT_BRUTO_AREA = "basement_bruto_area";

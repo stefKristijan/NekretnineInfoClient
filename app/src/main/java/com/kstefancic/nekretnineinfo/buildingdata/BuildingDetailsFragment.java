@@ -1,7 +1,8 @@
-package com.kstefancic.nekretnineinfo.buildinginsert;
+package com.kstefancic.nekretnineinfo.buildingdata;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -11,10 +12,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Spinner;
-import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kstefancic.nekretnineinfo.R;
@@ -22,6 +22,7 @@ import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.CeilingMaterial
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.ConstructionSystem;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Purpose;
+import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Roof;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Sector;
 import com.kstefancic.nekretnineinfo.helper.DBHelper;
 import com.kstefancic.nekretnineinfo.helper.PurposeExpandableListAdapter;
@@ -41,35 +42,44 @@ public class BuildingDetailsFragment extends Fragment {
     private static final String FORMAT_NOT_VALID = "Godina mora biti formata ####. ili ####.-####.";
     private Button btnNext;
     private EditText etYearOfBuild;
-    private Spinner spMaterial, spCeilingMaterial, spConstructionSystem;
+    private Spinner spMaterial, spCeilingMaterial, spConstructionSystem, spRoof;
+    private TextView tvSelectedPurpose;
     private ExpandableListView expandableListView;
     private TextInputLayout tilYearOfBuild;
     private List<Material> materials;
     private List<CeilingMaterial> ceilingMaterials;
     private List<ConstructionSystem> constructionSystems;
+    private List<Roof> roofs;
     private List<Sector> sectors;
     private List<Purpose> purposes;
-    private OtherInformationInserted otherInformationInserted;
+    private Purpose selectedPurpose;
+    private BuildingDetailsInserted buildingDetailsInserted;
     private PurposeExpandableListAdapter purposeExpandableListAdapter;
 
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.sectors = DBHelper.getInstance(getActivity()).getAllSectors();
+        this.purposes = DBHelper.getInstance(getActivity()).getAllPurposes();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_building_details,null);
-        this.sectors = DBHelper.getInstance(getActivity()).getAllSectors();
-        this.purposes = DBHelper.getInstance(getActivity()).getAllPurposes();
+
         setUI(layout);
         return layout;
     }
 
     private void setUI(View layout) {
+        this.spRoof = layout.findViewById(R.id.buildingDetailsFr_spRoof);
+        this.tvSelectedPurpose = layout.findViewById(R.id.buildingDetailsFr_tvSelectedPurpose);
         this.spMaterial = layout.findViewById(R.id.buildingDetailsFr_spMaterials);
         this.spCeilingMaterial =layout.findViewById(R.id.buildingDetailsFr_spCeilingMaterials);
         this.spConstructionSystem =layout.findViewById(R.id.buildingDetailsFr_spConstrSys);
         this.etYearOfBuild = layout.findViewById(R.id.buildingDetailsFr_etYearOfBuild);
         this.tilYearOfBuild = layout.findViewById(R.id.buildingDetailsFr_tilYear);
-        this.btnNext=layout.findViewById(R.id.buildingDetailsFr_btnNext);
 
         this.expandableListView = layout.findViewById(R.id.buildingDetailsFr_elvPurpose);
         this.expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -83,23 +93,29 @@ public class BuildingDetailsFragment extends Fragment {
                         purposeGroup.add(purpose);
                     }
                 }
-                Toast.makeText(getActivity(),"Odabrali ste: "+purposeGroup.get(childPosition) ,Toast.LENGTH_SHORT).show();
+                selectedPurpose = purposeGroup.get(childPosition);
+                tvSelectedPurpose.setText(selectedPurpose.getPurpose());
 
                 return false;
             }
         });
+
         setUpSpinners();
         setUpPurposeELV();
+
+        this.btnNext=layout.findViewById(R.id.buildingDetailsFr_btnNext);
         this.btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("CHECKING YEAR","before if");
-                if(checkYearFormat(etYearOfBuild.getText().toString())){
-                    Log.d("CHECKYEAR","good");
-                }
                 Material material = materials.get(spMaterial.getSelectedItemPosition());
                 CeilingMaterial ceilingMaterial = ceilingMaterials.get(spCeilingMaterial.getSelectedItemPosition());
                 ConstructionSystem constructionSystem = constructionSystems.get(spConstructionSystem.getSelectedItemPosition());
+                Roof roof = roofs.get(spRoof.getSelectedItemPosition());
+                if(checkYearFormat(etYearOfBuild.getText().toString())){
+                    String yearOfBuild = etYearOfBuild.getText().toString();
+                    Log.i("BUILDING","onInsert");
+                    buildingDetailsInserted.onBuildingDetailsInserted(material,ceilingMaterial,constructionSystem,roof,selectedPurpose,yearOfBuild);
+                }
             }
         });
 
@@ -115,11 +131,25 @@ public class BuildingDetailsFragment extends Fragment {
         List<String> constSysSpinnerItems = setUpConstrSysSpinnerItems();
         inflateSpinnerWithList(constSysSpinnerItems,spConstructionSystem);
 
+        List<String> roofSpinnerItems = setUpRoofSpinnerItems();
+        inflateSpinnerWithList(roofSpinnerItems,spRoof);
+
         List<String> ceilingMaterialSpinnerItems = setUpCeilingMaterialSpinnerItems();
         inflateSpinnerWithList(ceilingMaterialSpinnerItems,spCeilingMaterial);
 
         List<String> materialSpinnerItems = setUpMaterialSpinnerItems();
         inflateSpinnerWithList(materialSpinnerItems,spMaterial);
+    }
+
+    private List<String> setUpRoofSpinnerItems() {
+        List<String> roofsTxts = new ArrayList<>();
+        roofs= DBHelper.getInstance(getActivity()).getAllRoofs();
+        Log.i("ROOF ITEMS", String.valueOf(roofs.size()));
+        for(Roof roof: roofs){
+            roofsTxts.add(roof.getRoofType());
+        }
+
+        return  roofsTxts;
     }
 
     private List<String> setUpMaterialSpinnerItems() {
@@ -202,22 +232,22 @@ public class BuildingDetailsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof OtherInformationInserted)
+        if(context instanceof BuildingDetailsInserted)
         {
-            this.otherInformationInserted = (OtherInformationInserted) context;
+            this.buildingDetailsInserted = (BuildingDetailsInserted) context;
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        this.otherInformationInserted =null;
+        this.buildingDetailsInserted =null;
     }
 
-    public interface OtherInformationInserted {
-        void onOtherInformationInserted(Material wallMaterial, CeilingMaterial ceilingMaterial,
-                                        ConstructionSystem constructionSystem, Purpose purpose,
-                                        boolean properGroundPlan);
+    public interface BuildingDetailsInserted {
+        void onBuildingDetailsInserted(Material wallMaterial, CeilingMaterial ceilingMaterial,
+                                       ConstructionSystem constructionSystem, Roof roof,
+                                       Purpose purpose, String yearOfBuild);
     }
 
 

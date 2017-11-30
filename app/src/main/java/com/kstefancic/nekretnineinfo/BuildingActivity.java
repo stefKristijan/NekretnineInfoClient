@@ -1,48 +1,10 @@
 package com.kstefancic.nekretnineinfo;
 
-import android.Manifest;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-
 import com.kstefancic.nekretnineinfo.api.model.Building;
-import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.CeilingMaterial;
-import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.ConstructionSystem;
-import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
-import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Position;
-import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Purpose;
 import com.kstefancic.nekretnineinfo.api.model.User;
-import com.kstefancic.nekretnineinfo.buildinginsert.AddressInformationFragment;
-import com.kstefancic.nekretnineinfo.buildinginsert.DimensionsFragment;
-import com.kstefancic.nekretnineinfo.buildinginsert.BuildingDetailsFragment;
-import com.kstefancic.nekretnineinfo.buildinginsert.PicturesFragment;
-import com.kstefancic.nekretnineinfo.helper.DBHelper;
 import com.kstefancic.nekretnineinfo.helper.SessionManager;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import java.io.ByteArrayOutputStream;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Random;
-
-import static com.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.USER;
-import static com.kstefancic.nekretnineinfo.MainActivity.BUILDING_DATA;
-
-public class BuildingActivity{// extends AppCompatActivity implements AddressInformationFragment.AddressInformationInserted,DimensionsFragment.DimensionsInserted,BuildingDetailsFragment.OtherInformationInserted, PicturesFragment.PictureChoosen {
+public class BuildingActivity{// extends AppCompatActivity implements AddressInformationFragment.AddressInformationInserted,DimensionsFragment.DimensionsInserted,BuildingDetailsFragment.BuildingDetailsInserted, PicturesFragment.PictureChoosen {
 
     private static final String ADDRESS_INFO_FR = "address_info_fragment";
 
@@ -116,7 +78,7 @@ public class BuildingActivity{// extends AppCompatActivity implements AddressInf
 
 
     @Override
-    public void onOtherInformationInserted(Material wallMaterial, CeilingMaterial ceilingMaterial, ConstructionSystem constructionSystem, Purpose purpose, boolean properGroundPlan) {
+    public void onBuildingDetailsInserted(Material wallMaterial, CeilingMaterial ceilingMaterial, ConstructionSystem constructionSystem, Purpose purpose, boolean properGroundPlan) {
         building.setSynchronizedWithDatabase(false);
         building.setConstructionSystem(constructionSystem);
         building.setMaterial(wallMaterial);

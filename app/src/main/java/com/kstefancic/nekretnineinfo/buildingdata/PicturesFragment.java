@@ -1,7 +1,6 @@
-package com.kstefancic.nekretnineinfo.buildinginsert;
+package com.kstefancic.nekretnineinfo.buildingdata;
 
 
-import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.content.ClipData;
 import android.content.Context;

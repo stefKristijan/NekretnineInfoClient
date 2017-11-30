@@ -1,191 +1,217 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.kstefancic.nekretnineinfo.buildinginsert.AddressInformationFragment">
+    android:layout_height="wrap_content"
+    tools:context="com.kstefancic.nekretnineinfo.buildingdata.AddressInformationFragment"
+    tools:layout_editor_absoluteY="25dp">
 
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/frAddressInfo_tvLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/tvAddressInfo"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_etStreet"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        <Spinner
+            android:id="@+id/frAddressInfo_spPosition"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/frAddressInfo_tvPosition"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/frAddressInfo_tvPosition"
+            app:layout_constraintTop_toTopOf="@+id/frAddressInfo_tvPosition"
+            app:layout_constraintVertical_bias="0.384" />
 
-    <EditText
-        android:id="@+id/frAddressInfo_etStreet"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/edit_text"
-        android:ems="10"
-        android:hint="@string/etStreetHint"
-        android:inputType="textPersonName"
-        android:padding="5dp"
-        app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_etCity"
-        app:layout_constraintEnd_toStartOf="@+id/frAddressInfo_etStreetNum"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_tvLocation" />
+        <Button
+            android:id="@+id/frAddressInfo_btnAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/button_shape"
+            android:text="@string/btnAddText"
+            android:textColor="@color/colorWhite"
+            app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_lvAddresses"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_tilCadastralParticle" />
 
-    <EditText
-        android:id="@+id/frAddressInfo_etStreetNum"
-        android:layout_width="35dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/edit_text"
-        android:hint="@string/etStreetNumHint"
-        android:inputType="number"
-        android:maxEms="4"
-        android:padding="5dp"
-        app:layout_constraintEnd_toStartOf="@+id/frAddressInfo_etStreetChar"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/frAddressInfo_etStreet"
-        app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_tvLocation" />
+        <TextView
+            android:id="@+id/frAddressInfo_tvPosition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/tvPosition"
+            android:textAppearance="@style/TextAppearance.AppCompat.Notification"
+            app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_tilStreet"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
 
-    <EditText
-        android:id="@+id/frAddressInfo_etStreetChar"
-        android:layout_width="35dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/edit_text"
-        android:ems="10"
-        android:hint="@string/etStreetCharHint"
-        android:inputType="textPersonName"
-        android:padding="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/frAddressInfo_etStreetNum"
-        app:layout_constraintTop_toTopOf="@+id/frAddressInfo_etStreetNum" />
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/frAddressInfo_tilStreet"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_tilCity"
+            app:layout_constraintEnd_toStartOf="@+id/frAddressInfo_tilNumber"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_tvPosition"
+            app:layout_constraintVertical_chainStyle="packed">
 
-    <EditText
-        android:id="@+id/frAddressInfo_etCity"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/edit_text"
-        android:ems="10"
-        android:hint="@string/etCityHint"
-        android:inputType="textPersonName"
-        android:padding="5dp"
-        app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_etCadastralPart"
-        app:layout_constraintEnd_toStartOf="@+id/frAddressInfo_etState"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_etStreet" />
+            <AutoCompleteTextView
+                android:id="@+id/frAddressInfo_actvStreet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text"
+                android:hint="@string/etStreetHint"
+                android:inputType="text"
+                android:maxLines="1"
+                android:padding="5dp" />
 
-    <EditText
-        android:id="@+id/frAddressInfo_etState"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="4dp"
-        android:background="@drawable/edit_text"
-        android:ems="10"
-        android:hint="@string/etStateHint"
-        android:inputType="textPersonName"
-        android:padding="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/frAddressInfo_etCity"
-        app:layout_constraintTop_toTopOf="@+id/frAddressInfo_etCity" />
+        </android.support.design.widget.TextInputLayout>
 
-    <EditText
-        android:id="@+id/frAddressInfo_etCadastralPart"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/edit_text"
-        android:ems="10"
-        android:hint="@string/etCadastralParticleHint"
-        android:inputType="textPersonName"
-        android:padding="5dp"
-        app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_spOrientation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_etCity" />
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/frAddressInfo_tilNumber"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/frAddressInfo_tilStreet"
+            app:layout_constraintEnd_toStartOf="@+id/frAddressInfo_tilChar"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/frAddressInfo_tilStreet"
+            app:layout_constraintTop_toTopOf="@+id/frAddressInfo_tilStreet">
 
-    <Spinner
-        android:id="@+id/frAddressInfo_spOrientation"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_spPosition"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/textView3"
-        app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_etCadastralPart" />
+            <EditText
+                android:id="@+id/frAddressInfo_etStreetNum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text"
+                android:hint="@string/etStreetNumHint"
+                android:inputType="number"
+                android:maxLines="1"
+                android:padding="5dp" />
+        </android.support.design.widget.TextInputLayout>
 
-    <Spinner
-        android:id="@+id/frAddressInfo_spPosition"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_btnNext"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/textView4"
-        app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_spOrientation" />
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/frAddressInfo_tilChar"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/frAddressInfo_tilStreet"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/frAddressInfo_tilNumber"
+            app:layout_constraintTop_toTopOf="@+id/frAddressInfo_tilStreet">
 
-    <Button
-        android:id="@+id/frAddressInfo_btnNext"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/button_shape"
-        android:text="@string/btnNext"
-        android:textColor="@color/colorWhite"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_spPosition" />
+            <EditText
+                android:id="@+id/frAddressInfo_etStreetChar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text"
+                android:hint="@string/etStreetCharHint"
+                android:inputType="textCapCharacters"
+                android:maxLines="1"
+                android:padding="5dp" />
+        </android.support.design.widget.TextInputLayout>
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginStart="8dp"
-        android:text="@string/tvOrientation"
-        app:layout_constraintEnd_toStartOf="@+id/frAddressInfo_spOrientation"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/frAddressInfo_spOrientation" />
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/frAddressInfo_tilCity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_tilCadastralParticle"
+            app:layout_constraintEnd_toStartOf="@+id/frAddressInfo_tilState"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_tilStreet">
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:layout_marginStart="8dp"
-        android:text="@string/tvPosition"
-        app:layout_constraintEnd_toStartOf="@+id/frAddressInfo_spPosition"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/frAddressInfo_spPosition" />
+            <AutoCompleteTextView
+                android:id="@+id/frAddressInfo_actvCity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text"
+                android:hint="@string/etCityHint"
+                android:inputType="textAutoComplete"
+                android:maxLines="1"
+                android:padding="5dp" />
+        </android.support.design.widget.TextInputLayout>
 
-</android.support.constraint.ConstraintLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/frAddressInfo_tilState"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/frAddressInfo_tilCity"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/frAddressInfo_tilCity"
+            app:layout_constraintTop_toTopOf="@+id/frAddressInfo_tilCity">
+
+            <AutoCompleteTextView
+                android:id="@+id/frAddressInfo_actvState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text"
+                android:hint="@string/etStateHint"
+                android:inputType="textAutoComplete"
+                android:maxLines="1"
+                android:padding="5dp" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/frAddressInfo_tilCadastralParticle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_btnAdd"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_tilCity">
+
+            <EditText
+                android:id="@+id/frAddressInfo_etCadastralParticle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text"
+                android:hint="@string/etCadastralParticleHint"
+                android:inputType="text"
+                android:maxLines="1"
+                android:padding="5dp" />
+        </android.support.design.widget.TextInputLayout>
+
+        <com.kstefancic.nekretnineinfo.views.NoScrollListView
+            android:id="@+id/frAddressInfo_lvAddresses"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:divider="@android:drawable/divider_horizontal_dim_dark"
+            app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_btnNext"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_btnAdd" />
+
+        <Button
+            android:id="@+id/frAddressInfo_btnNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_lvAddresses"
+            tools:layout_editor_absoluteX="148dp" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>

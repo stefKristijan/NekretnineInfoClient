@@ -15,12 +15,37 @@ public class BuildingLocation implements Serializable {
     private String city;
     private String state;
     private String cadastralParticle;
-    private Building building;
+    private long buildingId;
 
     @Override
     public String toString() {
-        return "Address [id=" + id + ", street=" + street + ", streetNumber=" + streetNumber + ", streetNumberChar="
-                + streetNumberChar + ", city=" + city + ", state=" + state + ", building=" + building + "]";
+        return cadastralParticle+" - "+street+" "+streetNumber+streetNumberChar+", "+city+", "+state;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BuildingLocation that = (BuildingLocation) o;
+
+        if (streetNumber != that.streetNumber) return false;
+        if (streetNumberChar != that.streetNumberChar) return false;
+        if (!street.equals(that.street)) return false;
+        if (!city.equals(that.city)) return false;
+        if (!state.equals(that.state)) return false;
+        return cadastralParticle.equals(that.cadastralParticle);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = street.hashCode();
+        result = 31 * result + streetNumber;
+        result = 31 * result + (int) streetNumberChar;
+        result = 31 * result + city.hashCode();
+        result = 31 * result + state.hashCode();
+        result = 31 * result + cadastralParticle.hashCode();
+        return result;
     }
 
     public BuildingLocation() {
@@ -28,7 +53,7 @@ public class BuildingLocation implements Serializable {
     }
 
     public BuildingLocation(String street, int streetNumber, char streetNumberChar, String city, String state,
-                            String cadastralParticle, Building building) {
+                            String cadastralParticle) {
         super();
         this.street = street;
         this.streetNumber = streetNumber;
@@ -36,7 +61,6 @@ public class BuildingLocation implements Serializable {
         this.city = city;
         this.state = state;
         this.cadastralParticle = cadastralParticle;
-        this.building = building;
     }
 
     public long getId() {
@@ -95,8 +119,11 @@ public class BuildingLocation implements Serializable {
         this.cadastralParticle = cadastralParticle;
     }
 
-    public void setBuilding(Building building) {
-        this.building = building;
+    public long getBuildingId() {
+        return buildingId;
     }
 
+    public void setBuildingId(long buildingId) {
+        this.buildingId = buildingId;
+    }
 }

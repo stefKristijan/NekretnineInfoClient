@@ -18,8 +18,8 @@
 
     <string name="tvAddressInfo"><u>Lokacija</u></string>
     <string name="etStreetHint">Ulica</string>
-    <string name="etStreetCharHint">A,B</string>
-    <string name="etStreetNumHint">Br</string>
+    <string name="etStreetCharHint">A,B...</string>
+    <string name="etStreetNumHint">Broj</string>
     <string name="etCityHint">Grad</string>
     <string name="etStateHint">Županija</string>
     <string name="etCadastralParticleHint">Katastarska čestica</string>
@@ -36,7 +36,7 @@
     <string name="tvOrientation">Orijentacija:</string>
     <string name="tvPosition">Pozicija:</string>
     <string name="tvWallsMaterial">Materijal zidova:</string>
-    <string name="tvCeilingMaterial">Krovni materijal:</string>
+    <string name="tvCeilingMaterial">Strop:</string>
     <string name="tvDetails">Detalji</string>
     <string name="tvProperGroundPlan">Pravilan tlocrt:</string>
     <string name="cbProperGroundPlan">Pravilan tlocrt</string>
@@ -55,4 +55,9 @@
     <string name="tbDateFormat">GGGG.</string>
     <string name="tbDateFormat2">GGGG.-GGGG.</string>
     <string name="switchDateFormat">Format</string>
+    <string name="tvRoof">Krov:</string>
+    <string name="btnAddText">Dodaj</string>
+    <string name="etResidentialBAHint">Stambena površina</string>
+    <string name="etBusinessBAHint">Poslovna površina</string>
+    <string name="etBasementBAHint">Površina podruma</string>
 </resources>

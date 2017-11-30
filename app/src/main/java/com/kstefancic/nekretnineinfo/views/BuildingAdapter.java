@@ -3,6 +3,7 @@ package com.kstefancic.nekretnineinfo.views;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
@@ -11,10 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.kstefancic.nekretnineinfo.R;
 import com.kstefancic.nekretnineinfo.api.model.Building;
+import com.kstefancic.nekretnineinfo.api.model.BuildingLocation;
 import com.kstefancic.nekretnineinfo.api.model.localDBdto.LocalImage;
 import com.kstefancic.nekretnineinfo.api.service.BuildingService;
 import com.kstefancic.nekretnineinfo.helper.DBHelper;
@@ -55,11 +58,8 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View buildingView = inflater.inflate(R.layout.building_item, parent, false);
-        ViewHolder buildingViewHolder = new ViewHolder(buildingView);
-        return buildingViewHolder;
+        View buildingView =  LayoutInflater.from(context).inflate(R.layout.building_item, parent, false);
+        return new ViewHolder(buildingView);
     }
 
     @Override
@@ -71,30 +71,31 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
         Log.d("IMAGES FROM BUILD", String.valueOf(images.size())+" "+String.valueOf(buildings.size()));
         holder.ivBuilding.setImageBitmap(images.get(0).getImage());
 
+        List<BuildingLocation> locations = DBHelper.getInstance(context).getBuildingLocationsByBuildingId(building.getId());
+        Log.d("LOCATIONS", String.valueOf(locations.size())+" "+String.valueOf(buildings.size()));
 
-        holder.tvLocation.setText(building.getLocations().get(0).getStreet()+" "+building.getLocations().get(0).getStreetNumber()+building.getLocations().get(0).getStreetNumberChar()+", "+building.getLocations().get(0).getCity());
+        holder.tvStreetItems.setText(locations.get(0).getStreet());
+        holder.tvCity.setText(locations.get(0).getCity());
+        holder.tvStreetNumItems.setText(String.valueOf(locations.get(0).getStreetNumber()));
+        holder.tvCadastralParticles.setText(locations.get(0).getCadastralParticle());
 
         if(building.isSynchronizedWithDatabase()){
-            holder.tvSynchronized.setText("Sinkronizirano");
-            holder.tvSynchronized.setTextColor(Color.GREEN);
+            holder.tvDate.setBackground(context.getResources().getDrawable(R.drawable.cv_tv_synced));
         }else{
-            holder.tvSynchronized.setText("Nije sinkronizirano");
-            holder.tvSynchronized.setTextColor(Color.RED);
+            holder.tvDate.setBackground(context.getResources().getDrawable(R.drawable.cv_tv_not_sync));
+
         }
 
         String date = new SimpleDateFormat("dd. MMM yyyy. HH:mm").format(building.getDate());
         holder.tvDate.setText(date);
 
-        holder.ibSynchronize.setOnClickListener(new View.OnClickListener() {
+        holder.ibNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                List<String> imagePaths = new ArrayList<>();
-                for(LocalImage localImage : images){
-                    imagePaths.add(localImage.getImagePath());
-                }
-                uploadAlbum(imagePaths, position);
+
             }
         });
+
     }
 
     @Override
@@ -149,17 +150,18 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
 
 class ViewHolder extends RecyclerView.ViewHolder{
 
-    TextView tvLocation, tvDate, tvSynchronized;
-    ImageButton ibSynchronize, ibEdit;
+    TextView tvStreetItems, tvDate, tvStreetNumItems, tvCadastralParticles, tvCity;
     ImageView ivBuilding;
+    ImageButton ibNext, ibPrevious;
 
     public ViewHolder(View itemView) {
         super(itemView);
-       /* this.tvDate = itemView.findViewById(R.id.rvBuilding_tvDate);
-        this.tvLocation = itemView.findViewById(R.id.rvBuilding_tvLocation);
-        this.tvSynchronized = itemView.findViewById(R.id.rvBuilding_tvSynchronized);
-        this.ibEdit = itemView.findViewById(R.id.rvBuilding_ibEdit);
-        this.ibSynchronize = itemView.findViewById(R.id.rvBuilding_ibSynchronize);
-        this.ivBuilding = itemView.findViewById(R.id.rvBuilding_ivBuilding);*/
+        this.ibNext = itemView.findViewById(R.id.buildingItem_ibNext);
+        this.tvDate = itemView.findViewById(R.id.buildingItem_tvDate);
+        this.ivBuilding = itemView.findViewById(R.id.buildingItem_ivBuilding);
+        this.tvCadastralParticles = itemView.findViewById(R.id.buildingItem_tvCadastralPartItems);
+        this.tvStreetNumItems = itemView.findViewById(R.id.buildingItem_tvStreetNumItems);
+        this.tvStreetItems = itemView.findViewById(R.id.buildingItem_tvStreetItems);
+        this.tvCity = itemView.findViewById(R.id.buildingItem_tvCityItem);
     }
 }

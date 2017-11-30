@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -32,6 +33,10 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.io.ByteArrayOutputStream;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -52,7 +57,7 @@ public class MainActivity extends AppCompatActivity{
     private BuildingAdapter buildingAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.ItemDecoration itemDecoration;
-    private List<Building> buildings;
+    private List<Building> buildings = new ArrayList<>();
 
 
     @Override
@@ -81,9 +86,18 @@ public class MainActivity extends AppCompatActivity{
             Log.d("REQUEST CODE", String.valueOf(NEW_BUILDING_RQST));
             if (resultCode == RESULT_OK) {
                 Building building = (Building) data.getSerializableExtra(BUILDING_DATA);
-                buildings.add(building);
                 Log.d("ONRESULT", building.toString());
-                buildingAdapter.notifyDataSetChanged();
+                building.setUser(mUser);
+               /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    building.setDate((Timestamp) Timestamp.from(Instant.now()));
+                }else{
+                }*/
+
+                building.setDate(new Timestamp(System.currentTimeMillis()));
+                buildings.add(building);
+                DBHelper.getInstance(this).insertBuilding(building);
+                Log.d("ONRESULT AFTER INSERT", building.toString());
+                setRecyclerView(buildings);
             } else if (resultCode == RESULT_CANCELED) {
                 Log.i("RESULT_CANCEL", "result canceled");
             }

@@ -19,6 +19,7 @@ import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceDataResponse;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Position;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Purpose;
+import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Roof;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Sector;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.addressMultichoiceData.City;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.addressMultichoiceData.State;
@@ -58,7 +59,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 
     private void checkIfLoggedIn() {
         this.mSessionManager = new SessionManager(this);
-        //kstefancicthis.mSessionManager.setLogin(false,null);
+        //this.mSessionManager.setLogin(false,null);
         //DBHelper.getInstance(this).deleteAllTables();
         if(this.mSessionManager.isLoggedIn()){
             User user = DBHelper.getInstance(this).getUser();
@@ -156,6 +157,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
                     insertPurposesInLocalDatabase(response.body().getPurpose());
                     insertCeilingMaterialsInLocalDatabase(response.body().getCeilingMaterial());
                     insertSectorsInLocalDatabase(response.body().getSectors());
+                    insertRoofsInLocalDatabase(response.body().getRoofs());
                     getMultichoiceAddressDataAndSaveToLocalDatabase(user);
                 }else{
                     Log.e("MULTICHOICE DATA RESP", response.body().toString());
@@ -170,6 +172,8 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
             }
         });
     }
+
+
 
     private void getMultichoiceAddressDataAndSaveToLocalDatabase(final User user) {
         String base = user.getUsername()+":"+mSessionManager.getPassword();
@@ -197,6 +201,13 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
             }
         });
     }
+
+    private void insertRoofsInLocalDatabase(List<Roof> roofs) {
+        for(Roof roof : roofs){
+            DBHelper.getInstance(this).insertRoof(roof);
+        }
+    }
+
 
     private void insertStatesInLocalDatabase(List<State> states) {
         for (State state : states){
