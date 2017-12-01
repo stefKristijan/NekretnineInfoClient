@@ -1,20 +1,15 @@
 package com.kstefancic.nekretnineinfo.buildingdata;
 
-import android.content.Intent;
-import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -49,7 +44,7 @@ public class AddressInformationFragment extends Fragment {
     private static final String UNKNOWN_STATE= "Županija ne postoji na popisu županija";
     private static final String LOCATION_EXISTS = "Lokacija već postoji";
 
-    private Button btnAdd, btnNext;
+    private Button btnAdd, btnAccept;
     private AutoCompleteTextView actvStreet, actvCity, actvState;
     private EditText etStreetNum, etStreetChar, etCadastralParticle;
     private ListView lvLocations;
@@ -114,30 +109,26 @@ public class AddressInformationFragment extends Fragment {
                 String cadastralParticle= etCadastralParticle.getText().toString();
 
 
-                if(checkData(street,streetChar,state, city, cadastralParticle)){
+                if(checkData(street,streetChar,state, city, cadastralParticle)) {
 
                     int streetNum = Integer.valueOf(etStreetNum.getText().toString());
-                    char streetCharacter='\0';
-                    if(!streetChar.isEmpty()) {
+                    char streetCharacter = '\0';
+                    if (!streetChar.isEmpty()) {
                         streetCharacter = streetChar.charAt(0);
                     }
-                    BuildingLocation buildingLocation = new BuildingLocation(street,streetNum,streetCharacter,city,state,cadastralParticle);
-                    if(!locationExists(buildingLocation)){
+                    BuildingLocation buildingLocation = new BuildingLocation(street, streetNum, streetCharacter, city, state, cadastralParticle);
+                    if (!locationExists(buildingLocation)) {
                         locationListItems.add(buildingLocation.toString());
                         buildingLocations.add(buildingLocation);
-                        Log.i("LOCATION",buildingLocation.toString()+" "+locationListItems.size());
+                        Log.i("LOCATION", buildingLocation.toString() + " " + locationListItems.size());
                         listViewAdapter.notifyDataSetChanged();
                     }
                 }
-
-                //addressInformationInsertedListener.onAddressInformationInserted(street,streetNum,streetChar,city,state,cadastralParticle,position);*/
-
-
             }
         });
 
-        this.btnNext= layout.findViewById(R.id.frAddressInfo_btnNext);
-        this.btnNext.setOnClickListener(new View.OnClickListener() {
+        this.btnAccept = layout.findViewById(R.id.frAddressInfo_btnNext);
+        this.btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i("ADDRESS","onInsert");

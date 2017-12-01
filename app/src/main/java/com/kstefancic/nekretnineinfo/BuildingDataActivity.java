@@ -1,11 +1,18 @@
 package com.kstefancic.nekretnineinfo;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Picture;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v4.app.Fragment;
@@ -16,6 +23,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.kstefancic.nekretnineinfo.api.model.Building;
 import com.kstefancic.nekretnineinfo.api.model.BuildingLocation;
@@ -42,6 +50,7 @@ import static com.kstefancic.nekretnineinfo.MainActivity.BUILDING_DATA;
 
 public class BuildingDataActivity extends AppCompatActivity implements BuildingDetailsFragment.BuildingDetailsInserted, AddressInformationFragment.AddressInformationInserted, DimensionsFragment.DimensionsInserted,PicturesFragment.PictureChoosen{
 
+    private static final String VALIDATE = "Potvrdite podatke radi validacije";
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -69,6 +78,7 @@ public class BuildingDataActivity extends AppCompatActivity implements BuildingD
     };
 
     private Building mBuilding;
+    private boolean hasDimensions=false, hasLocations=false, hasDetails=false;
 
 
     @Override
@@ -84,6 +94,7 @@ public class BuildingDataActivity extends AppCompatActivity implements BuildingD
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         mViewPager = findViewById(R.id.container);
+        mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         setUpViewPager();
@@ -91,8 +102,24 @@ public class BuildingDataActivity extends AppCompatActivity implements BuildingD
         tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         setUpTabIcons();
+
+        if(ContextCompat.checkSelfPermission(BuildingDataActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(BuildingDataActivity.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},100);
+        }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 100:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+
+                }
+                return;
+        }
+    }
     private void setUpTabIcons() {
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
         Log.d("TAB ICON", String.valueOf(tabIcons[0]));
@@ -139,6 +166,9 @@ public class BuildingDataActivity extends AppCompatActivity implements BuildingD
     public void onDimensionsInformationInserted(double length, double width, double brutoArea, double basementArea, double residentalArea, double businessArea, double fullHeight, double floorHeight, int numOfFloors, boolean properGroundPlan) {
         this.mBuilding.setDimensions(width,length,brutoArea,floorHeight,fullHeight,numOfFloors,residentalArea,basementArea,businessArea);
         this.mBuilding.setProperGroundPlan(properGroundPlan);
+        this.mViewPager.setCurrentItem(3,true);
+        this.hasDimensions=true;
+
     }
 
     @Override
@@ -149,49 +179,80 @@ public class BuildingDataActivity extends AppCompatActivity implements BuildingD
         this.mBuilding.setRoof(roof);
         this.mBuilding.setPurpose(purpose);
         this.mBuilding.setYearOfBuild(yearOfBuild);
+        this.mViewPager.setCurrentItem(1,true);
+        this.hasDetails=true;
     }
 
     @Override
     public void onAddressInformationInserted(List<BuildingLocation> buildingLocations, Position position) {
         this.mBuilding.setLocations(buildingLocations);
         this.mBuilding.setPosition(position);
+        this.mViewPager.setCurrentItem(2,true);
+        this.hasLocations=true;
     }
 
     @Override
     public void onPictureChoosenListener(ArrayList<Uri> imageUris) {
+        if(!hasDetails){
+            this.mViewPager.setCurrentItem(0,true);
+            Toast.makeText(this,VALIDATE,Toast.LENGTH_SHORT).show();
+        }else if(!hasLocations){
+            this.mViewPager.setCurrentItem(1,true);
+            Toast.makeText(this,VALIDATE,Toast.LENGTH_SHORT).show();
+        }else if(!hasDimensions){
+            this.mViewPager.setCurrentItem(2,true);
+            Toast.makeText(this,VALIDATE,Toast.LENGTH_SHORT).show();
+        }else {
+            for (final Uri uri : imageUris) {
+                Picasso.with(getApplicationContext())
+                        .load(uri)
+                        .into(new Target() {
+                            @Override
+                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                Log.d("INSERTING IMAGE", String.valueOf(mBuilding.getId()));
+                                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 60, outputStream);
+                                byte[] imageBytes = outputStream.toByteArray();
+                                DBHelper.getInstance(getApplicationContext()).insertImage(getRealPathFromUri(uri), imageBytes, mBuilding.getId());
+                                Intent returnIntent = new Intent();
+                                returnIntent.putExtra(BUILDING_DATA, mBuilding);
+                                setResult(RESULT_OK, returnIntent);
+                                Log.d("RESULT_OK", mBuilding.toString());
+                                finish();
+                            }
 
-        for (final Uri uri : imageUris) {
-            Picasso.with(getApplicationContext())
-                    .load(uri)
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            Log.d("INSERTING IMAGE", String.valueOf(mBuilding.getId()));
-                            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 60, outputStream);
-                            byte[] imageBytes = outputStream.toByteArray();
-                            DBHelper.getInstance(getApplicationContext()).insertImage(uri.toString(), imageBytes, mBuilding.getId());
-                            Intent returnIntent = new Intent();
-                            returnIntent.putExtra(BUILDING_DATA, mBuilding);
-                            setResult(RESULT_OK, returnIntent);
-                            Log.d("RESULT_OK", mBuilding.toString());
-                            finish();
-                        }
+                            @Override
+                            public void onBitmapFailed(Drawable errorDrawable) {
+                                Log.d("FAIL INSERTING IMAGE", uri.toString());
+                            }
 
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-                            Log.d("FAIL INSERTING IMAGE", uri.toString());
-                        }
+                            @Override
+                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                                Log.d("PREPARE INSERTING IMAGE", uri.toString());
+                            }
+                        });
+            }
+        }
+    }
 
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            Log.d("PREPARE INSERTING IMAGE", uri.toString());
-                        }
-                    });
+        public String getRealPathFromUri(Uri contentUri) {
+            Cursor cursor = null;
+            try {
+                String[] proj = { MediaStore.Images.Media.DATA };
+                cursor = getContentResolver().query(contentUri, proj, null,
+                        null, null);
+                int column_index = cursor
+                        .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                cursor.moveToFirst();
+                return cursor.getString(column_index);
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+            }
         }
 
 
-    }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to

@@ -10,9 +10,9 @@
     <color name="btnEditCenterColor">#FC7C00</color>
     <color name="btnEditStartColor">#FC9900</color>
     <color name="btnEditEndColor">#FC9900</color>
-    <color name="btnSynchronizeCenterColor">#36C50A</color>
-    <color name="btnSynchronizeStartColor">#3ADE0A</color>
-    <color name="btnSynchronizeEndColor">#3ADE0A</color>
+    <color name="btnAcceptCenterColor">#36C50A</color>
+    <color name="btnAcceptStartColor">#3ADE0A</color>
+    <color name="btnAcceptEndColor">#3ADE0A</color>
     <color name="shadow_back_color">#67000000</color>
     <color name="gray">#444</color>
     <color name="lighterGray">#888</color>

@@ -60,4 +60,5 @@
     <string name="etResidentialBAHint">Stambena površina</string>
     <string name="etBusinessBAHint">Poslovna površina</string>
     <string name="etBasementBAHint">Površina podruma</string>
+    <string name="btnAccept">Potvrdi</string>
 </resources>

@@ -26,15 +26,12 @@
             android:layout_width="wrap_content"
             android:layout_height="35dp"
             android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/button_shape"
             android:text="@string/btnAddText"
             android:textColor="@color/colorWhite"
             app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_lvAddresses"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_tilCadastralParticle" />
 
@@ -198,7 +195,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:divider="@android:drawable/divider_horizontal_dim_dark"
-            app:layout_constraintBottom_toTopOf="@+id/frAddressInfo_btnNext"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_btnAdd" />
@@ -206,11 +203,14 @@
         <Button
             android:id="@+id/frAddressInfo_btnNext"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/frAddressInfo_lvAddresses"
-            tools:layout_editor_absoluteX="148dp" />
+            android:layout_height="35dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/button_accept"
+            android:text="@string/btnAccept"
+            android:textColor="@color/colorWhite"
+            app:layout_constraintBottom_toBottomOf="@+id/frAddressInfo_btnAdd"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/frAddressInfo_btnAdd" />
 
     </android.support.constraint.ConstraintLayout>
 

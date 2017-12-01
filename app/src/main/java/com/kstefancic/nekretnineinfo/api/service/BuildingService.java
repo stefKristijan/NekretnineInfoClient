@@ -20,11 +20,11 @@ import retrofit2.http.Path;
 
 public interface BuildingService {
 
-    @GET("/api/users/{username}/buildings")
+    @GET("/users/{username}/buildings")
     Call<List<Building>> getBuildings(@Header("Authorization") String authorization, @Path("username") String username);
 
     @Multipart
-    @POST("/api/users/{username}/buildings")
+    @POST("/users/{username}/buildings")
     Call<ResponseBody> uploadBuilding(@Header("Authorization") String authorization,
                                       @Path("username") String username,
                                       @Part List<MultipartBody.Part> files,

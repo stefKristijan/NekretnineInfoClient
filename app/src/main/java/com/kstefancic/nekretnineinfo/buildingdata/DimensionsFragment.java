@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
 
 import com.kstefancic.nekretnineinfo.R;
 
@@ -21,7 +20,12 @@ import com.kstefancic.nekretnineinfo.R;
 
 public class DimensionsFragment extends Fragment {
 
-    private Button btnNext;
+    private static final String EMPTY_FIELD = "*Obavezno polje";
+    private static final String VALUE_TOO_SMALL = "Vrijednost ne može biti 0 ili manja";
+    private static final String BRUTO_AREA_TOO_BIG = "Bruto površina ne može biti veća od umnoška duljine i širine";
+    private static final String NUM_OF_FLOORS_SMALL = "Broj katova mora biti 1 (samo prizemlje) ili veći";
+    private static final String FULL_HEIGHT_SMALL = "Ukupna visina ne može biti manja od visine kata x broj katova";
+    private Button btnAccept;
     private TextInputLayout tilLength, tilWidth, tilBrutoArea, tilFullHeight, tilFloorHeight, tilNumOfFloors, tilResidentArea, tilBasementArea, tilBusinessArea;
     private EditText etLength, etWidth, etBrutoArea, etFullHeight, etFloorHeight, etNumberOfFloors, etResidentArea, etBasementArea, etBusinessArea;
     private CheckBox cbProperGroundPlan;
@@ -56,25 +60,115 @@ public class DimensionsFragment extends Fragment {
         this.etBrutoArea = layout.findViewById(R.id.frDims_etBrutoArea);
         this.etWidth = layout.findViewById(R.id.frDims_etWidth);
         this.etNumberOfFloors = layout.findViewById(R.id.frDims_etNumOfFloors);
-        this.btnNext=layout.findViewById(R.id.frDims_btnNext);
-        this.btnNext.setOnClickListener(new View.OnClickListener() {
+        this.btnAccept =layout.findViewById(R.id.frDims_btnNext);
+        this.btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                double length = Double.parseDouble(etLength.getText().toString());
-                double width = Double.parseDouble(etWidth.getText().toString());
-                double brutoArea = Double.parseDouble(etBrutoArea.getText().toString());
-                double basementArea = Double.parseDouble(etBasementArea.getText().toString());
-                double residentialArea = Double.parseDouble(etResidentArea.getText().toString());
-                double businessArea = Double.parseDouble(etBusinessArea.getText().toString());
-                double fullHeight = Double.parseDouble(etFullHeight.getText().toString());
-                double floorHeight = Double.parseDouble(etFloorHeight.getText().toString());
-                int numOfFloors = Integer.parseInt(etNumberOfFloors.getText().toString());
                 boolean properGroundPlan = cbProperGroundPlan.isChecked();
-                Log.i("DIMENSIONS","onInsert");
-                dimensionsInsertedListener.onDimensionsInformationInserted(length,width,brutoArea,basementArea,residentialArea,businessArea,fullHeight,floorHeight,numOfFloors,properGroundPlan);
+                if(checkData(properGroundPlan)){
+                    double length = Double.parseDouble(etLength.getText().toString());
+                    double width = Double.parseDouble(etWidth.getText().toString());
+                    double brutoArea = Double.parseDouble(etBrutoArea.getText().toString());
+                    double basementArea=0, residentialArea=0, businessArea=0;
+                    if(!etBasementArea.getText().toString().isEmpty()){
+                        basementArea = Double.parseDouble(etBasementArea.getText().toString());
+                    }
+                    if(!etResidentArea.getText().toString().isEmpty()){
+                        residentialArea = Double.parseDouble(etResidentArea.getText().toString());
+                    }
+                    if(!etBusinessArea.getText().toString().isEmpty()){
+                        businessArea = Double.parseDouble(etBusinessArea.getText().toString());
+                    }
+                    double fullHeight = Double.parseDouble(etFullHeight.getText().toString());
+                    double floorHeight = Double.parseDouble(etFloorHeight.getText().toString());
+                    int numOfFloors = Integer.parseInt(etNumberOfFloors.getText().toString());
+                    Log.i("DIMENSIONS","onInsert");
+                    dimensionsInsertedListener.onDimensionsInformationInserted(length,width,brutoArea,basementArea,residentialArea,businessArea,fullHeight,floorHeight,numOfFloors,properGroundPlan);
+                }
             }
         });
 
+    }
+
+    private boolean checkData(boolean properGroundPlan) {
+        boolean isValid=true;
+        refreshErrors();
+        String length= etLength.getText().toString();
+        String width = etWidth.getText().toString();
+        String brutoArea = etBrutoArea.getText().toString();
+        /*String basementArea = etBasementArea.getText().toString();
+        String businessArea = etBusinessArea.getText().toString();
+        String residentialArea = etResidentArea.getText().toString();*/
+        String fullHeight = etFullHeight.getText().toString();
+        String floorHeight = etFloorHeight.getText().toString();
+        String numOfFloors = etNumberOfFloors.getText().toString();
+
+        if(length.isEmpty()){
+            isValid=false;
+            tilLength.setError(EMPTY_FIELD);
+        }else if(Double.parseDouble(length)<=0){
+            isValid = false;
+            tilLength.setError(VALUE_TOO_SMALL);
+        }
+
+        if(width.isEmpty()){
+            isValid=false;
+            tilWidth.setError(EMPTY_FIELD);
+        }else if(Double.parseDouble(width)<=0){
+            isValid=false;
+            tilWidth.setError(VALUE_TOO_SMALL);
+        }
+
+        if(brutoArea.isEmpty()){
+            isValid=false;
+            tilBrutoArea.setError(EMPTY_FIELD);
+        }else if(!width.isEmpty() && !length.isEmpty() && properGroundPlan){
+            if(Double.parseDouble(brutoArea)<(Double.parseDouble(width)*Double.parseDouble(length))){
+                isValid=false;
+                tilBrutoArea.setError(BRUTO_AREA_TOO_BIG);
+            }
+        }
+
+        if(floorHeight.isEmpty()){
+            isValid=false;
+            tilFloorHeight.setError(EMPTY_FIELD);
+        }else if(Double.parseDouble(floorHeight)<0){
+            isValid=false;
+            tilFloorHeight.setError(VALUE_TOO_SMALL);
+        }
+
+        if(numOfFloors.isEmpty()){
+            isValid=false;
+            tilNumOfFloors.setError(EMPTY_FIELD);
+        }else if(Double.parseDouble(numOfFloors)<1){
+            isValid=false;
+            tilNumOfFloors.setError(NUM_OF_FLOORS_SMALL);
+        }
+
+        if(fullHeight.isEmpty()){
+            isValid=false;
+            tilFullHeight.setError(EMPTY_FIELD);
+        }else if(!floorHeight.isEmpty() && !numOfFloors.isEmpty()){
+            if(Double.parseDouble(fullHeight)<(Double.parseDouble(floorHeight)*Double.parseDouble(numOfFloors))){
+                isValid=false;
+                tilFullHeight.setError(FULL_HEIGHT_SMALL);
+            }
+        }
+
+
+        return isValid;
+    }
+
+    private void refreshErrors() {
+        tilFullHeight.setErrorEnabled(false);
+        tilNumOfFloors.setErrorEnabled(false);
+        tilFloorHeight.setErrorEnabled(false);
+        tilBrutoArea.setErrorEnabled(false);
+        tilWidth.setErrorEnabled(false);
+        tilLength.setErrorEnabled(false);
+        tilResidentArea.setErrorEnabled(false);
+        tilBusinessArea.setErrorEnabled(false);
+        tilBasementArea.setErrorEnabled(false);
     }
 
 

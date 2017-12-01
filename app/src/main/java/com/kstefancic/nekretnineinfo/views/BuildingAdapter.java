@@ -92,7 +92,11 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
         holder.ibNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                List<String> imagePaths = new ArrayList<>();
+                for(LocalImage localImage : images){
+                    imagePaths.add(localImage.getImagePath());
+                }
+                uploadAlbum(imagePaths, position);
             }
         });
 

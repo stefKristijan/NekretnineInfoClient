@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.kstefancic.nekretnineinfo.R;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.CeilingMaterial;
@@ -40,7 +39,7 @@ public class BuildingDetailsFragment extends Fragment {
     private static final String FUTURE_YEAR = "Ne možete unijeti godinu veću od trenutne";
     private static final String FIRST_YEAR_GREATER = "Prva godina mora biti manja od druge godine";
     private static final String FORMAT_NOT_VALID = "Godina mora biti formata ####. ili ####.-####.";
-    private Button btnNext;
+    private Button btnAccept;
     private EditText etYearOfBuild;
     private Spinner spMaterial, spCeilingMaterial, spConstructionSystem, spRoof;
     private TextView tvSelectedPurpose;
@@ -103,8 +102,8 @@ public class BuildingDetailsFragment extends Fragment {
         setUpSpinners();
         setUpPurposeELV();
 
-        this.btnNext=layout.findViewById(R.id.buildingDetailsFr_btnNext);
-        this.btnNext.setOnClickListener(new View.OnClickListener() {
+        this.btnAccept =layout.findViewById(R.id.buildingDetailsFr_btnNext);
+        this.btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Material material = materials.get(spMaterial.getSelectedItemPosition());
