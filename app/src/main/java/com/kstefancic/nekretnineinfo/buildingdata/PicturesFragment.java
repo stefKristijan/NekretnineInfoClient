@@ -13,10 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.kstefancic.nekretnineinfo.R;
+import com.kstefancic.nekretnineinfo.views.PictureGridViewAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -31,10 +33,10 @@ import static android.app.Activity.RESULT_OK;
 public class PicturesFragment extends Fragment{
 
     private Button btnFinish, btnBrowse;
-    private ImageButton ibCancel;
-    private ImageView ivBuilding;
+    private GridView gvPictures;
+    private PictureGridViewAdapter pictureGridViewAdapter;
     private PictureChoosen pictureChoosenListener;
-    private  ArrayList<Uri> fileUris;
+    private ArrayList<Uri> fileUris = new ArrayList<>();
 
 
     @Override
@@ -45,7 +47,7 @@ public class PicturesFragment extends Fragment{
     }
 
     private void setUI(View layout) {
-        this.ivBuilding = layout.findViewById(R.id.frPictures_ivPicture);
+        this.gvPictures = layout.findViewById(R.id.frPictures_gridView);
         this.btnBrowse = layout.findViewById(R.id.frPictures_btnBrowse);
         this.btnBrowse.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,7 +59,7 @@ public class PicturesFragment extends Fragment{
                 Uri data = Uri.parse(picturesDirectoryPath);
 
                 intent.setDataAndType(data,"image/*");
-
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                 startActivityForResult(intent, 10);
             }
         });
@@ -76,20 +78,16 @@ public class PicturesFragment extends Fragment{
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 10 && resultCode == RESULT_OK && data != null) {
             ClipData clipData = data.getClipData();
-            fileUris = new ArrayList<>();
+
             for (int i = 0; i < clipData.getItemCount(); i++) {
                 ClipData.Item item = clipData.getItemAt(i);
                 Uri uri = item.getUri();
                 Log.d("URI", uri.toString());
                 fileUris.add(uri);
             }
-            if(fileUris.size()>0){
-                Picasso.with(getActivity())
-                        .load(fileUris.get(0))
-                        .fit()
-                        .centerCrop()
-                        .into(ivBuilding);
-            }
+
+            pictureGridViewAdapter = new PictureGridViewAdapter(getActivity(),R.layout.picture_grid_item, fileUris);
+            gvPictures.setAdapter(pictureGridViewAdapter);
         }
     }
 

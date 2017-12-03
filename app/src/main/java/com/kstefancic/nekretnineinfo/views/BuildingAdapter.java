@@ -63,13 +63,18 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
 
         Building building = this.buildings.get(position);
 
         final List<LocalImage> images = DBHelper.getInstance(context).getImagesByBuildingId(building.getId());
         Log.d("IMAGES FROM BUILD", String.valueOf(images.size())+" "+String.valueOf(buildings.size()));
-        holder.ivBuilding.setImageBitmap(images.get(0).getImage());
+        for(int i=0; i<images.size();i++){
+            images.get(i).setListId(i);
+        }
+        final LocalImage[] currentImage = {images.get(0)};
+        holder.ivBuilding.setImageBitmap(currentImage[0].getImage());
+
 
         List<BuildingLocation> locations = DBHelper.getInstance(context).getBuildingLocationsByBuildingId(building.getId());
         Log.d("LOCATIONS", String.valueOf(locations.size())+" "+String.valueOf(buildings.size()));
@@ -92,11 +97,29 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
         holder.ibNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                List<String> imagePaths = new ArrayList<>();
+                int index = currentImage[0].getListId();
+                if(index<images.size()-1){
+                    holder.ivBuilding.setImageBitmap(images.get(++index).getImage());
+                    currentImage[0] =images.get(index);
+                }
+
+               /* List<String> imagePaths = new ArrayList<>();
                 for(LocalImage localImage : images){
                     imagePaths.add(localImage.getImagePath());
                 }
-                uploadAlbum(imagePaths, position);
+                uploadAlbum(imagePaths, position);*/
+            }
+        });
+
+        holder.ibPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int index = currentImage[0].getListId();
+                if(index>0){
+                    holder.ivBuilding.setImageBitmap(images.get(--index).getImage());
+                    currentImage[0] =images.get(index);
+                }
+
             }
         });
 
@@ -138,7 +161,7 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
         Log.d("IMAGE PATH",imagePath);
         File imageFile = new File(imagePath);
 
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"),imageFile);
+        RequestBody requestFile = RequestBody.create(MediaType.parse("ivPicture/*"),imageFile);
 
         MultipartBody.Part part = MultipartBody.Part.createFormData(partName, imageFile.getName(), requestFile);
         Log.d("MULTIPARTBODY",part.body().contentType().toString());
@@ -161,6 +184,7 @@ class ViewHolder extends RecyclerView.ViewHolder{
     public ViewHolder(View itemView) {
         super(itemView);
         this.ibNext = itemView.findViewById(R.id.buildingItem_ibNext);
+        this.ibPrevious = itemView.findViewById(R.id.buildingItem_ibPrevious);
         this.tvDate = itemView.findViewById(R.id.buildingItem_tvDate);
         this.ivBuilding = itemView.findViewById(R.id.buildingItem_ivBuilding);
         this.tvCadastralParticles = itemView.findViewById(R.id.buildingItem_tvCadastralPartItems);

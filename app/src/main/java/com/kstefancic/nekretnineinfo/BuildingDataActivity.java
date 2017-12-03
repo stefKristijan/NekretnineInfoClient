@@ -33,6 +33,7 @@ import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Position;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Purpose;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Roof;
+import com.kstefancic.nekretnineinfo.api.model.localDBdto.LocalImage;
 import com.kstefancic.nekretnineinfo.buildingdata.AddressInformationFragment;
 import com.kstefancic.nekretnineinfo.buildingdata.BuildingDetailsFragment;
 import com.kstefancic.nekretnineinfo.buildingdata.DimensionsFragment;
@@ -192,7 +193,7 @@ public class BuildingDataActivity extends AppCompatActivity implements BuildingD
     }
 
     @Override
-    public void onPictureChoosenListener(ArrayList<Uri> imageUris) {
+    public void onPictureChoosenListener(final ArrayList<Uri> imageUris) {
         if(!hasDetails){
             this.mViewPager.setCurrentItem(0,true);
             Toast.makeText(this,VALIDATE,Toast.LENGTH_SHORT).show();
@@ -203,7 +204,9 @@ public class BuildingDataActivity extends AppCompatActivity implements BuildingD
             this.mViewPager.setCurrentItem(2,true);
             Toast.makeText(this,VALIDATE,Toast.LENGTH_SHORT).show();
         }else {
-            for (final Uri uri : imageUris) {
+            for (int i=0;i<imageUris.size();i++) {
+                final Uri uri = imageUris.get(i);
+                final int finalI = i;
                 Picasso.with(getApplicationContext())
                         .load(uri)
                         .into(new Target() {
@@ -214,11 +217,15 @@ public class BuildingDataActivity extends AppCompatActivity implements BuildingD
                                 bitmap.compress(Bitmap.CompressFormat.JPEG, 60, outputStream);
                                 byte[] imageBytes = outputStream.toByteArray();
                                 DBHelper.getInstance(getApplicationContext()).insertImage(getRealPathFromUri(uri), imageBytes, mBuilding.getId());
-                                Intent returnIntent = new Intent();
-                                returnIntent.putExtra(BUILDING_DATA, mBuilding);
-                                setResult(RESULT_OK, returnIntent);
-                                Log.d("RESULT_OK", mBuilding.toString());
-                                finish();
+
+                                if(finalI == imageUris.size()-1){
+                                    Intent returnIntent = new Intent();
+                                    returnIntent.putExtra(BUILDING_DATA, mBuilding);
+                                    setResult(RESULT_OK, returnIntent);
+                                    Log.d("RESULT_OK", mBuilding.toString());
+                                    finish();
+                                }
+
                             }
 
                             @Override

@@ -14,6 +14,7 @@ public class LocalImage implements Serializable {
     private Bitmap image;
     private String imagePath;
     private long buildingId;
+    private int listId;
 
     public LocalImage(int id, Bitmap image, String imagePath, long buildingId) {
         this.id = id;
@@ -31,8 +32,17 @@ public class LocalImage implements Serializable {
                 "id=" + id +
                 ", image=" + image +
                 ", imagePath='" + imagePath + '\'' +
-                ", buildingId=" + buildingId +
+                ", buildingId=" + buildingId +'\'' +
+                ", listId=" + listId +
                 '}';
+    }
+
+    public int getListId() {
+        return listId;
+    }
+
+    public void setListId(int listId) {
+        this.listId = listId;
     }
 
     public int getId() {

@@ -88,11 +88,6 @@ public class MainActivity extends AppCompatActivity{
                 Building building = (Building) data.getSerializableExtra(BUILDING_DATA);
                 Log.d("ONRESULT", building.toString());
                 building.setUser(mUser);
-               /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    building.setDate((Timestamp) Timestamp.from(Instant.now()));
-                }else{
-                }*/
-
                 building.setDate(new Timestamp(System.currentTimeMillis()));
                 buildings.add(building);
                 DBHelper.getInstance(this).insertBuilding(building);
