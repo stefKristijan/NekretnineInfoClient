@@ -946,11 +946,11 @@ public class DBHelper extends SQLiteOpenHelper {
     - getImagesByBuildingId(long buildingId)
      */
 
-    public void insertImage(String imagePath, byte[] imageBytes, long buildingId){
+    public void insertImage(/*String imagePath, */byte[] imageBytes, long buildingId){
         ContentValues contentValues = new ContentValues();
         Random random = new Random();
         contentValues.put(Schema.IMAGE_ID,random.nextInt());
-        contentValues.put(Schema.IMAGE_PATH,imagePath);
+        contentValues.put(Schema.IMAGE_PATH,"jkkw");
         contentValues.put(Schema.IMAGE,imageBytes);
         contentValues.put(Schema.IP_BUILDING_ID,buildingId);
         SQLiteDatabase wdb = this.getWritableDatabase();
@@ -971,7 +971,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 byte[] imgBytes = imageCursor.getBlob(2);
                 long buildingIdDB = imageCursor.getLong(3);
                 Bitmap imgBitmap = BitmapFactory.decodeByteArray(imgBytes,0,imgBytes.length);
-                LocalImage localImage = new LocalImage(id,imgBitmap,imagePath,buildingIdDB);
+                LocalImage localImage = new LocalImage(id,imgBitmap,buildingIdDB);
                 Log.d("LOCAL IMAGE DB",localImage.toString());
                 images.add(localImage);
             }while (imageCursor.moveToNext());
@@ -981,6 +981,15 @@ public class DBHelper extends SQLiteOpenHelper {
         return images;
     }
 
+    public void deleteBuildings() {
+
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        wdb.execSQL(DELETE_TABLE_BUILDING);
+        wdb.execSQL(DELETE_TABLE_LOCATIONS);
+        wdb.execSQL(DELETE_TABLE_IMAGES);
+        wdb.close();
+
+    }
 
 
     public static class Schema{

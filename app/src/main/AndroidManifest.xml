@@ -24,11 +24,11 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme" />
-        <activity android:name=".BuildingActivity" />
         <activity
             android:name=".BuildingDataActivity"
             android:label="@string/title_activity_building_data"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity android:name=".BuildingDetailsActivity"></activity>
     </application>
 
 </manifest>

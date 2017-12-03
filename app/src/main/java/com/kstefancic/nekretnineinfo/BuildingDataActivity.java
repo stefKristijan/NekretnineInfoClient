@@ -23,6 +23,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.kstefancic.nekretnineinfo.api.model.Building;
@@ -49,7 +52,7 @@ import java.util.UUID;
 
 import static com.kstefancic.nekretnineinfo.MainActivity.BUILDING_DATA;
 
-public class BuildingDataActivity extends AppCompatActivity implements BuildingDetailsFragment.BuildingDetailsInserted, AddressInformationFragment.AddressInformationInserted, DimensionsFragment.DimensionsInserted,PicturesFragment.PictureChoosen{
+public class BuildingDataActivity extends AppCompatActivity implements View.OnClickListener,BuildingDetailsFragment.BuildingDetailsInserted, AddressInformationFragment.AddressInformationInserted, DimensionsFragment.DimensionsInserted,PicturesFragment.PictureChoosen{
 
     private static final String VALIDATE = "Potvrdite podatke radi validacije";
     /**
@@ -67,6 +70,7 @@ public class BuildingDataActivity extends AppCompatActivity implements BuildingD
      */
     private ViewPager mViewPager;
     private TabLayout tabLayout;
+    private ImageButton ibCancel, ibSave;
     private int[] tabIcons={
           /*  R.drawable.ic_business_black_48dp,
             R.drawable.ic_place_black_48dp,
@@ -79,7 +83,8 @@ public class BuildingDataActivity extends AppCompatActivity implements BuildingD
     };
 
     private Building mBuilding;
-    private boolean hasDimensions=false, hasLocations=false, hasDetails=false;
+    private List<LocalImage> images = new ArrayList<>();
+    private boolean hasDimensions=false, hasLocations=false, hasDetails=false, hasPictures=false;
 
 
     @Override
@@ -104,10 +109,21 @@ public class BuildingDataActivity extends AppCompatActivity implements BuildingD
         tabLayout.setupWithViewPager(mViewPager);
         setUpTabIcons();
 
+       setUpButtons();
+
         if(ContextCompat.checkSelfPermission(BuildingDataActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(BuildingDataActivity.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},100);
         }
     }
+
+    private void setUpButtons() {
+        this.ibCancel = findViewById(R.id.main_ibCancel);
+        this.ibCancel.setOnClickListener(this);
+        this.ibSave = findViewById(R.id.main_ibSave);
+        this.ibSave.setOnClickListener(this);
+    }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -193,71 +209,70 @@ public class BuildingDataActivity extends AppCompatActivity implements BuildingD
     }
 
     @Override
-    public void onPictureChoosenListener(final ArrayList<Uri> imageUris) {
-        if(!hasDetails){
-            this.mViewPager.setCurrentItem(0,true);
-            Toast.makeText(this,VALIDATE,Toast.LENGTH_SHORT).show();
-        }else if(!hasLocations){
-            this.mViewPager.setCurrentItem(1,true);
-            Toast.makeText(this,VALIDATE,Toast.LENGTH_SHORT).show();
-        }else if(!hasDimensions){
-            this.mViewPager.setCurrentItem(2,true);
-            Toast.makeText(this,VALIDATE,Toast.LENGTH_SHORT).show();
-        }else {
-            for (int i=0;i<imageUris.size();i++) {
-                final Uri uri = imageUris.get(i);
-                final int finalI = i;
-                Picasso.with(getApplicationContext())
-                        .load(uri)
-                        .into(new Target() {
-                            @Override
-                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                Log.d("INSERTING IMAGE", String.valueOf(mBuilding.getId()));
-                                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                                bitmap.compress(Bitmap.CompressFormat.JPEG, 60, outputStream);
-                                byte[] imageBytes = outputStream.toByteArray();
-                                DBHelper.getInstance(getApplicationContext()).insertImage(getRealPathFromUri(uri), imageBytes, mBuilding.getId());
+    public void onPictureChoosenListener(final ArrayList<LocalImage> images) {
+        this.images = images;
+        hasPictures =true;
+    }
 
-                                if(finalI == imageUris.size()-1){
-                                    Intent returnIntent = new Intent();
-                                    returnIntent.putExtra(BUILDING_DATA, mBuilding);
-                                    setResult(RESULT_OK, returnIntent);
-                                    Log.d("RESULT_OK", mBuilding.toString());
-                                    finish();
-                                }
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()){
 
-                            }
+            case R.id.main_ibCancel:
+                Intent returnIntent = new Intent();
+                //returnIntent.putExtra(BUILDING_DATA, mBuilding);
+                setResult(RESULT_CANCELED, returnIntent);
+                Log.d("RESULT_CANCEL", "canceled");
+                finish();
+                break;
 
-                            @Override
-                            public void onBitmapFailed(Drawable errorDrawable) {
-                                Log.d("FAIL INSERTING IMAGE", uri.toString());
-                            }
-
-                            @Override
-                            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                                Log.d("PREPARE INSERTING IMAGE", uri.toString());
-                            }
-                        });
-            }
+            case R.id.main_ibSave:
+                if(dataValidationCheck()){
+                    saveImages();
+                    Intent saveIntent = new Intent();
+                    saveIntent.putExtra(BUILDING_DATA, mBuilding);
+                    setResult(RESULT_OK, saveIntent);
+                    Log.d("RESULT_OK", mBuilding.toString());
+                    finish();
+                }
+                break;
         }
     }
 
-        public String getRealPathFromUri(Uri contentUri) {
-            Cursor cursor = null;
-            try {
-                String[] proj = { MediaStore.Images.Media.DATA };
-                cursor = getContentResolver().query(contentUri, proj, null,
-                        null, null);
-                int column_index = cursor
-                        .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                cursor.moveToFirst();
-                return cursor.getString(column_index);
-            } finally {
-                if (cursor != null) {
-                    cursor.close();
-                }
-            }
+    private boolean dataValidationCheck() {
+
+        if(!hasDetails){
+            this.mViewPager.setCurrentItem(0,true);
+            Toast.makeText(this,VALIDATE,Toast.LENGTH_SHORT).show();
+            return false;
+        }else if(!hasLocations){
+            this.mViewPager.setCurrentItem(1,true);
+            Toast.makeText(this,VALIDATE,Toast.LENGTH_SHORT).show();
+            return false;
+        }else if(!hasDimensions){
+            this.mViewPager.setCurrentItem(2,true);
+            Toast.makeText(this,VALIDATE,Toast.LENGTH_SHORT).show();
+            return false;
+        }else if(!hasPictures){
+            this.mViewPager.setCurrentItem(3, true);
+            Toast.makeText(this, VALIDATE, Toast.LENGTH_SHORT).show();
+            return false;
         }
+        else {
+            return true;
+        }
+    }
+
+    private void saveImages() {
+        for (LocalImage localImage : images) {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            localImage.getImage().compress(Bitmap.CompressFormat.JPEG, 70, outputStream);
+            byte[] imageBytes = outputStream.toByteArray();
+            localImage.setBuildingId(mBuilding.getId());
+            DBHelper.getInstance(this).insertImage( imageBytes, mBuilding.getId());
+        }
+
+    }
 
 
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +26,13 @@ public class PictureGridViewAdapter extends ArrayAdapter {
 
     private Context context;
     private int resourceId;
-    private ArrayList imageUris = new ArrayList();
+    private ArrayList images = new ArrayList();
 
     public PictureGridViewAdapter(Context context, int resourceId, ArrayList data){
         super(context,resourceId,data);
         this.context=context;
         this.resourceId=resourceId;
-        this.imageUris =data;
+        this.images =data;
     }
 
     @NonNull
@@ -50,12 +51,16 @@ public class PictureGridViewAdapter extends ArrayAdapter {
             holder = (ViewHolder) row.getTag();
         }
 
-        Uri uriItem = (Uri) imageUris.get(position);
+        LocalImage localImage= (LocalImage) images.get(position);
+        Log.i("LOCAL IMAGE", localImage.toString());
+        holder.ivPicture.setImageBitmap(localImage.getImage());
+
+        /*Uri uriItem = (Uri) imageUris.get(position);
         Picasso.with(context)
                 .load(uriItem)
                 .fit()
                 .centerCrop()
-                .into(holder.ivPicture);
+                .into(holder.ivPicture);*/
 
         return  row;
     }

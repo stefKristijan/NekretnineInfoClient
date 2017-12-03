@@ -67,33 +67,53 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         Building building = this.buildings.get(position);
 
-        final List<LocalImage> images = DBHelper.getInstance(context).getImagesByBuildingId(building.getId());
-        Log.d("IMAGES FROM BUILD", String.valueOf(images.size())+" "+String.valueOf(buildings.size()));
-        for(int i=0; i<images.size();i++){
-            images.get(i).setListId(i);
-        }
+        final List<LocalImage> images = getImages(building);
         final LocalImage[] currentImage = {images.get(0)};
         holder.ivBuilding.setImageBitmap(currentImage[0].getImage());
 
+        setLocationdata(holder,building);
 
-        List<BuildingLocation> locations = DBHelper.getInstance(context).getBuildingLocationsByBuildingId(building.getId());
-        Log.d("LOCATIONS", String.valueOf(locations.size())+" "+String.valueOf(buildings.size()));
+        setDateView(holder, building);
 
-        holder.tvStreetItems.setText(locations.get(0).getStreet());
-        holder.tvCity.setText(locations.get(0).getCity());
-        holder.tvStreetNumItems.setText(String.valueOf(locations.get(0).getStreetNumber()));
-        holder.tvCadastralParticles.setText(locations.get(0).getCadastralParticle());
+        setImageShiftButtons(holder, images, currentImage);
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                
+            }
+        });
+
+         /* List<String> imagePaths = new ArrayList<>();
+                for(LocalImage localImage : images){
+                    imagePaths.add(localImage.getImagePath());
+                }
+                uploadAlbum(imagePaths, position);*/
+
+    }
+
+    private void setDateView(ViewHolder holder, Building building) {
         if(building.isSynchronizedWithDatabase()){
             holder.tvDate.setBackground(context.getResources().getDrawable(R.drawable.cv_tv_synced));
         }else{
             holder.tvDate.setBackground(context.getResources().getDrawable(R.drawable.cv_tv_not_sync));
 
         }
-
         String date = new SimpleDateFormat("dd. MMM yyyy. HH:mm").format(building.getDate());
         holder.tvDate.setText(date);
+    }
 
+    @NonNull
+    private List<LocalImage> getImages(Building building) {
+        final List<LocalImage> images = DBHelper.getInstance(context).getImagesByBuildingId(building.getId());
+        Log.d("IMAGES FROM BUILD", String.valueOf(images.size())+" "+String.valueOf(buildings.size()));
+        for(int i=0; i<images.size();i++){
+            images.get(i).setListId(i);
+        }
+        return images;
+    }
+
+    private void setImageShiftButtons(final ViewHolder holder, final List<LocalImage> images, final LocalImage[] currentImage) {
         holder.ibNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,11 +123,7 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
                     currentImage[0] =images.get(index);
                 }
 
-               /* List<String> imagePaths = new ArrayList<>();
-                for(LocalImage localImage : images){
-                    imagePaths.add(localImage.getImagePath());
-                }
-                uploadAlbum(imagePaths, position);*/
+
             }
         });
 
@@ -122,7 +138,50 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
 
             }
         });
+    }
 
+    //TODO Write this in another way - better way!
+    private void setLocationdata(ViewHolder holder, Building building) {
+        List<BuildingLocation> locations = DBHelper.getInstance(context).getBuildingLocationsByBuildingId(building.getId());
+        Log.d("LOCATIONS", String.valueOf(locations.size())+" "+String.valueOf(buildings.size()));
+        String streets ="";
+        String streetNums = "";
+        String cadastralParticles ="";
+        for(int i=0; i<locations.size(); i++){
+            BuildingLocation location = locations.get(i);
+            if(i==0){
+                streets = location.getStreet();
+                streetNums = String.valueOf(location.getStreetNumber()+location.getStreetNumberChar());
+                cadastralParticles = location.getCadastralParticle();
+            }else{
+                boolean streetExists = false, numExists = false, cadastralExists =false;
+                for(int j=0;j<i;j++){
+                    BuildingLocation existingLoc = locations.get(j);
+                    if (location.getStreet().equals(existingLoc.getStreet())) {
+                        streetExists=true;
+                    }
+                    if(String.valueOf(location.getStreetNumber()+location.getStreetNumberChar()).equals(String.valueOf(existingLoc.getStreetNumber()+existingLoc.getStreetNumberChar()))){
+                        numExists = true;
+                    }
+                    if(location.getCadastralParticle().equals(existingLoc.getCadastralParticle())){
+                        cadastralExists=true;
+                    }
+                }
+                if(!streetExists){
+                    streets+=", "+location.getStreet();
+                }
+                if(!numExists){
+                    streetNums += ", "+location.getStreetNumber()+location.getStreetNumberChar();
+                }
+                if(!cadastralExists){
+                    cadastralParticles+=", "+location.getCadastralParticle();
+                }
+            }
+        }
+        holder.tvStreetItems.setText(streets);
+        holder.tvCity.setText(locations.get(0).getCity());
+        holder.tvStreetNumItems.setText(streetNums);
+        holder.tvCadastralParticles.setText(cadastralParticles);
     }
 
     @Override

@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         setUpActivity();
         this.mUser = (User) getIntent().getExtras().getSerializable(USER);
-
+        //DBHelper.getInstance(this).deleteBuildings();
         if(getIntent().getExtras().getBoolean(FIRST_LOGIN)){
             Log.d("GET BUILDINGS", "getting buildings from server");
             getBuildingsFromServer();
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity{
                             bitmap.compress(Bitmap.CompressFormat.JPEG,100,outputStream);
                             byte[] imageBytes = outputStream.toByteArray();
                             Log.d("INSERTING IMAGE",imagePath.getImagePath());
-                            DBHelper.getInstance(getApplicationContext()).insertImage(imagePath.getImagePath(),imageBytes,building.getId());
+                            DBHelper.getInstance(getApplicationContext()).insertImage(imageBytes,building.getId());
                             getBuildingsFromLocalDatabase();
                         }
 

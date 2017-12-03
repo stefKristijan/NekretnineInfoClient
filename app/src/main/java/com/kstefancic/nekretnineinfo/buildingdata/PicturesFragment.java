@@ -1,6 +1,12 @@
 package com.kstefancic.nekretnineinfo.buildingdata;
 
 
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.content.ClipData;
 import android.content.Context;
@@ -18,13 +24,19 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.kstefancic.nekretnineinfo.R;
+import com.kstefancic.nekretnineinfo.api.model.localDBdto.LocalImage;
+import com.kstefancic.nekretnineinfo.helper.DBHelper;
 import com.kstefancic.nekretnineinfo.views.PictureGridViewAdapter;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Random;
 
 import static android.app.Activity.RESULT_OK;
+import static com.kstefancic.nekretnineinfo.MainActivity.BUILDING_DATA;
 
 /**
  * Created by user on 15.11.2017..
@@ -32,11 +44,14 @@ import static android.app.Activity.RESULT_OK;
 
 public class PicturesFragment extends Fragment{
 
+    private static final int REQUEST_IMAGE_CAPTURE = 20;
+    private static final int GALLERY_REQUEST = 10;
     private Button btnFinish, btnBrowse;
     private GridView gvPictures;
     private PictureGridViewAdapter pictureGridViewAdapter;
     private PictureChoosen pictureChoosenListener;
-    private ArrayList<Uri> fileUris = new ArrayList<>();
+    private FloatingActionButton fabCamera;
+    private ArrayList<LocalImage> localImages = new ArrayList<>();
 
 
     @Override
@@ -48,6 +63,8 @@ public class PicturesFragment extends Fragment{
 
     private void setUI(View layout) {
         this.gvPictures = layout.findViewById(R.id.frPictures_gridView);
+        pictureGridViewAdapter = new PictureGridViewAdapter(getActivity(),R.layout.picture_grid_item, localImages);
+        gvPictures.setAdapter(pictureGridViewAdapter);
         this.btnBrowse = layout.findViewById(R.id.frPictures_btnBrowse);
         this.btnBrowse.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,14 +77,24 @@ public class PicturesFragment extends Fragment{
 
                 intent.setDataAndType(data,"image/*");
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                startActivityForResult(intent, 10);
+                startActivityForResult(intent, GALLERY_REQUEST);
             }
         });
         this.btnFinish =layout.findViewById(R.id.frPictures_btnFinish);
         this.btnFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              pictureChoosenListener.onPictureChoosenListener(fileUris);
+              pictureChoosenListener.onPictureChoosenListener(localImages);
+            }
+        });
+        this.fabCamera = layout.findViewById(R.id.frPictures_fabCamera);
+        this.fabCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
             }
         });
 
@@ -76,18 +103,49 @@ public class PicturesFragment extends Fragment{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 10 && resultCode == RESULT_OK && data != null) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            addImageToList(null,imageBitmap);
+            pictureGridViewAdapter.notifyDataSetChanged();
+        }
+        else if (requestCode == 10 && resultCode == RESULT_OK && data != null) {
             ClipData clipData = data.getClipData();
 
             for (int i = 0; i < clipData.getItemCount(); i++) {
                 ClipData.Item item = clipData.getItemAt(i);
                 Uri uri = item.getUri();
-                Log.d("URI", uri.toString());
-                fileUris.add(uri);
+                Bitmap bitmap = BitmapFactory.decodeFile(getRealPathFromUri(uri));
+                addImageToList(uri, bitmap);
+                Log.d("INSERTING IMAGE", uri.toString() + " size: " + localImages.size());
             }
+            pictureGridViewAdapter.notifyDataSetChanged();
 
-            pictureGridViewAdapter = new PictureGridViewAdapter(getActivity(),R.layout.picture_grid_item, fileUris);
-            gvPictures.setAdapter(pictureGridViewAdapter);
+        }
+    }
+
+    private void addImageToList(Uri uri, Bitmap bitmap) {
+        LocalImage localImage = new LocalImage();
+        localImage.setImage(bitmap);
+        //localImage.setImagePath(getRealPathFromUri(uri));
+        localImage.setId(new Random().nextInt());
+        localImages.add(localImage);
+    }
+
+    public String getRealPathFromUri(Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = {MediaStore.Images.Media.DATA};
+            cursor = getContext().getContentResolver().query(contentUri, proj, null,
+                    null, null);
+            int column_index = cursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
     }
 
@@ -107,7 +165,7 @@ public class PicturesFragment extends Fragment{
     }
 
     public interface PictureChoosen {
-        void onPictureChoosenListener( ArrayList<Uri> imageUris);
+        void onPictureChoosenListener( ArrayList<LocalImage> images);
     }
 
 }
