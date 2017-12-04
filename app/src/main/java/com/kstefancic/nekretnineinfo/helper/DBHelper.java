@@ -847,6 +847,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 building.setConstructionSystem(this.getConstructionSystemById(constrSysId));
                 building.setSynchronizedWithDatabase(isSynchronized);
                 building.setId(id);
+                building.setLocations(getBuildingLocationsByBuildingId(id));
                 Log.d("GET ALL BUILD DB",building.toString());
                 buildings.add(building);
             }while(buildingCursor.moveToNext());

@@ -1,9 +1,8 @@
 package com.kstefancic.nekretnineinfo.views;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
@@ -12,14 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.kstefancic.nekretnineinfo.BuildingDetailsActivity;
 import com.kstefancic.nekretnineinfo.R;
 import com.kstefancic.nekretnineinfo.api.model.Building;
 import com.kstefancic.nekretnineinfo.api.model.BuildingLocation;
 import com.kstefancic.nekretnineinfo.api.model.localDBdto.LocalImage;
-import com.kstefancic.nekretnineinfo.api.service.BuildingService;
 import com.kstefancic.nekretnineinfo.helper.DBHelper;
 import com.kstefancic.nekretnineinfo.helper.RetrofitSingleton;
 import com.kstefancic.nekretnineinfo.helper.SessionManager;
@@ -36,8 +34,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 
 /**
@@ -46,6 +42,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
 
+    public static final String BUILDING_INTENT = "building_details";
     private List<Building> buildings;
     private Context context;
     private SessionManager mSessionManager;
@@ -65,22 +62,20 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-        Building building = this.buildings.get(position);
-
-        final List<LocalImage> images = getImages(building);
-        final LocalImage[] currentImage = {images.get(0)};
-        holder.ivBuilding.setImageBitmap(currentImage[0].getImage());
+        final Building building = this.buildings.get(position);
 
         setLocationdata(holder,building);
 
         setDateView(holder, building);
 
-        setImageShiftButtons(holder, images, currentImage);
+        setImageShiftButtons(holder, building);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                
+                Intent detailsIntent = new Intent(context, BuildingDetailsActivity.class);
+                detailsIntent.putExtra(BUILDING_INTENT,building);
+                context.startActivity(detailsIntent);
             }
         });
 
@@ -113,7 +108,10 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
         return images;
     }
 
-    private void setImageShiftButtons(final ViewHolder holder, final List<LocalImage> images, final LocalImage[] currentImage) {
+    private void setImageShiftButtons(final ViewHolder holder, Building building) {
+        final List<LocalImage> images = getImages(building);
+        final LocalImage[] currentImage = {images.get(0)};
+        holder.ivBuilding.setImageBitmap(currentImage[0].getImage());
         holder.ibNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -142,7 +140,7 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     //TODO Write this in another way - better way!
     private void setLocationdata(ViewHolder holder, Building building) {
-        List<BuildingLocation> locations = DBHelper.getInstance(context).getBuildingLocationsByBuildingId(building.getId());
+        List<BuildingLocation> locations = building.getLocations();
         Log.d("LOCATIONS", String.valueOf(locations.size())+" "+String.valueOf(buildings.size()));
         String streets ="";
         String streetNums = "";

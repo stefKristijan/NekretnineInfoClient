@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.kstefancic.nekretnineinfo.BuildingDetailsActivity">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/colorPrimary">
+
+        <ImageButton
+            android:id="@+id/buildingDetailsActvty_ibBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/transparent"
+            android:src="@android:drawable/ic_delete"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/buildingDetailsActvty_ibEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/transparent"
+            android:src="@android:drawable/ic_menu_edit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/buildingDetailsActvty_constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp">
+
+
+            <ImageView
+                android:id="@+id/buildingDetailsActvty_ivBuilding"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_alignParentBottom="true"
+                android:scaleType="fitCenter"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@mipmap/nekretnine_logo" />
+
+            <ImageButton
+                android:id="@+id/buildingDetailsActvty_ibPrevious"
+                android:layout_width="40dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/buildingDetailsActvty_tvDate"
+                app:layout_constraintStart_toStartOf="@+id/buildingDetailsActvty_ivBuilding"
+                app:layout_constraintTop_toTopOf="parent"
+                android:src="@android:drawable/ic_media_previous"/>
+
+            <ImageButton
+                android:id="@+id/buildingDetailsActvty_ibNext"
+                android:layout_width="40dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/buildingDetailsActvty_tvDate"
+                app:layout_constraintEnd_toEndOf="@+id/buildingDetailsActvty_ivBuilding"
+                app:layout_constraintTop_toTopOf="parent"
+                android:src="@android:drawable/ic_media_next" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/cv_tv_not_sync"
+                android:paddingStart="10dp"
+                android:textColor="@color/colorWhite"
+                app:layout_constraintBottom_toBottomOf="@+id/buildingDetailsActvty_ivBuilding"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <RelativeLayout
+            android:id="@+id/buildingDetailsActvty_relativelayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="240dp"
+            android:layout_gravity="bottom">
+
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvAddressInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="2dp"
+                android:text="@string/tvAddressInfo"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvStreet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/buildingDetailsActvty_tvAddressInfo"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvStreet"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvStreetItems"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/buildingDetailsActvty_tvAddressInfo"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/buildingDetailsActvty_tvStreet"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvStreetNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/buildingDetailsActvty_tvStreet"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvStreetNumber"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvStreetNumItems"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/buildingDetailsActvty_tvStreet"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/buildingDetailsActvty_tvStreetNumber"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvCity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/buildingDetailsActvty_tvStreetNumber"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvCityAndState"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvCityItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/buildingDetailsActvty_tvStreetNumber"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/buildingDetailsActvty_tvCity"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/tvState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/buildingDetailsActvty_tvCity"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvCityAndState"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/buildingDetailsActvty_tvCity"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvState"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvCadastralParticle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvPosition"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvCadastralParticle"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvCadastralPartItems"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvPosition"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/buildingDetailsActvty_tvCadastralParticle"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/tvPosition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvState"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvPosition"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvPosition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvState"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvPosition"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/tvDetails"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@android:color/black"
+                android:layout_below="@id/buildingDetailsActvty_tvCadastralParticle"/>
+
+            <TextView
+                android:id="@+id/tvYearOfBuild"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/buildingDetailsActvty_tvDetails"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvYearOfBuild"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvYearOfBuild"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/buildingDetailsActvty_tvDetails"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvYearOfBuild"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/tvPurpose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvYearOfBuild"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvPurpose"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvPurpose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvYearOfBuild"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvPurpose"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+
+            <TextView
+                android:id="@+id/tvMaterial"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvPurpose"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvWallsMaterial"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvMaterial"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvPurpose"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvMaterial"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/tvCeiling"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvMaterial"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvCeilingMaterial"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvCeilingMaterial"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvMaterial"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvCeiling"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/tvRoof"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvCeiling"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvRoof"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvRoof"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvCeiling"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvRoof"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/tvConstructionSystem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvRoof"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvConstructionSystem"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvConstructionSystem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvRoof"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvConstructionSystem"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvDimensions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/tvDimensions"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@android:color/black"
+                android:layout_below="@id/tvConstructionSystem"/>
+
+            <TextView
+                android:id="@+id/tvLength"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/buildingDetailsActvty_tvDimensions"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvLength"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvLength"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/buildingDetailsActvty_tvDimensions"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvLength"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/tvWidth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvLength"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvWidth"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvWidth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvLength"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvWidth"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/tvResidentialArea"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvWidth"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvResidentialArea"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvResidentialArea"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvWidth"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvResidentialArea"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/tvBusinessArea"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvResidentialArea"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvBusinessArea"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvBusinessArea"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvResidentialArea"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvBusinessArea"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/tvBasementArea"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvBusinessArea"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvBasementArea"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvBasementArea"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvBusinessArea"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvBasementArea"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/tvBrutoArea"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvBasementArea"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvBrutoArea"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvBrutoArea"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvBasementArea"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvBrutoArea"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/tvProperGroundPlan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvBrutoArea"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvProperGroundPlan"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvProperGroundPlan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvBrutoArea"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvProperGroundPlan"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/tvFloorHeight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvProperGroundPlan"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvResidentialArea"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvFloorHeight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvProperGroundPlan"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvFloorHeight"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/tvNumberOfFloors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvFloorHeight"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvNumberOfFloors"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvNumberOfFloors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvFloorHeight"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvNumberOfFloors"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/tvFullHeight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvNumberOfFloors"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/tvFullHeight"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvFullHeight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvNumberOfFloors"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvFullHeight"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+        </RelativeLayout>
+
+
+    </android.support.v7.widget.CardView>
+</ScrollView>
