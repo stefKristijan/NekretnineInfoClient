@@ -84,7 +84,7 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
 
     private Building mBuilding;
     private List<LocalImage> images = new ArrayList<>();
-    private boolean hasDimensions=false, hasLocations=false, hasDetails=false, hasPictures=false;
+    private boolean hasDimensions=false, hasLocations=false, hasDetails=false, hasPictures=false, isUpdating=false;
 
 
     @Override
@@ -92,11 +92,18 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building_data);
 
+        this.mBuilding = (Building) getIntent().getSerializableExtra(BUILDING_DATA);
+        Log.i("BUILDING UPDATE",mBuilding.toString());
+        setActivity();
+        Log.i("BUIDLING UPDATE",mBuilding.toString());
 
+        if(ContextCompat.checkSelfPermission(BuildingDataActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(BuildingDataActivity.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},100);
+        }
+    }
 
-        mBuilding = new Building();
-        mBuilding.setId(DBHelper.getInstance(this).getMaxId()+1);
-        mBuilding.setuId(UUID.randomUUID().toString());
+    private void setActivity() {
+
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         mViewPager = findViewById(R.id.container);
@@ -109,10 +116,14 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
         tabLayout.setupWithViewPager(mViewPager);
         setUpTabIcons();
 
-       setUpButtons();
+        setUpButtons();
 
-        if(ContextCompat.checkSelfPermission(BuildingDataActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(BuildingDataActivity.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},100);
+        if(mBuilding==null){
+            mBuilding = new Building();
+            mBuilding.setId(DBHelper.getInstance(this).getMaxId()+1);
+            mBuilding.setuId(UUID.randomUUID().toString());
+        }else{
+            isUpdating=true;
         }
     }
 
@@ -149,10 +160,14 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void setUpViewPager() {
-        mSectionsPagerAdapter.addFragment(new BuildingDetailsFragment());
-        mSectionsPagerAdapter.addFragment(new AddressInformationFragment());
-        mSectionsPagerAdapter.addFragment(new DimensionsFragment());
-        mSectionsPagerAdapter.addFragment(new PicturesFragment());
+        Fragment addressFragment = AddressInformationFragment.newInstance(mBuilding);
+        Fragment detailsFragment = BuildingDetailsFragment.newInstance(mBuilding);
+        Fragment dimensionFragment = DimensionsFragment.newInstance(mBuilding);
+        Fragment picturesFragment = PicturesFragment.newInstance(mBuilding);
+        mSectionsPagerAdapter.addFragment(detailsFragment);
+        mSectionsPagerAdapter.addFragment(addressFragment);
+        mSectionsPagerAdapter.addFragment(dimensionFragment);
+        mSectionsPagerAdapter.addFragment(picturesFragment);
         mViewPager.setAdapter(mSectionsPagerAdapter);
     }
 
@@ -264,6 +279,9 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void saveImages() {
+        if(isUpdating){
+            DBHelper.getInstance(this).deleteImagesByBuildingId(mBuilding.getId());
+        }
         for (LocalImage localImage : images) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             localImage.getImage().compress(Bitmap.CompressFormat.JPEG, 70, outputStream);

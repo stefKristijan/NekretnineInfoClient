@@ -17,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.kstefancic.nekretnineinfo.R;
+import com.kstefancic.nekretnineinfo.api.model.Building;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.CeilingMaterial;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.ConstructionSystem;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Material;
@@ -30,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import static com.kstefancic.nekretnineinfo.MainActivity.BUILDING_DATA;
 
 /**
  * Created by user on 15.11.2017..
@@ -53,12 +56,25 @@ public class BuildingDetailsFragment extends Fragment {
     private List<Purpose> purposes;
     private Purpose selectedPurpose;
     private BuildingDetailsInserted buildingDetailsInserted;
+    private Building mBuilding;
     private PurposeExpandableListAdapter purposeExpandableListAdapter;
+
+
+    public static BuildingDetailsFragment newInstance(Building building) {
+        BuildingDetailsFragment fragment = new BuildingDetailsFragment();
+        Bundle bundle = new Bundle();
+
+        bundle.putSerializable(BUILDING_DATA, building);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mBuilding = (Building) getArguments().getSerializable(BUILDING_DATA);
+
         this.sectors = DBHelper.getInstance(getActivity()).getAllSectors();
         this.purposes = DBHelper.getInstance(getActivity()).getAllPurposes();
     }
@@ -94,13 +110,18 @@ public class BuildingDetailsFragment extends Fragment {
                 }
                 selectedPurpose = purposeGroup.get(childPosition);
                 tvSelectedPurpose.setText(selectedPurpose.getPurpose());
-
                 return false;
             }
         });
 
         setUpSpinners();
         setUpPurposeELV();
+
+        if(mBuilding!=null){
+            this.etYearOfBuild.setText(mBuilding.getYearOfBuild());
+            this.tvSelectedPurpose.setText(mBuilding.getPurpose().getPurpose());
+            this.selectedPurpose=mBuilding.getPurpose();
+        }
 
         this.btnAccept =layout.findViewById(R.id.buildingDetailsFr_btnNext);
         this.btnAccept.setOnClickListener(new View.OnClickListener() {
@@ -138,6 +159,23 @@ public class BuildingDetailsFragment extends Fragment {
 
         List<String> materialSpinnerItems = setUpMaterialSpinnerItems();
         inflateSpinnerWithList(materialSpinnerItems,spMaterial);
+
+        if(mBuilding!=null){
+            setSpinnersToBuildingData(constSysSpinnerItems,mBuilding.getConstructionSystem().getConstructionSystem(),spConstructionSystem);
+            setSpinnersToBuildingData(roofSpinnerItems,mBuilding.getRoof().getRoofType(),spRoof);
+            setSpinnersToBuildingData(ceilingMaterialSpinnerItems,mBuilding.getCeilingMaterial().getCeilingMaterial(),spCeilingMaterial);
+            setSpinnersToBuildingData(materialSpinnerItems, mBuilding.getMaterial().getMaterial(),spMaterial);
+        }
+    }
+
+    private void setSpinnersToBuildingData(List<String> items, String searchTerm, Spinner spinner) {
+        for(int i=0; i<items.size(); i++){
+            if(items.get(i).equals(searchTerm)){
+                spinner.setSelection(i);
+                break;
+            }
+        }
+
     }
 
     private List<String> setUpRoofSpinnerItems() {

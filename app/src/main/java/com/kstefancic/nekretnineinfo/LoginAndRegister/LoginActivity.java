@@ -40,6 +40,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import static com.kstefancic.nekretnineinfo.MainActivity.BUILDING_DATA;
+
 public class LoginActivity extends AppCompatActivity implements RegisterFragment.UserDataInsertedListener, LogInFragment.CredentialsInserted{
 
     private static final String LOGIN_FRAGMENT = "login";
@@ -52,20 +54,11 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSessionManager = new SessionManager(this);
         setContentView(R.layout.activity_login);
-        checkIfLoggedIn();
         setUpFragment();
     }
 
-    private void checkIfLoggedIn() {
-        this.mSessionManager = new SessionManager(this);
-        //this.mSessionManager.setLogin(false,null);
-        //DBHelper.getInstance(this).deleteAllTables();
-        if(this.mSessionManager.isLoggedIn()){
-            User user = DBHelper.getInstance(this).getUser();
-            startMainActivity(user, false);
-        }
-    }
 
     private void setUpFragment() {
         FragmentManager fragmentManager = getFragmentManager();
@@ -187,7 +180,11 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
                    insertStatesInLocalDatabase(response.body().getStates());
                    insertCitiesInLocalDatabase(response.body().getCities());
                    insertStreetsInLocalDatabase(response.body().getStreets());
-                   startMainActivity(user, true);
+                    Intent loginIntent = new Intent();
+                    loginIntent.putExtra(USER, user);
+                    setResult(RESULT_OK, loginIntent);
+                    Log.d("RESULT_OK", user.toString());
+                    finish();
                 }else{
                     Log.e("LOCATION DATA RESP", response.body().toString());
                     showErrorResponse(response);
@@ -269,11 +266,4 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
         }
     }
 
-    private void startMainActivity(User user, boolean firstLogin) {
-        Intent mainIntent = new Intent(LoginActivity.this,MainActivity.class);
-        mainIntent.putExtra(USER, user);
-        mainIntent.putExtra(FIRST_LOGIN, firstLogin);
-        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(mainIntent);
-    }
 }

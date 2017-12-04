@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.transition.Scene;
 import android.util.Log;
 
 import com.kstefancic.nekretnineinfo.api.model.Building;
@@ -195,7 +196,6 @@ public class DBHelper extends SQLiteOpenHelper {
     //SELECTING TABLES
     private static final String SELECT_USER = "SELECT * FROM " + Schema.TABLE_USER;
     private static final String SELECT_BUILDINGS = "SELECT * FROM " + Schema.TABLE_BUILDING;
-
 
 
     private static DBHelper mDbHelper = null;
@@ -774,6 +774,8 @@ public class DBHelper extends SQLiteOpenHelper {
     - insertBuilding(Building building)
     - getAllBuildings()
     - getMaxId()
+    - updateBuilding(Building building)
+    - deleteBuilding(long buildingId)
      */
 
     public void insertBuilding(Building building){
@@ -871,11 +873,48 @@ public class DBHelper extends SQLiteOpenHelper {
         return id;
     }
 
+    public void updateBuilding(Building building){
+        Log.d("DB UPDATE BUILD",building.toString());
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Schema.BRUTO_AREA, building.getBrutoArea());
+        contentValues.put(Schema.FLOOR_HEIGHT, building.getFloorHeight());
+        contentValues.put(Schema.FULL_HEIGHT, building.getFullHeight());
+        contentValues.put(Schema.LENGTH, building.getLength());
+        contentValues.put(Schema.NUMBER_OF_FLOORS, building.getNumberOfFloors());
+        contentValues.put(Schema.PROPER_GROUND_PLAN, building.isProperGroundPlan());
+        contentValues.put(Schema.SYNCHRONIZED, building.isSynchronizedWithDatabase());
+        contentValues.put(Schema.WIDTH, building.getWidth());
+        contentValues.put(Schema.BASEMENT_BRUTO_AREA, building.getBasementBrutoArea());
+        contentValues.put(Schema.BUSINESS_BRUTO_AREA, building.getBusinessBrutoArea());
+        contentValues.put(Schema.RESIDENTIAL_BRUTO_AREA, building.getResidentialBrutoArea());
+        contentValues.put(Schema.YEAR_OF_BUILD, building.getYearOfBuild());
+        contentValues.put(Schema.B_CEILING_MATERIAL_ID, building.getCeilingMaterial().getId());
+        contentValues.put(Schema.B_CONSTRUCT_SYS_ID, building.getConstructionSystem().getId());
+        contentValues.put(Schema.B_MATERIAL_ID, building.getMaterial().getId());
+        contentValues.put(Schema.B_PURPOSE_ID, building.getPurpose().getId());
+        contentValues.put(Schema.B_POSITION_ID, building.getPosition().getId());
+        contentValues.put(Schema.B_ROOF_ID,building.getRoof().getId());
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        wdb.update(Schema.TABLE_BUILDING,contentValues,Schema.BUILDING_ID+"="+building.getId(),null);
+        wdb.close();
+        deleteLocationsByBuildingId(building.getId());
+        insertBuildingLocations(building.getLocations(), building.getId());
+    }
+
+    public void deleteBuilding(long buildingId){
+        deleteImagesByBuildingId(buildingId);
+        deleteLocationsByBuildingId(buildingId);
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        wdb.delete(Schema.TABLE_BUILDING,Schema.BUILDING_ID+"="+buildingId,null);
+        wdb.close();
+    }
+
     /*
     BUILDING LOCATION QUERIES
     - insertBuildingLocation(BuildingLocation buildingLocation)
     - insertBuildingLocations(List<BuildingLocation> locations, long buildingId)
     - getBuildingLocationByBuildingId(long buildingID)
+    - deleteLocationsByBuildingId(long buidlingId);
      */
 
     public void insertBuildingLocation(BuildingLocation buildingLocation){
@@ -941,16 +980,25 @@ public class DBHelper extends SQLiteOpenHelper {
         return locations;
     }
 
+    public void  deleteLocationsByBuildingId(long buildingId){
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        wdb.delete(Schema.TABLE_BUILDING_LOCATION,Schema.LOC_BUILDING_ID+"="+buildingId,null);
+        wdb.close();
+    }
+
     /*
     IMAGE PATH QUERIES
     - insertImage()
     - getImagesByBuildingId(long buildingId)
+    - deleteImagesByBuildingId(long buildingId);
      */
 
     public void insertImage(/*String imagePath, */byte[] imageBytes, long buildingId){
         ContentValues contentValues = new ContentValues();
         Random random = new Random();
-        contentValues.put(Schema.IMAGE_ID,random.nextInt());
+        int id = random.nextInt();
+        Log.i("DB IMAGE INSERT", String.valueOf(buildingId)+" "+id);
+        contentValues.put(Schema.IMAGE_ID,id);
         contentValues.put(Schema.IMAGE_PATH,"jkkw");
         contentValues.put(Schema.IMAGE,imageBytes);
         contentValues.put(Schema.IP_BUILDING_ID,buildingId);
@@ -980,6 +1028,12 @@ public class DBHelper extends SQLiteOpenHelper {
         imageCursor.close();
         wdb.close();
         return images;
+    }
+
+    public void deleteImagesByBuildingId(long buildingId) {
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        wdb.delete(Schema.TABLE_IMAGES,Schema.IP_BUILDING_ID+"="+buildingId,null);
+        wdb.close();
     }
 
     public void deleteBuildings() {

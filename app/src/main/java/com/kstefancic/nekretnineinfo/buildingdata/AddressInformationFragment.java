@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.kstefancic.nekretnineinfo.R;
+import com.kstefancic.nekretnineinfo.api.model.Building;
 import com.kstefancic.nekretnineinfo.api.model.BuildingLocation;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.Position;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.addressMultichoiceData.City;
@@ -29,6 +30,8 @@ import com.kstefancic.nekretnineinfo.helper.DBHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import static com.kstefancic.nekretnineinfo.MainActivity.BUILDING_DATA;
 
 /**
  * Created by user on 15.11.2017..
@@ -55,14 +58,23 @@ public class AddressInformationFragment extends Fragment {
     private List<City> cities;
     private List<Street> streets;
     private List<BuildingLocation> buildingLocations = new ArrayList<>();
+    private Building mBuilding;
     ArrayList<String> locationListItems =new ArrayList<String>();
     ArrayAdapter<String> listViewAdapter;
     private AddressInformationInserted addressInformationInsertedListener;
 
+    public static AddressInformationFragment newInstance(Building building) {
+        AddressInformationFragment fragment = new AddressInformationFragment();
+        Bundle bundle = new Bundle();
+
+        bundle.putSerializable(BUILDING_DATA, building);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("ADDRESSFRAGMENT","onCreate()");
 
         states = DBHelper.getInstance(getActivity()).getAllStates();
         cities = DBHelper.getInstance(getActivity()).getAllCities();
@@ -73,8 +85,14 @@ public class AddressInformationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_adress_information,null);
-        Log.i("ADDRESSFRAGMENT","onCreateView()");
-
+        mBuilding = (Building) getArguments().getSerializable(BUILDING_DATA);
+        if(mBuilding!=null){
+            buildingLocations = mBuilding.getLocations();
+            for(BuildingLocation buildingLocation : buildingLocations){
+                locationListItems.add(buildingLocation.toString());
+            }
+        }
+        Log.i("BUILDING IN ADRS",mBuilding.toString());
         setUI(layout);
         setUpSpinners();
         return layout;
@@ -277,6 +295,16 @@ public class AddressInformationFragment extends Fragment {
         positionAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spPosition.setAdapter(positionAdapter);
 
+
+        if(mBuilding!=null){
+            for(int i=0; i<positionTexts.size(); i++){
+                Log.i("POZICIJA", positionTexts.get(i)+ " "+mBuilding.getPosition().getPosition());
+                if(positionTexts.get(i).equals(mBuilding.getPosition().getPosition())){
+                    spPosition.setSelection(i);
+                    break;
+                }
+            }
+        }
 
     }
 

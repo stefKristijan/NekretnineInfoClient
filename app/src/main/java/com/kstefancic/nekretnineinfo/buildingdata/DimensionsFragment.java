@@ -13,6 +13,9 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.kstefancic.nekretnineinfo.R;
+import com.kstefancic.nekretnineinfo.api.model.Building;
+
+import static com.kstefancic.nekretnineinfo.MainActivity.BUILDING_DATA;
 
 /**
  * Created by user on 15.11.2017..
@@ -31,9 +34,21 @@ public class DimensionsFragment extends Fragment {
     private CheckBox cbProperGroundPlan;
     private DimensionsInserted dimensionsInsertedListener;
 
+    private Building mBuilding;
+
+    public static DimensionsFragment newInstance(Building building) {
+        DimensionsFragment fragment = new DimensionsFragment();
+        Bundle bundle = new Bundle();
+
+        bundle.putSerializable(BUILDING_DATA, building);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mBuilding = (Building) getArguments().getSerializable(BUILDING_DATA);
         View layout = inflater.inflate(R.layout.fragment_dimensions,null);
         setUI(layout);
         return layout;
@@ -88,6 +103,22 @@ public class DimensionsFragment extends Fragment {
             }
         });
 
+        if(mBuilding!=null){
+            setDataFromBuildingToViews();
+        }
+    }
+
+    private void setDataFromBuildingToViews() {
+        this.etLength.setText(String.valueOf(mBuilding.getLength()));
+        this.etWidth.setText(String.valueOf(mBuilding.getWidth()));
+        this.etFloorHeight.setText(String.valueOf(mBuilding.getFloorHeight()));
+        this.etFullHeight.setText(String.valueOf(mBuilding.getFullHeight()));
+        this.etNumberOfFloors.setText(String.valueOf(mBuilding.getNumberOfFloors()));
+        this.etBrutoArea.setText(String.valueOf(mBuilding.getBrutoArea()));
+        this.etBusinessArea.setText(String.valueOf(mBuilding.getBusinessBrutoArea()));
+        this.etBasementArea.setText(String.valueOf(mBuilding.getBasementBrutoArea()));
+        this.etResidentArea.setText(String.valueOf(mBuilding.getResidentialBrutoArea()));
+        this.cbProperGroundPlan.setChecked(mBuilding.isProperGroundPlan());
     }
 
     private boolean checkData(boolean properGroundPlan) {

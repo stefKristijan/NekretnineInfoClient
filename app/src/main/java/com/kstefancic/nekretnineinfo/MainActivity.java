@@ -38,6 +38,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,11 +47,13 @@ import retrofit2.Response;
 import static com.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.FIRST_LOGIN;
 import static com.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.USER;
 import static com.kstefancic.nekretnineinfo.helper.RetrofitSingleton.BASE_URL;
+import static com.kstefancic.nekretnineinfo.views.BuildingAdapter.UPDATE_BUILDING_RQST;
 
 public class MainActivity extends AppCompatActivity{
 
     private static final int NEW_BUILDING_RQST = 1;
     public static final String BUILDING_DATA = "building";
+    private static final int LOGIN_RQST = 10;
     private User mUser;
     private SessionManager mSessionManager;
     private RecyclerView recyclerView;
@@ -64,19 +67,24 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        checkIfLoggedIn();
         setUpActivity();
-        this.mUser = (User) getIntent().getExtras().getSerializable(USER);
         //DBHelper.getInstance(this).deleteBuildings();
-        if(getIntent().getExtras().getBoolean(FIRST_LOGIN)){
-            Log.d("GET BUILDINGS", "getting buildings from server");
-            getBuildingsFromServer();
-        }else{
-            Log.d("GET BUILDINGS", "getting buildings from local database");
-            getBuildingsFromLocalDatabase();
-        }
-
-
+        getBuildingsFromLocalDatabase();
     }
+
+    private void checkIfLoggedIn() {
+        this.mSessionManager = new SessionManager(this);
+        //this.mSessionManager.setLogin(false,null);
+        //DBHelper.getInstance(this).deleteAllTables();
+        if(!this.mSessionManager.isLoggedIn()){
+            Intent loginIntent = new Intent(MainActivity.this,LoginActivity.class);
+            startActivityForResult(loginIntent, LOGIN_RQST);
+        }else{
+            this.mUser=DBHelper.getInstance(this).getUser();
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -96,6 +104,26 @@ public class MainActivity extends AppCompatActivity{
             } else if (resultCode == RESULT_CANCELED) {
                 Log.i("RESULT_CANCEL", "result canceled");
             }
+        }
+        if(requestCode==LOGIN_RQST){
+            this.mUser = (User) data.getSerializableExtra(USER);
+            getBuildingsFromServer();
+        }
+        if(requestCode==UPDATE_BUILDING_RQST){
+            Building building = (Building) data.getSerializableExtra(BUILDING_DATA);
+            Log.d("ONRESULT", building.toString());
+            building.setUser(mUser);
+            building.setDate(new Timestamp(System.currentTimeMillis()));
+            for(int i = 0; i<buildings.size();i++){
+                if(Objects.equals(buildings.get(i).getId(), building.getId())){
+                    buildings.remove(i);
+                    break;
+                }
+            }
+            buildings.add(building);
+            DBHelper.getInstance(this).updateBuilding(building);
+            Log.d("ONRESULT AFTER INSERT", building.toString());
+            buildingAdapter.notifyDataSetChanged();
         }
     }
 
@@ -180,10 +208,9 @@ public class MainActivity extends AppCompatActivity{
 
     private void setRecyclerView(List<Building> buildings) {
 
-        Context context = getApplicationContext();
-        this.buildingAdapter= new BuildingAdapter(buildings,context, mSessionManager);
-        this.layoutManager = new LinearLayoutManager(context);
-        this.itemDecoration= new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+        this.buildingAdapter= new BuildingAdapter(buildings,this, mSessionManager);
+        this.layoutManager = new LinearLayoutManager(this);
+        this.itemDecoration= new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
 
         this.recyclerView.addItemDecoration(this.itemDecoration);
         this.recyclerView.setLayoutManager(this.layoutManager);

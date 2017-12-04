@@ -1,5 +1,6 @@
 package com.kstefancic.nekretnineinfo.views;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -13,7 +14,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.kstefancic.nekretnineinfo.BuildingDataActivity;
 import com.kstefancic.nekretnineinfo.BuildingDetailsActivity;
+import com.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity;
+import com.kstefancic.nekretnineinfo.MainActivity;
 import com.kstefancic.nekretnineinfo.R;
 import com.kstefancic.nekretnineinfo.api.model.Building;
 import com.kstefancic.nekretnineinfo.api.model.BuildingLocation;
@@ -26,6 +30,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -43,6 +48,9 @@ import retrofit2.Response;
 public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     public static final String BUILDING_INTENT = "building_details";
+    public static final int UPDATE_BUILDING_RQST = 2;
+    private static final String BUILDING = "building";
+
     private List<Building> buildings;
     private Context context;
     private SessionManager mSessionManager;
@@ -70,6 +78,10 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         setImageShiftButtons(holder, building);
 
+        setEditButton(holder, building);
+
+        setDeleteButton(holder,building);
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,6 +97,33 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
                 }
                 uploadAlbum(imagePaths, position);*/
 
+    }
+
+    private void setDeleteButton(ViewHolder holder, final Building building) {
+        holder.ibDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for(int i = 0; i<buildings.size();i++){
+                    if(Objects.equals(buildings.get(i).getId(), building.getId())){
+                        buildings.remove(i);
+                        break;
+                    }
+                }
+                notifyDataSetChanged();
+                DBHelper.getInstance(context).deleteBuilding(building.getId());
+            }
+        });
+    }
+
+    private void setEditButton(ViewHolder holder, final Building building) {
+        holder.ibEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent buildingIntent = new Intent(context,BuildingDataActivity.class);
+                buildingIntent.putExtra(BUILDING, building);
+                ((Activity) context).startActivityForResult(buildingIntent, UPDATE_BUILDING_RQST);
+            }
+        });
     }
 
     private void setDateView(ViewHolder holder, Building building) {
@@ -236,7 +275,7 @@ class ViewHolder extends RecyclerView.ViewHolder{
 
     TextView tvStreetItems, tvDate, tvStreetNumItems, tvCadastralParticles, tvCity;
     ImageView ivBuilding;
-    ImageButton ibNext, ibPrevious;
+    ImageButton ibNext, ibPrevious, ibDelete, ibEdit;
 
     public ViewHolder(View itemView) {
         super(itemView);
@@ -248,5 +287,7 @@ class ViewHolder extends RecyclerView.ViewHolder{
         this.tvStreetNumItems = itemView.findViewById(R.id.buildingItem_tvStreetNumItems);
         this.tvStreetItems = itemView.findViewById(R.id.buildingItem_tvStreetItems);
         this.tvCity = itemView.findViewById(R.id.buildingItem_tvCityItem);
+        this.ibDelete = itemView.findViewById(R.id.buildingItem_ibDelete);
+        this.ibEdit = itemView.findViewById(R.id.buildingItem_ibEdit);
     }
 }

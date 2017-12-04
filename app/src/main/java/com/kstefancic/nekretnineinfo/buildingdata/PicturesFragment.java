@@ -24,6 +24,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.kstefancic.nekretnineinfo.R;
+import com.kstefancic.nekretnineinfo.api.model.Building;
 import com.kstefancic.nekretnineinfo.api.model.localDBdto.LocalImage;
 import com.kstefancic.nekretnineinfo.helper.DBHelper;
 import com.kstefancic.nekretnineinfo.views.PictureGridViewAdapter;
@@ -52,11 +53,26 @@ public class PicturesFragment extends Fragment{
     private PictureChoosen pictureChoosenListener;
     private FloatingActionButton fabCamera;
     private ArrayList<LocalImage> localImages = new ArrayList<>();
+    private Building mBuilding;
+
+    public static PicturesFragment newInstance(Building building) {
+        PicturesFragment fragment = new PicturesFragment();
+        Bundle bundle = new Bundle();
+
+        bundle.putSerializable(BUILDING_DATA, building);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_pictures,null);
+        mBuilding = (Building) getArguments().getSerializable(BUILDING_DATA);
+        if(mBuilding!=null){
+            localImages = (ArrayList<LocalImage>) DBHelper.getInstance(getActivity()).getImagesByBuildingId(mBuilding.getId());
+            Log.i("PICTURES", String.valueOf(localImages.size()));
+        }
         setUI(layout);
         return layout;
     }
@@ -97,6 +113,7 @@ public class PicturesFragment extends Fragment{
                 }
             }
         });
+
 
     }
 

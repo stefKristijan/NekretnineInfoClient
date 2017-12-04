@@ -66,26 +66,28 @@
             <ImageButton
                 android:id="@+id/buildingDetailsActvty_ibPrevious"
                 android:layout_width="40dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/shift_image_btn"
+                android:src="@android:drawable/ic_media_previous"
                 app:layout_constraintBottom_toTopOf="@+id/buildingDetailsActvty_tvDate"
                 app:layout_constraintStart_toStartOf="@+id/buildingDetailsActvty_ivBuilding"
-                app:layout_constraintTop_toTopOf="parent"
-                android:src="@android:drawable/ic_media_previous"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:id="@+id/buildingDetailsActvty_ibNext"
                 android:layout_width="40dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/shift_image_btn"
+                android:src="@android:drawable/ic_media_next"
                 app:layout_constraintBottom_toTopOf="@+id/buildingDetailsActvty_tvDate"
                 app:layout_constraintEnd_toEndOf="@+id/buildingDetailsActvty_ivBuilding"
-                app:layout_constraintTop_toTopOf="parent"
-                android:src="@android:drawable/ic_media_next" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/buildingDetailsActvty_tvDate"
@@ -95,7 +97,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/cv_tv_not_sync"
-                android:paddingStart="10dp"
+                android:padding="5dp"
                 android:textColor="@color/colorWhite"
                 app:layout_constraintBottom_toBottomOf="@+id/buildingDetailsActvty_ivBuilding"
                 app:layout_constraintEnd_toEndOf="parent"

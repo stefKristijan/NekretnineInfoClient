@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#60AAAAAA</color>
+    <color name="colorPrimaryDark">#80888888</color>
+    <color name="colorAccent">#A0FF4081</color>
+
     <color name="colorWhite">#FFF</color>
     <color name="btnCenterColor">#0B55DF</color>
     <color name="btnStartColor">#0097F6</color>
@@ -10,6 +11,9 @@
     <color name="btnEditCenterColor">#FC7C00</color>
     <color name="btnEditStartColor">#FC9900</color>
     <color name="btnEditEndColor">#FC9900</color>
+    <color name="btnDeleteCenterColor">#AF0000</color>
+    <color name="btnDeleteStartColor">#CD0000</color>
+    <color name="btnDeleteEndColor">#FF0000</color>
     <color name="btnAcceptCenterColor">#36C50A</color>
     <color name="btnAcceptStartColor">#3ADE0A</color>
     <color name="btnAcceptEndColor">#3ADE0A</color>
@@ -17,6 +21,7 @@
     <color name="gray">#444</color>
     <color name="lighterGray">#888</color>
     <color name="whiteOpacity">#A0FFFFFF</color>
+    <color name="grayOpacity">#50DDDDDD</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="lightRed">#FF0000</color>
     <color name="lightRedOpacity">#70FF0000</color>
