@@ -11,17 +11,27 @@ public class ImagePath implements Serializable {
 
     private int id;
 
-    private String imagePath;
+    private String path;
+    private String title;
 
     private long buildingId;
 
     public ImagePath() {
     }
 
-    public ImagePath(String imagePath, long buildingId) {
+    public ImagePath(String path, String title,  long buildingId) {
         super();
-        this.imagePath = imagePath;
+        this.path = path;
+        this.title = title;
         this.buildingId = buildingId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public int getId() {
@@ -32,12 +42,12 @@ public class ImagePath implements Serializable {
         this.id = id;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getPath() {
+        return path;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public long getBuildingId() {

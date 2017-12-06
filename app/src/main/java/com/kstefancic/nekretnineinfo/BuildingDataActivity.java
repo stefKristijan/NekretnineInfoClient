@@ -3,12 +3,7 @@ package com.kstefancic.nekretnineinfo;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Picture;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -21,11 +16,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.kstefancic.nekretnineinfo.api.model.Building;
@@ -42,8 +34,6 @@ import com.kstefancic.nekretnineinfo.buildingdata.BuildingDetailsFragment;
 import com.kstefancic.nekretnineinfo.buildingdata.DimensionsFragment;
 import com.kstefancic.nekretnineinfo.buildingdata.PicturesFragment;
 import com.kstefancic.nekretnineinfo.helper.DBHelper;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -93,12 +83,13 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.activity_building_data);
 
         this.mBuilding = (Building) getIntent().getSerializableExtra(BUILDING_DATA);
-        Log.i("BUILDING UPDATE",mBuilding.toString());
         setActivity();
-        Log.i("BUIDLING UPDATE",mBuilding.toString());
 
         if(ContextCompat.checkSelfPermission(BuildingDataActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(BuildingDataActivity.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},100);
+        }
+        if(ContextCompat.checkSelfPermission(BuildingDataActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(BuildingDataActivity.this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},101);
         }
     }
 
@@ -146,6 +137,14 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
 
                 }
                 return;
+
+            case 101:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+
+                }
+                return;
         }
     }
     private void setUpTabIcons() {
@@ -172,27 +171,6 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_building_data, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void onDimensionsInformationInserted(double length, double width, double brutoArea, double basementArea, double residentalArea, double businessArea, double fullHeight, double floorHeight, int numOfFloors, boolean properGroundPlan) {
@@ -244,6 +222,7 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
             case R.id.main_ibSave:
                 if(dataValidationCheck()){
                     saveImages();
+                    mBuilding.setSynchronizedWithDatabase(false);
                     Intent saveIntent = new Intent();
                     saveIntent.putExtra(BUILDING_DATA, mBuilding);
                     setResult(RESULT_OK, saveIntent);
@@ -284,10 +263,10 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
         }
         for (LocalImage localImage : images) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            localImage.getImage().compress(Bitmap.CompressFormat.JPEG, 70, outputStream);
+            localImage.getImage().compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             byte[] imageBytes = outputStream.toByteArray();
             localImage.setBuildingId(mBuilding.getId());
-            DBHelper.getInstance(this).insertImage( imageBytes, mBuilding.getId());
+            DBHelper.getInstance(this).insertImage( localImage.getImagePath(),localImage.getTitle(),imageBytes, mBuilding.getId());
         }
 
     }

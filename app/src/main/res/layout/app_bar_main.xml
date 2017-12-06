@@ -6,19 +6,25 @@
     android:layout_height="match_parent"
     tools:context="com.kstefancic.nekretnineinfo.MainActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="40dp">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_ibSynchronize"
+            android:src="@android:drawable/ic_popup_sync"
+            />
 
-    </android.support.design.widget.AppBarLayout>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_ibLogout"
+            android:src="@android:drawable/ic_menu_myplaces"
+            android:layout_alignParentEnd="true"/>
+
+    </RelativeLayout>
 
     <include layout="@layout/content_main" />
 

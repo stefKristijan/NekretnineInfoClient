@@ -1,5 +1,6 @@
 package com.kstefancic.nekretnineinfo.LoginAndRegister;
 
+import android.app.Application;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -50,15 +51,26 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
     public static final String USER = "user";
     public static final String FIRST_LOGIN = "first_login";
     private SessionManager mSessionManager;
+    private User mUser = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSessionManager = new SessionManager(this);
         setContentView(R.layout.activity_login);
+        checkIfLoggedIn();
         setUpFragment();
     }
 
+    private void checkIfLoggedIn() {
+        this.mSessionManager = new SessionManager(this);
+        //this.mSessionManager.setLogin(false,null);
+        //DBHelper.getInstance(this).deleteAllTables();
+        if (this.mSessionManager.isLoggedIn()) {
+            mUser = DBHelper.getInstance(this).getUser();
+            startMainActivity(false);
+        }
+    }
 
     private void setUpFragment() {
         FragmentManager fragmentManager = getFragmentManager();
@@ -112,10 +124,10 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if(response.isSuccessful()){
-                    User user = response.body();
-                    DBHelper.getInstance(getApplicationContext()).insertUser(user);
+                    mUser = response.body();
+                    DBHelper.getInstance(getApplicationContext()).insertUser(mUser);
                     mSessionManager.setLogin(true,password);
-                    getMultiChoiceDataAndSaveToLocalDatabase(user);
+                    getMultiChoiceDataAndSaveToLocalDatabase();
 
                 }else {
                    showErrorResponse(response);
@@ -134,9 +146,9 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
         Toast.makeText(getApplicationContext(),DEFAULT_ERROR,Toast.LENGTH_SHORT).show();
     }
 
-    private void getMultiChoiceDataAndSaveToLocalDatabase(final User user) {
+    private void getMultiChoiceDataAndSaveToLocalDatabase() {
 
-        String base = user.getUsername()+":"+mSessionManager.getPassword();
+        String base = mUser.getUsername()+":"+mSessionManager.getPassword();
         String authHeader = "Basic "+ Base64.encodeToString(base.getBytes(), Base64.NO_WRAP);
 
         final Call<MultiChoiceDataResponse> getMultiChoiceCall = RetrofitSingleton.getMultiChoiceDataService().getMultiChoiceData(authHeader);
@@ -151,7 +163,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
                     insertCeilingMaterialsInLocalDatabase(response.body().getCeilingMaterial());
                     insertSectorsInLocalDatabase(response.body().getSectors());
                     insertRoofsInLocalDatabase(response.body().getRoofs());
-                    getMultichoiceAddressDataAndSaveToLocalDatabase(user);
+                    getMultichoiceAddressDataAndSaveToLocalDatabase();
                 }else{
                     Log.e("MULTICHOICE DATA RESP", response.body().toString());
                     showErrorResponse(response);
@@ -168,8 +180,8 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 
 
 
-    private void getMultichoiceAddressDataAndSaveToLocalDatabase(final User user) {
-        String base = user.getUsername()+":"+mSessionManager.getPassword();
+    private void getMultichoiceAddressDataAndSaveToLocalDatabase() {
+        String base = mUser.getUsername()+":"+mSessionManager.getPassword();
         String authHeader = "Basic "+ Base64.encodeToString(base.getBytes(), Base64.NO_WRAP);
 
         final Call<MultichoiceLocationDataResponse> getMultiChoiceLocationCall = RetrofitSingleton.getMultiChoiceDataService().getMultichoiceLocationData(authHeader);
@@ -180,11 +192,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
                    insertStatesInLocalDatabase(response.body().getStates());
                    insertCitiesInLocalDatabase(response.body().getCities());
                    insertStreetsInLocalDatabase(response.body().getStreets());
-                    Intent loginIntent = new Intent();
-                    loginIntent.putExtra(USER, user);
-                    setResult(RESULT_OK, loginIntent);
-                    Log.d("RESULT_OK", user.toString());
-                    finish();
+                    startMainActivity(true);
                 }else{
                     Log.e("LOCATION DATA RESP", response.body().toString());
                     showErrorResponse(response);
@@ -264,6 +272,14 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
         for(Sector sector : sectors){
             DBHelper.getInstance(this).insertSector(sector);
         }
+    }
+
+    private void startMainActivity(boolean firstLogin) {
+        Intent mainIntent = new Intent(LoginActivity.this,MainActivity.class);
+        mainIntent.putExtra(USER, mUser);
+        mainIntent.putExtra(FIRST_LOGIN, firstLogin);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
     }
 
 }

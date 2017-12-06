@@ -3,28 +3,30 @@ package com.kstefancic.nekretnineinfo;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity;
 import com.kstefancic.nekretnineinfo.api.model.Building;
 import com.kstefancic.nekretnineinfo.api.model.ImagePath;
 import com.kstefancic.nekretnineinfo.api.model.User;
+import com.kstefancic.nekretnineinfo.api.model.localDBdto.LocalImage;
 import com.kstefancic.nekretnineinfo.helper.DBHelper;
 import com.kstefancic.nekretnineinfo.helper.RetrofitSingleton;
 import com.kstefancic.nekretnineinfo.helper.SessionManager;
@@ -33,13 +35,17 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.io.ByteArrayOutputStream;
-import java.sql.Time;
+import java.io.File;
 import java.sql.Timestamp;
-import java.time.Instant;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,14 +55,15 @@ import static com.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.USER;
 import static com.kstefancic.nekretnineinfo.helper.RetrofitSingleton.BASE_URL;
 import static com.kstefancic.nekretnineinfo.views.BuildingAdapter.UPDATE_BUILDING_RQST;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     private static final int NEW_BUILDING_RQST = 1;
     public static final String BUILDING_DATA = "building";
-    private static final int LOGIN_RQST = 10;
+    private static final int LOGIN_RQST = 2;
     private User mUser;
     private SessionManager mSessionManager;
     private RecyclerView recyclerView;
+    private ImageButton ibSynchronize, ibLogout;
     private BuildingAdapter buildingAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.ItemDecoration itemDecoration;
@@ -67,29 +74,24 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        checkIfLoggedIn();
         setUpActivity();
-        //DBHelper.getInstance(this).deleteBuildings();
-        getBuildingsFromLocalDatabase();
-    }
+        this.mUser = (User) getIntent().getExtras().getSerializable(USER);
 
-    private void checkIfLoggedIn() {
-        this.mSessionManager = new SessionManager(this);
-        //this.mSessionManager.setLogin(false,null);
-        //DBHelper.getInstance(this).deleteAllTables();
-        if(!this.mSessionManager.isLoggedIn()){
-            Intent loginIntent = new Intent(MainActivity.this,LoginActivity.class);
-            startActivityForResult(loginIntent, LOGIN_RQST);
+        if(getIntent().getExtras().getBoolean(FIRST_LOGIN)){
+            Log.d("GET BUILDINGS", "getting buildings from server");
+
+            getBuildingsFromServer();
         }else{
-            this.mUser=DBHelper.getInstance(this).getUser();
+            Log.d("GET BUILDINGS", "getting buildings from local database");
+            getBuildingsFromLocalDatabase();
         }
+        //DBHelper.getInstance(this).deleteBuildings();
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        Log.i("RESULT",String.valueOf(requestCode)+" "+resultCode);
         if (requestCode == NEW_BUILDING_RQST) {
             Log.d("REQUEST CODE", String.valueOf(NEW_BUILDING_RQST));
             if (resultCode == RESULT_OK) {
@@ -105,44 +107,39 @@ public class MainActivity extends AppCompatActivity{
                 Log.i("RESULT_CANCEL", "result canceled");
             }
         }
-        if(requestCode==LOGIN_RQST){
-            this.mUser = (User) data.getSerializableExtra(USER);
-            getBuildingsFromServer();
-        }
+
         if(requestCode==UPDATE_BUILDING_RQST){
-            Building building = (Building) data.getSerializableExtra(BUILDING_DATA);
-            Log.d("ONRESULT", building.toString());
-            building.setUser(mUser);
-            building.setDate(new Timestamp(System.currentTimeMillis()));
-            for(int i = 0; i<buildings.size();i++){
-                if(Objects.equals(buildings.get(i).getId(), building.getId())){
-                    buildings.remove(i);
-                    break;
+            if(resultCode==RESULT_OK) {
+                Building building = (Building) data.getSerializableExtra(BUILDING_DATA);
+                Log.d("ONRESULT", building.toString());
+                building.setUser(mUser);
+                building.setDate(new Timestamp(System.currentTimeMillis()));
+                for (int i = 0; i < buildings.size(); i++) {
+                    if (Objects.equals(buildings.get(i).getId(), building.getId())) {
+                        buildings.remove(i);
+                        break;
+                    }
                 }
+                buildings.add(building);
+                DBHelper.getInstance(this).updateBuildingById(building);
+                Log.d("ONRESULT AFTER INSERT", building.toString());
+                buildingAdapter.notifyDataSetChanged();
             }
-            buildings.add(building);
-            DBHelper.getInstance(this).updateBuilding(building);
-            Log.d("ONRESULT AFTER INSERT", building.toString());
-            buildingAdapter.notifyDataSetChanged();
         }
     }
 
     private void setUpActivity() {
+        this.ibLogout = findViewById(R.id.main_ibLogout);
+        this.ibLogout.setOnClickListener(this);
+        this.ibSynchronize=findViewById(R.id.main_ibSynchronize);
+        this.ibSynchronize.setOnClickListener(this);
+
         this.mSessionManager = new SessionManager(this);
 
         this.recyclerView = findViewById(R.id.rvBuilding);
 
-        Toolbar toolbar =  findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
         FloatingActionButton fab = findViewById(R.id.fabAdd);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent buildingIntent = new Intent(MainActivity.this,BuildingDataActivity.class);
-                startActivityForResult(buildingIntent, NEW_BUILDING_RQST);
-            }
-        });
+        fab.setOnClickListener(this);
     }
 
     private void getBuildingsFromLocalDatabase() {
@@ -151,6 +148,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void getBuildingsFromServer() {
+        Log.i("LOGIN", "getting buildings from serer");
         Call<List<Building>> call = RetrofitSingleton.getBuildingService().getBuildings(setAuthenticationHeader(),mUser.getUsername());
 
         call.enqueue(new Callback<List<Building>>() {
@@ -181,29 +179,55 @@ public class MainActivity extends AppCompatActivity{
     private void insertPicturesIntoDatabase(final Building building) {
         for(final ImagePath imagePath : building.getImagePaths()){
             Picasso.with(this)
-                    .load(BASE_URL+imagePath.getImagePath())
+                    .load(BASE_URL+"/"+imagePath.getPath())
                     .into(new Target() {
                         @Override
                         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                             bitmap.compress(Bitmap.CompressFormat.JPEG,100,outputStream);
                             byte[] imageBytes = outputStream.toByteArray();
-                            Log.d("INSERTING IMAGE",imagePath.getImagePath());
-                            DBHelper.getInstance(getApplicationContext()).insertImage(imageBytes,building.getId());
                             getBuildingsFromLocalDatabase();
+                            Uri finalUri = getImageUri(getApplicationContext(),bitmap,imagePath);
+                            String path = getRealPathFromUri(finalUri);
+                            Log.d("INSERTING IMAGE",imagePath.getPath()+"   "+path);
+                            DBHelper.getInstance(getApplicationContext()).insertImage(path,imagePath.getTitle(),imageBytes,building.getId());
                         }
 
                         @Override
                         public void onBitmapFailed(Drawable errorDrawable) {
-                            Log.d("FAIL INSERTING IMAGE",imagePath.getImagePath());
+                            Log.d("FAIL INSERTING IMAGE",imagePath.getPath());
                         }
 
                         @Override
                         public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            Log.d("PREPARE INSERTING IMAGE",imagePath.getImagePath());
+                            Log.d("PREPARE INSERTING IMAGE",imagePath.getPath());
                         }
                     });
         }
+    }
+    public String getRealPathFromUri(Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = {MediaStore.Images.Media.DATA};
+            cursor = getContentResolver().query(contentUri, proj, null,
+                    null, null);
+            int column_index = cursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    private Uri getImageUri(Context context, Bitmap imageBitmap, ImagePath imagePath) {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG,100,bytes);
+        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), imageBitmap, imagePath.getTitle(),null);
+        return Uri.parse(path);
     }
 
     private void setRecyclerView(List<Building> buildings) {
@@ -223,43 +247,6 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logOut) {
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-            dialogBuilder.setTitle("Odjava")
-                    .setMessage("Jeste li sigurni da se želite odjaviti?")
-                    .setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    })
-                    .setPositiveButton("Odjavi se", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            signOut();
-                        }
-                    })
-                    .show();
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     private void signOut() {
         this.mSessionManager.setLogin(false,"");
         DBHelper.getInstance(this).deleteAllTables();
@@ -269,4 +256,94 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()){
+            case R.id.fabAdd:
+                Intent buildingIntent = new Intent(MainActivity.this,BuildingDataActivity.class);
+                startActivityForResult(buildingIntent, NEW_BUILDING_RQST);
+                break;
+
+            case R.id.main_ibSynchronize:
+                synchronizeBuildings();
+                break;
+
+            case R.id.main_ibLogout:
+               showLogoutDialog();
+                break;
+        }
+    }
+
+    private void synchronizeBuildings() {
+        for(int i=0; i<buildings.size(); i++){
+            if(!buildings.get(i).isSynchronizedWithDatabase()){
+                uploadBuilding(DBHelper.getInstance(this).getImagesByBuildingId(buildings.get(i).getId()),i);
+            }
+        }
+    }
+
+    private void uploadBuilding(List<LocalImage> images, final int position) {
+
+        List<MultipartBody.Part> parts = new ArrayList<>();
+        Log.d("fileURIs size",String.valueOf(images.size()));
+        for(int i=0; i< images.size();i++){
+            parts.add(prepareFilePart("files",images.get(i).getImagePath()));
+        }
+        Log.d("BEFORE UPLOAD",setAuthenticationHeader()+"\n"+buildings.get(position).getUser().toString()+"\n"+parts.size()+"\n"+buildings.get(position).toString());
+        Call<Building> call = RetrofitSingleton.getBuildingService().uploadBuilding(setAuthenticationHeader(),buildings.get(position).getUser().getUsername(),parts,buildings.get(position));
+
+        call.enqueue(new Callback<Building>() {
+            @Override
+            public void onResponse(Call<Building> call, Response<Building> response) {
+                Log.d("GOOD",response.toString());
+                if(response.isSuccessful()){
+                    Building building = response.body();
+                    Log.i("BUILDING",building.toString());
+                    DBHelper.getInstance(getApplicationContext()).updateLocations(buildings.get(position).getId(), building.getId());
+                    DBHelper.getInstance(getApplicationContext()).updateImagesByBuildingId(buildings.get(position).getId(), building.getId());
+                    buildings.get(position).setId(building.getId());
+                    buildings.get(position).setSynchronizedWithDatabase(true);
+                    buildings.get(position).setLocations(building.getLocations());
+                    DBHelper.getInstance(getApplicationContext()).updateBuildingByuId(building);
+                    buildingAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Building> call, Throwable t) {
+                Log.e("Error", t.toString());
+            }
+        });
+    }
+
+    @NonNull
+    private MultipartBody.Part prepareFilePart(String partName, String imagePath){
+        Log.d("IMAGE PATH",imagePath);
+        File imageFile = new File(imagePath);
+
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"),imageFile);
+
+        MultipartBody.Part part = MultipartBody.Part.createFormData(partName, imageFile.getName(), requestFile);
+        Log.d("MULTIPARTBODY",part.body().contentType().toString());
+        return part;
+    }
+
+    private void showLogoutDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle("Odjava")
+                .setMessage("Jeste li sigurni da se želite odjaviti?")
+                .setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setPositiveButton("Odjavi se", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        signOut();
+                    }
+                })
+                .show();
+    }
 }

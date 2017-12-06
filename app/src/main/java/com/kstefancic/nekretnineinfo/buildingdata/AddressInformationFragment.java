@@ -92,7 +92,6 @@ public class AddressInformationFragment extends Fragment {
                 locationListItems.add(buildingLocation.toString());
             }
         }
-        Log.i("BUILDING IN ADRS",mBuilding.toString());
         setUI(layout);
         setUpSpinners();
         return layout;

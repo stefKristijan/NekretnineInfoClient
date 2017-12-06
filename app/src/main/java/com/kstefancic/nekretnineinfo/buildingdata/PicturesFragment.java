@@ -4,7 +4,6 @@ package com.kstefancic.nekretnineinfo.buildingdata;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -14,6 +13,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,19 +21,22 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.kstefancic.nekretnineinfo.R;
 import com.kstefancic.nekretnineinfo.api.model.Building;
 import com.kstefancic.nekretnineinfo.api.model.localDBdto.LocalImage;
 import com.kstefancic.nekretnineinfo.helper.DBHelper;
 import com.kstefancic.nekretnineinfo.views.PictureGridViewAdapter;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 import static android.app.Activity.RESULT_OK;
@@ -47,6 +50,7 @@ public class PicturesFragment extends Fragment{
 
     private static final int REQUEST_IMAGE_CAPTURE = 20;
     private static final int GALLERY_REQUEST = 10;
+    private static final String CAPTURE_ERROR = "Dogodila se pogreška pri stvaranju slike";
     private Button btnFinish, btnBrowse;
     private GridView gvPictures;
     private PictureGridViewAdapter pictureGridViewAdapter;
@@ -79,7 +83,7 @@ public class PicturesFragment extends Fragment{
 
     private void setUI(View layout) {
         this.gvPictures = layout.findViewById(R.id.frPictures_gridView);
-        pictureGridViewAdapter = new PictureGridViewAdapter(getActivity(),R.layout.picture_grid_item, localImages);
+        pictureGridViewAdapter = new PictureGridViewAdapter(getActivity(), R.layout.picture_grid_item, localImages);
         gvPictures.setAdapter(pictureGridViewAdapter);
         this.btnBrowse = layout.findViewById(R.id.frPictures_btnBrowse);
         this.btnBrowse.setOnClickListener(new View.OnClickListener() {
@@ -91,16 +95,16 @@ public class PicturesFragment extends Fragment{
 
                 Uri data = Uri.parse(picturesDirectoryPath);
 
-                intent.setDataAndType(data,"image/*");
+                intent.setDataAndType(data, "image/*");
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                 startActivityForResult(intent, GALLERY_REQUEST);
             }
         });
-        this.btnFinish =layout.findViewById(R.id.frPictures_btnFinish);
+        this.btnFinish = layout.findViewById(R.id.frPictures_btnFinish);
         this.btnFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              pictureChoosenListener.onPictureChoosenListener(localImages);
+                pictureChoosenListener.onPictureChoosenListener(localImages);
             }
         });
         this.fabCamera = layout.findViewById(R.id.frPictures_fabCamera);
@@ -123,7 +127,9 @@ public class PicturesFragment extends Fragment{
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            addImageToList(null,imageBitmap);
+            Uri finalUri = getImageUri(getActivity().getApplicationContext(),imageBitmap);
+            String path = getRealPathFromUri(finalUri);
+            addImageToList(imageBitmap, path);
             pictureGridViewAdapter.notifyDataSetChanged();
         }
         else if (requestCode == 10 && resultCode == RESULT_OK && data != null) {
@@ -132,24 +138,37 @@ public class PicturesFragment extends Fragment{
             for (int i = 0; i < clipData.getItemCount(); i++) {
                 ClipData.Item item = clipData.getItemAt(i);
                 Uri uri = item.getUri();
-                Bitmap bitmap = BitmapFactory.decodeFile(getRealPathFromUri(uri));
-                addImageToList(uri, bitmap);
-                Log.d("INSERTING IMAGE", uri.toString() + " size: " + localImages.size());
+                String path= getRealPathFromUri(uri);
+                Bitmap bitmap = BitmapFactory.decodeFile(path);
+                addImageToList(bitmap, path);
+                Log.d("INSERTING IMAGE", uri.toString() + " size: " + localImages.size()+ " realPath:"+path);
             }
             pictureGridViewAdapter.notifyDataSetChanged();
 
         }
     }
 
-    private void addImageToList(Uri uri, Bitmap bitmap) {
+    private Uri getImageUri(Context context, Bitmap imageBitmap) {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        String imageFileName = String.valueOf("building_" + timeStamp);
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG,100,bytes);
+        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), imageBitmap, imageFileName,"This is description");
+        Log.i("NEWIMAGE", imageFileName+ "  "+path);
+        return Uri.parse(path);
+    }
+
+    private void addImageToList(Bitmap bitmap, String path) {
         LocalImage localImage = new LocalImage();
         localImage.setImage(bitmap);
-        //localImage.setImagePath(getRealPathFromUri(uri));
+        localImage.setImagePath(path);
+        localImage.setTitle(path.substring(path.lastIndexOf("/")+1));
+        Log.i("FILENAME",localImage.getTitle());
         localImage.setId(new Random().nextInt());
         localImages.add(localImage);
     }
 
-    public String getRealPathFromUri(Uri contentUri) {
+    private String getRealPathFromUri(Uri contentUri) {
         Cursor cursor = null;
         try {
             String[] proj = {MediaStore.Images.Media.DATA};

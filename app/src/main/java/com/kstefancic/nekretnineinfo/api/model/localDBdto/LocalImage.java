@@ -12,14 +12,16 @@ public class LocalImage implements Serializable {
 
     private int id;
     private Bitmap image;
-    //private String imagePath;
+    private String title;
+    private String imagePath;
     private long buildingId;
     private int listId;
 
-    public LocalImage(int id, Bitmap image /*String imagePath*/, long buildingId) {
+    public LocalImage(int id, String title, Bitmap image,String imagePath, long buildingId) {
         this.id = id;
         this.image = image;
-        //this.imagePath = imagePath;
+        this.title = title;
+        this.imagePath = imagePath;
         this.buildingId = buildingId;
     }
 
@@ -31,9 +33,20 @@ public class LocalImage implements Serializable {
         return "LocalImage{" +
                 "id=" + id +
                 ", image=" + image +
-                ", buildingId=" + buildingId +'\'' +
+                ", title=" + title+
+                ", imagePath='" + imagePath + '\'' +
+                ", buildingId=" + buildingId +
                 ", listId=" + listId +
                 '}';
+    }
+
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public int getListId() {
@@ -60,13 +73,13 @@ public class LocalImage implements Serializable {
         this.image = image;
     }
 
-    /*public String getImagePath() {
+    public String getImagePath() {
         return imagePath;
     }
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
-    }*/
+    }
 
     public long getBuildingId() {
         return buildingId;

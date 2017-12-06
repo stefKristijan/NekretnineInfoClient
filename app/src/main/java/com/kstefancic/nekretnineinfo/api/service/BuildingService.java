@@ -25,7 +25,7 @@ public interface BuildingService {
 
     @Multipart
     @POST("/users/{username}/buildings")
-    Call<ResponseBody> uploadBuilding(@Header("Authorization") String authorization,
+    Call<Building> uploadBuilding(@Header("Authorization") String authorization,
                                       @Path("username") String username,
                                       @Part List<MultipartBody.Part> files,
                                       @Part("building") Building building);

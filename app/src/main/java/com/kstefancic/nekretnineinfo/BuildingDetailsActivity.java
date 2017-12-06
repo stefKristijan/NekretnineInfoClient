@@ -182,7 +182,7 @@ public class BuildingDetailsActivity extends AppCompatActivity {
             BuildingLocation location = locations.get(i);
             if(i==0){
                 streets = location.getStreet();
-                streetNums = String.valueOf(location.getStreetNumber()+location.getStreetNumberChar());
+                streetNums = String.valueOf(location.getStreetNumber()+location.getStreetChar());
                 cadastralParticles = location.getCadastralParticle();
             }else{
                 boolean streetExists = false, numExists = false, cadastralExists =false;
@@ -191,7 +191,7 @@ public class BuildingDetailsActivity extends AppCompatActivity {
                     if (location.getStreet().equals(existingLoc.getStreet())) {
                         streetExists=true;
                     }
-                    if(String.valueOf(location.getStreetNumber()+location.getStreetNumberChar()).equals(String.valueOf(existingLoc.getStreetNumber()+existingLoc.getStreetNumberChar()))){
+                    if(String.valueOf(location.getStreetNumber()+location.getStreetChar()).equals(String.valueOf(existingLoc.getStreetNumber()+existingLoc.getStreetChar()))){
                         numExists = true;
                     }
                     if(location.getCadastralParticle().equals(existingLoc.getCadastralParticle())){
@@ -202,7 +202,7 @@ public class BuildingDetailsActivity extends AppCompatActivity {
                     streets+=", "+location.getStreet();
                 }
                 if(!numExists){
-                    streetNums += ", "+location.getStreetNumber()+location.getStreetNumberChar();
+                    streetNums += ", "+location.getStreetNumber()+location.getStreetChar();
                 }
                 if(!cadastralExists){
                     cadastralParticles+=", "+location.getCadastralParticle();
