@@ -1,6 +1,7 @@
 package com.kstefancic.nekretnineinfo.buildingdata;
 
 
+import android.content.ContextWrapper;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,6 +24,7 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity;
 import com.kstefancic.nekretnineinfo.R;
 import com.kstefancic.nekretnineinfo.api.model.Building;
 import com.kstefancic.nekretnineinfo.api.model.localDBdto.LocalImage;
@@ -127,8 +129,8 @@ public class PicturesFragment extends Fragment{
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            Uri finalUri = getImageUri(getActivity().getApplicationContext(),imageBitmap);
-            String path = getRealPathFromUri(finalUri);
+            String path=saveThumbnailToInternalStorage(imageBitmap);
+            Log.i("CAMERA IMAGE",path);
             addImageToList(imageBitmap, path);
             pictureGridViewAdapter.notifyDataSetChanged();
         }
@@ -146,6 +148,35 @@ public class PicturesFragment extends Fragment{
             pictureGridViewAdapter.notifyDataSetChanged();
 
         }
+    }
+
+    private String saveThumbnailToInternalStorage(Bitmap imageBitmap) {
+        ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+        // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        // Create imageDir
+        File mypath=new File(directory,getFileName()+".jpg");
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return mypath.getAbsolutePath();
+    }
+
+    private String getFileName() {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        return String.valueOf("building_" + timeStamp);
     }
 
     private Uri getImageUri(Context context, Bitmap imageBitmap) {

@@ -2,7 +2,6 @@ package com.kstefancic.nekretnineinfo.views;
 
 import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -10,11 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.kstefancic.nekretnineinfo.R;
 import com.kstefancic.nekretnineinfo.api.model.localDBdto.LocalImage;
-import com.squareup.picasso.Picasso;
+import com.kstefancic.nekretnineinfo.helper.DBHelper;
 
 import java.util.ArrayList;
 
@@ -37,7 +37,7 @@ public class PictureGridViewAdapter extends ArrayAdapter {
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public View getView(final int position, @Nullable final View convertView, @NonNull ViewGroup parent) {
         View row = convertView;
         ViewHolder holder = null;
 
@@ -45,15 +45,24 @@ public class PictureGridViewAdapter extends ArrayAdapter {
             LayoutInflater inflater = ((Activity) context).getLayoutInflater();
             row = inflater.inflate(resourceId, parent, false);
             holder = new ViewHolder();
-            holder.ivPicture = row.findViewById(R.id.picture_item_ivImage);
+            holder.ivPicture = row.findViewById(R.id.pictureItem_ivImage);
+            holder.ibClear = row.findViewById(R.id.pictureItem_ibDelete);
             row.setTag(holder);
         }else{
             holder = (ViewHolder) row.getTag();
         }
 
-        LocalImage localImage= (LocalImage) images.get(position);
+        final LocalImage localImage= (LocalImage) images.get(position);
         Log.i("LOCAL IMAGE", localImage.toString());
         holder.ivPicture.setImageBitmap(localImage.getImage());
+        holder.ibClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DBHelper.getInstance(context).deleteImageById(localImage.getId());
+                images.remove(position);
+                notifyDataSetChanged();
+            }
+        });
 
         /*Uri uriItem = (Uri) imageUris.get(position);
         Picasso.with(context)
@@ -67,5 +76,6 @@ public class PictureGridViewAdapter extends ArrayAdapter {
 
     static class ViewHolder{
         ImageView ivPicture;
+        ImageButton ibClear;
     }
 }

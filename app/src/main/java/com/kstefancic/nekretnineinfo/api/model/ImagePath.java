@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class ImagePath implements Serializable {
 
 
-    private int id;
+    private long id;
 
     private String path;
     private String title;
@@ -34,11 +34,11 @@ public class ImagePath implements Serializable {
         this.title = title;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

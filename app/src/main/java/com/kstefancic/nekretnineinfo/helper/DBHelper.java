@@ -132,7 +132,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_IMAGES =
             "CREATE TABLE " + Schema.TABLE_IMAGES + " (" +
-                    Schema.IMAGE_ID +" INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    Schema.IMAGE_ID +" BIGINT PRIMARY KEY," +
                     Schema.IMAGE_PATH+" VARCHAR(255) NOT NULL,"+
                     Schema.IMAGE_TITLE+" VARCHAR(255) NOT NULL,"+
                     Schema.IMAGE+" BLOB NOT NULL,"+
@@ -849,7 +849,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 building.setSynchronizedWithDatabase(isSynchronized);
                 building.setId(id);
                 building.setLocations(getBuildingLocationsByBuildingId(id));
-                Log.d("GET ALL BUILD DB",building.toString());
                 buildings.add(building);
             }while(buildingCursor.moveToNext());
         }
@@ -965,8 +964,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         for(BuildingLocation buildingLocation : buildingLocations){
             ContentValues contentValues = new ContentValues();
-            Random random = new Random();
-            contentValues.put(Schema.LOCATION_ID,random.nextInt());
+            contentValues.put(Schema.LOCATION_ID,getLocationMaxId());
             contentValues.put(Schema.STREET,buildingLocation.getStreet());
             contentValues.put(Schema.STREET_NUM,buildingLocation.getStreetNumber());
             contentValues.put(Schema.STREET_CHAR, String.valueOf(buildingLocation.getStreetChar()));
@@ -1016,6 +1014,20 @@ public class DBHelper extends SQLiteOpenHelper {
         return locations;
     }
 
+    public long getLocationMaxId(){
+        String query="SELECT "+ Schema.LOCATION_ID+ " FROM "+ Schema.TABLE_BUILDING_LOCATION+
+                " ORDER BY " + Schema.LOCATION_ID+ " DESC LIMIT 1";
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor idCursor = wdb.rawQuery(query,null);
+        long id=0;
+        if(idCursor.moveToFirst()){
+            id = idCursor.getLong(0);
+        }
+        idCursor.close();
+        wdb.close();
+        return id;
+    }
+
     public void  deleteLocationsByBuildingId(long buildingId){
         SQLiteDatabase wdb = this.getWritableDatabase();
         wdb.delete(Schema.TABLE_BUILDING_LOCATION,Schema.LOC_BUILDING_ID+"="+buildingId,null);
@@ -1031,10 +1043,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void insertImage(String imagePath, String title, byte[] imageBytes, long buildingId){
         ContentValues contentValues = new ContentValues();
-        Random random = new Random();
-        int id = random.nextInt();
-        Log.i("DB IMAGE INSERT", String.valueOf(buildingId)+" "+id+"  "+imagePath);
-        contentValues.put(Schema.IMAGE_ID,id);
+        contentValues.put(Schema.IMAGE_ID,getImageMaxId());
         contentValues.put(Schema.IMAGE_TITLE, title);
         contentValues.put(Schema.IMAGE_PATH,imagePath);
         contentValues.put(Schema.IMAGE,imageBytes);
@@ -1042,6 +1051,20 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase wdb = this.getWritableDatabase();
         wdb.insert(Schema.TABLE_IMAGES,null, contentValues);
         wdb.close();
+    }
+
+    public long getImageMaxId(){
+        String query="SELECT "+ Schema.IMAGE_ID+ " FROM "+ Schema.TABLE_IMAGES+
+                " ORDER BY " + Schema.IMAGE_ID+ " DESC LIMIT 1";
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor idCursor = wdb.rawQuery(query,null);
+        long id=0;
+        if(idCursor.moveToFirst()){
+            id = idCursor.getLong(0);
+        }
+        idCursor.close();
+        wdb.close();
+        return id;
     }
 
     public List<LocalImage> getImagesByBuildingId(long buildingId){
@@ -1082,6 +1105,12 @@ public class DBHelper extends SQLiteOpenHelper {
         wdb.close();
     }
 
+    public void deleteImageById(int id) {
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        wdb.delete(Schema.TABLE_IMAGES,Schema.IMAGE_ID+"="+id,null);
+        wdb.close();
+    }
+
     public void deleteBuildings() {
 
         SQLiteDatabase wdb = this.getWritableDatabase();
@@ -1091,6 +1120,8 @@ public class DBHelper extends SQLiteOpenHelper {
         wdb.close();
 
     }
+
+
 
 
     public static class Schema{
