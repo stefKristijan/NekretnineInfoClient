@@ -961,10 +961,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void insertBuildingLocations(List<BuildingLocation> buildingLocations, long buildingId){
         SQLiteDatabase wdb = this.getWritableDatabase();
-
         for(BuildingLocation buildingLocation : buildingLocations){
             ContentValues contentValues = new ContentValues();
-            contentValues.put(Schema.LOCATION_ID,getLocationMaxId());
+            contentValues.put(Schema.LOCATION_ID,getLocationMaxId(wdb)+1);
             contentValues.put(Schema.STREET,buildingLocation.getStreet());
             contentValues.put(Schema.STREET_NUM,buildingLocation.getStreetNumber());
             contentValues.put(Schema.STREET_CHAR, String.valueOf(buildingLocation.getStreetChar()));
@@ -973,8 +972,8 @@ public class DBHelper extends SQLiteOpenHelper {
             contentValues.put(Schema.STATE,buildingLocation.getState());
             contentValues.put(Schema.IP_BUILDING_ID,buildingId);
             wdb.insert(Schema.TABLE_BUILDING_LOCATION,null, contentValues);
-
         }
+
         wdb.close();
     }
 
@@ -1014,17 +1013,15 @@ public class DBHelper extends SQLiteOpenHelper {
         return locations;
     }
 
-    public long getLocationMaxId(){
+    public long getLocationMaxId(SQLiteDatabase wdb){
         String query="SELECT "+ Schema.LOCATION_ID+ " FROM "+ Schema.TABLE_BUILDING_LOCATION+
                 " ORDER BY " + Schema.LOCATION_ID+ " DESC LIMIT 1";
-        SQLiteDatabase wdb = this.getWritableDatabase();
         Cursor idCursor = wdb.rawQuery(query,null);
         long id=0;
         if(idCursor.moveToFirst()){
             id = idCursor.getLong(0);
         }
         idCursor.close();
-        wdb.close();
         return id;
     }
 
@@ -1043,7 +1040,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void insertImage(String imagePath, String title, byte[] imageBytes, long buildingId){
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Schema.IMAGE_ID,getImageMaxId());
+        contentValues.put(Schema.IMAGE_ID,getImageMaxId()+1);
         contentValues.put(Schema.IMAGE_TITLE, title);
         contentValues.put(Schema.IMAGE_PATH,imagePath);
         contentValues.put(Schema.IMAGE,imageBytes);

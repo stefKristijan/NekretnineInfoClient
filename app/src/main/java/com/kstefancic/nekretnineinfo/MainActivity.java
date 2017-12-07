@@ -1,9 +1,12 @@
 package com.kstefancic.nekretnineinfo;
 
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -12,6 +15,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -55,6 +59,7 @@ import retrofit2.Response;
 
 import static com.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.FIRST_LOGIN;
 import static com.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity.USER;
+import static com.kstefancic.nekretnineinfo.helper.GetDataService.FINISH;
 import static com.kstefancic.nekretnineinfo.helper.RetrofitSingleton.BASE_URL;
 import static com.kstefancic.nekretnineinfo.views.BuildingAdapter.UPDATE_BUILDING_RQST;
 
@@ -64,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String BUILDING_DATA = "building";
     private static final int LOGIN_RQST = 2;
     private User mUser;
+    private ProgressDialog progressDialog;
     private SessionManager mSessionManager;
     private RecyclerView recyclerView;
     private ImageButton ibSynchronize, ibLogout;
@@ -82,13 +88,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if(getIntent().getExtras().getBoolean(FIRST_LOGIN)){
             Log.d("GET BUILDINGS", "getting buildings from server");
+            showDialog();
 
-            getBuildingsFromServer();
         }else{
             Log.d("GET BUILDINGS", "getting buildings from local database");
             getBuildingsFromLocalDatabase();
         }
         //DBHelper.getInstance(this).deleteBuildings();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(mMessageReceiver,
+                        new IntentFilter(FINISH));
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getBooleanExtra(FINISH,true)){
+                getBuildingsFromLocalDatabase();
+                hideDialog();
+            }
+        }
+    };
+
+    @Override
+    protected void onPause() {
+        // Unregister since the activity is not visible
+        LocalBroadcastManager.getInstance(this)
+                .unregisterReceiver(mMessageReceiver);
+        super.onPause();
     }
 
     @Override
@@ -131,6 +163,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void showDialog(){
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Dohvaćanje podataka sa servera");
+        progressDialog.setMessage("Ovo bi moglo potrajati nekoliko trenutaka, molimo pričekajte...");
+        progressDialog.setIndeterminate(true);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+    private void hideDialog(){
+        progressDialog.dismiss();
+    }
+
     private void setUpActivity() {
         this.ibLogout = findViewById(R.id.main_ibLogout);
         this.ibLogout.setOnClickListener(this);
@@ -150,112 +194,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setRecyclerView(buildings);
     }
 
-    private void getBuildingsFromServer() {
-        Log.i("LOGIN", "getting buildings from serer");
-        Call<List<Building>> call = RetrofitSingleton.getBuildingService().getBuildings(setAuthenticationHeader(),mUser.getUsername());
 
-        call.enqueue(new Callback<List<Building>>() {
-          @Override
-          public void onResponse(Call<List<Building>> call, Response<List<Building>> response) {
-              if(response.isSuccessful()){
-                  Log.d("ON BUILDING RESPONSE", response.body().toString());
-                  buildings = response.body();
-                  for(Building building : buildings){
-                      DBHelper.getInstance(getApplicationContext()).insertBuilding(building);
-                      insertPicturesIntoDatabase(building);
-                  }
-
-              }else {
-                  Log.e("ON BUILDING RESPONSE", response.raw().toString());
-              }
-
-          }
-
-          @Override
-          public void onFailure(Call<List<Building>> call, Throwable t) {
-              Toast.makeText(getApplicationContext(),t.toString(),Toast.LENGTH_LONG).show();
-              Log.e("REAL_ESTATE",t.toString());
-          }
-        });
-    }
-
-    private void insertPicturesIntoDatabase(final Building building) {
-        for(final ImagePath imagePath : building.getImagePaths()){
-            Picasso.with(this)
-                    .load(BASE_URL+"/"+imagePath.getPath())
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG,100,outputStream);
-                            getBuildingsFromLocalDatabase();
-                            //Uri finalUri = getImageUri(getApplicationContext(),bitmap,imagePath);
-                            String path = saveThumbnailToInternalStorage(bitmap,imagePath.getTitle());
-                            Log.d("INSERTING IMAGE",imagePath.getPath()+"   "+path);
-                            DBHelper.getInstance(getApplicationContext()).insertImage(path,imagePath.getTitle(),outputStream.toByteArray(),building.getId());
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-                            Log.d("FAIL INSERTING IMAGE",imagePath.getPath());
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            Log.d("PREPARE INSERTING IMAGE",imagePath.getPath());
-                        }
-                    });
-        }
-    }
-
-    private String saveThumbnailToInternalStorage(Bitmap imageBitmap, String fileName) {
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
-        // path to /data/data/yourapp/app_data/imageDir
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-        // Create imageDir
-        File mypath=new File(directory,fileName);
-
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(mypath);
-            // Use the compress method on the BitMap object to write image to the OutputStream
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return mypath.getAbsolutePath();
-    }
-
-    public String getRealPathFromUri(Uri contentUri) {
-        Cursor cursor = null;
-        try {
-            String[] proj = {MediaStore.Images.Media.DATA};
-            cursor = getContentResolver().query(contentUri, proj, null,
-                    null, null);
-            int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-    }
-
-    private Uri getImageUri(Context context, Bitmap imageBitmap, ImagePath imagePath) {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        imageBitmap.compress(Bitmap.CompressFormat.JPEG,100,bytes);
-        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), imageBitmap, imagePath.getTitle(),null);
-        return Uri.parse(path);
-    }
 
     private void setRecyclerView(List<Building> buildings) {
 

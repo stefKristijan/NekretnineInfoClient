@@ -30,6 +30,7 @@ import com.kstefancic.nekretnineinfo.api.model.User;
 import com.kstefancic.nekretnineinfo.api.service.MultiChoiceDataService;
 import com.kstefancic.nekretnineinfo.api.service.UserClient;
 import com.kstefancic.nekretnineinfo.helper.DBHelper;
+import com.kstefancic.nekretnineinfo.helper.GetDataService;
 import com.kstefancic.nekretnineinfo.helper.RetrofitSingleton;
 import com.kstefancic.nekretnineinfo.helper.SessionManager;
 
@@ -127,8 +128,8 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
                     mUser = response.body();
                     DBHelper.getInstance(getApplicationContext()).insertUser(mUser);
                     mSessionManager.setLogin(true,password);
-                    getMultiChoiceDataAndSaveToLocalDatabase();
-
+                    startDownloadDataService();
+                    startMainActivity(true);
                 }else {
                    showErrorResponse(response);
                 }
@@ -142,101 +143,14 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
         });
     }
 
+    private void startDownloadDataService() {
+        Intent serviceIntent = new Intent(this,GetDataService.class);
+        serviceIntent.putExtra(USER,mUser);
+        startService(serviceIntent);
+    }
+
     private void showDefaultError() {
         Toast.makeText(getApplicationContext(),DEFAULT_ERROR,Toast.LENGTH_SHORT).show();
-    }
-
-    private void getMultiChoiceDataAndSaveToLocalDatabase() {
-
-        String base = mUser.getUsername()+":"+mSessionManager.getPassword();
-        String authHeader = "Basic "+ Base64.encodeToString(base.getBytes(), Base64.NO_WRAP);
-
-        final Call<MultiChoiceDataResponse> getMultiChoiceCall = RetrofitSingleton.getMultiChoiceDataService().getMultiChoiceData(authHeader);
-        getMultiChoiceCall.enqueue(new Callback<MultiChoiceDataResponse>() {
-            @Override
-            public void onResponse(Call<MultiChoiceDataResponse> call, Response<MultiChoiceDataResponse> response) {
-                if (response.isSuccessful()){
-                    insertPositionsInLocalDatabase(response.body().getPosition());
-                    insertMaterialsInLocalDatabase(response.body().getMaterial());
-                    insertConstructionSystemsInLocalDatabase(response.body().getConstructionSystem());
-                    insertPurposesInLocalDatabase(response.body().getPurpose());
-                    insertCeilingMaterialsInLocalDatabase(response.body().getCeilingMaterial());
-                    insertSectorsInLocalDatabase(response.body().getSectors());
-                    insertRoofsInLocalDatabase(response.body().getRoofs());
-                    getMultichoiceAddressDataAndSaveToLocalDatabase();
-                }else{
-                    Log.e("MULTICHOICE DATA RESP", response.body().toString());
-                    showErrorResponse(response);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MultiChoiceDataResponse> call, Throwable t) {
-                Log.e("MULTICHOICE DATA RESP", t.toString());
-                showDefaultError();
-            }
-        });
-    }
-
-
-
-    private void getMultichoiceAddressDataAndSaveToLocalDatabase() {
-        String base = mUser.getUsername()+":"+mSessionManager.getPassword();
-        String authHeader = "Basic "+ Base64.encodeToString(base.getBytes(), Base64.NO_WRAP);
-
-        final Call<MultichoiceLocationDataResponse> getMultiChoiceLocationCall = RetrofitSingleton.getMultiChoiceDataService().getMultichoiceLocationData(authHeader);
-        getMultiChoiceLocationCall.enqueue(new Callback<MultichoiceLocationDataResponse>() {
-            @Override
-            public void onResponse(Call<MultichoiceLocationDataResponse> call, Response<MultichoiceLocationDataResponse> response) {
-                if (response.isSuccessful()){
-                   insertStatesInLocalDatabase(response.body().getStates());
-                   insertCitiesInLocalDatabase(response.body().getCities());
-                   insertStreetsInLocalDatabase(response.body().getStreets());
-                    startMainActivity(true);
-                }else{
-                    Log.e("LOCATION DATA RESP", response.body().toString());
-                    showErrorResponse(response);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MultichoiceLocationDataResponse> call, Throwable t) {
-                Log.e("MULTICHOICE DATA RESP", t.toString());
-                showDefaultError();
-            }
-        });
-    }
-
-    private void insertRoofsInLocalDatabase(List<Roof> roofs) {
-        for(Roof roof : roofs){
-            DBHelper.getInstance(this).insertRoof(roof);
-        }
-    }
-
-
-    private void insertStatesInLocalDatabase(List<State> states) {
-        for (State state : states){
-            DBHelper.getInstance(this).insertState(state);
-        }
-    }
-
-    private void insertCitiesInLocalDatabase(List<City> cities) {
-        for (City city : cities){
-            DBHelper.getInstance(this).insertCity(city);
-        }
-    }
-
-    private void insertStreetsInLocalDatabase(List<Street> streets) {
-        for (Street street : streets){
-            DBHelper.getInstance(this).insertStreet(street);
-        }
-    }
-
-    private void insertCeilingMaterialsInLocalDatabase(List<CeilingMaterial> ceilingMaterials) {
-
-        for(CeilingMaterial ceilingMaterial : ceilingMaterials) {
-            DBHelper.getInstance(this).insertCeilingMaterial(ceilingMaterial);
-        }
     }
 
     private void showErrorResponse(Response<?> response) {
@@ -244,35 +158,6 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
         Toast.makeText(getApplicationContext(),exceptionResponse.getMessage(),Toast.LENGTH_SHORT).show();
     }
 
-    private void insertPurposesInLocalDatabase(List<Purpose> purposes) {
-        for(Purpose purpose : purposes){
-            DBHelper.getInstance(this).insertPurpose(purpose);
-        }
-    }
-
-    private void insertConstructionSystemsInLocalDatabase(List<ConstructionSystem> constructionSystems) {
-        for(ConstructionSystem constructionSystem : constructionSystems){
-            DBHelper.getInstance(this).insertConstructSys(constructionSystem);
-        }
-    }
-
-    private void insertMaterialsInLocalDatabase(List<Material> materials) {
-        for(Material material : materials){
-            DBHelper.getInstance(this).insertMaterial(material);
-        }
-    }
-
-    private void insertPositionsInLocalDatabase(List<Position> positions) {
-        for(Position position : positions){
-            DBHelper.getInstance(this).insertPosition(position);
-        }
-    }
-
-    private void insertSectorsInLocalDatabase(List<Sector> sectors) {
-        for(Sector sector : sectors){
-            DBHelper.getInstance(this).insertSector(sector);
-        }
-    }
 
     private void startMainActivity(boolean firstLogin) {
         Intent mainIntent = new Intent(LoginActivity.this,MainActivity.class);

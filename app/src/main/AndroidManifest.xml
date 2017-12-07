@@ -31,6 +31,8 @@
             android:theme="@style/AppTheme" />
         <activity android:name=".BuildingDetailsActivity"
             android:theme="@style/AppTheme"/>
+
+        <service android:name=".helper.GetDataService"/>
     </application>
 
 </manifest>
