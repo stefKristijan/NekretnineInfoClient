@@ -17,7 +17,7 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.kstefancic.nekretnineinfo.api.model.Building;
@@ -60,16 +60,12 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
      */
     private ViewPager mViewPager;
     private TabLayout tabLayout;
-    private ImageButton ibCancel, ibSave;
+    private Button btnCancel, btnSave;
     private int[] tabIcons={
-          /*  R.drawable.ic_business_black_48dp,
-            R.drawable.ic_place_black_48dp,
-            R.drawable.ic_straighten_black_48dp,
-            R.drawable.ic_photo_library_black_48dp*/
-            R.mipmap.building,
-            R.mipmap.location,
-            R.mipmap.dimension,
-            R.mipmap.gallery
+            R.drawable.ic_business_white_24dp,
+            R.drawable.ic_place_white_24dp,
+            R.drawable.ic_straighten_white_24dp,
+            R.drawable.ic_photo_library_white_24dp
     };
 
     private Building mBuilding;
@@ -119,10 +115,10 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void setUpButtons() {
-        this.ibCancel = findViewById(R.id.main_ibCancel);
-        this.ibCancel.setOnClickListener(this);
-        this.ibSave = findViewById(R.id.main_ibSave);
-        this.ibSave.setOnClickListener(this);
+        this.btnCancel = findViewById(R.id.main_btnCancel);
+        this.btnCancel.setOnClickListener(this);
+        this.btnSave = findViewById(R.id.main_btnSave);
+        this.btnSave.setOnClickListener(this);
     }
 
 
@@ -211,7 +207,7 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View view) {
         switch(view.getId()){
 
-            case R.id.main_ibCancel:
+            case R.id.main_btnCancel:
                 Intent returnIntent = new Intent();
                 //returnIntent.putExtra(BUILDING_DATA, mBuilding);
                 setResult(RESULT_CANCELED, returnIntent);
@@ -219,7 +215,7 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
                 finish();
                 break;
 
-            case R.id.main_ibSave:
+            case R.id.main_btnSave:
                 if(dataValidationCheck()){
                     saveImages();
                     mBuilding.setSynchronizedWithDatabase(false);

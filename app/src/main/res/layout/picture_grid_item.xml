@@ -2,29 +2,31 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <ImageView
         android:id="@+id/pictureItem_ivImage"
-        android:layout_width="100dp"
-        android:layout_height="103dp"
+        android:layout_width="99dp"
+        android:layout_height="105dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/pictureItem_ibDelete"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_gravity="end"
         android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
-        android:background="@color/redOpacity"
-        android:padding="5dp"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:background="@drawable/delete_btn_background"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_clear_white_24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

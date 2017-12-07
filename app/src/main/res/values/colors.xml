@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#60AAAAAA</color>
-    <color name="colorPrimaryDark">#80888888</color>
-    <color name="colorAccent">#A0FF4081</color>
+    <color name="colorPrimary">#A0F5F6F6</color>
+    <color name="colorPrimaryDark">#A0C5C6C6</color>
+    <color name="colorAccent">#2CA489</color>
 
     <color name="colorWhite">#FFF</color>
-    <color name="btnCenterColor">#0B55DF</color>
-    <color name="btnStartColor">#0097F6</color>
-    <color name="btnEndColor">#0097F6</color>
-    <color name="btnEditCenterColor">#FC7C00</color>
-    <color name="btnEditStartColor">#FC9900</color>
-    <color name="btnEditEndColor">#FC9900</color>
-    <color name="btnDeleteCenterColor">#AF0000</color>
-    <color name="btnDeleteStartColor">#CD0000</color>
-    <color name="btnDeleteEndColor">#FF0000</color>
+    <color name="btnCenterColor">#049372</color>
+    <color name="btnStartColor">#04A07C</color>
+    <color name="btnEndColor">#03795E</color>
+    <color name="btnEditCenterColor">#DFAD11</color>
+    <color name="btnEditStartColor">#ECB712</color>
+    <color name="btnEditEndColor">#C5990F</color>
+    <color name="btnDeleteCenterColor">#C61932</color>
+    <color name="btnDeleteStartColor">#D31B35</color>
+    <color name="btnDeleteEndColor">#AC162C</color>
     <color name="btnAcceptCenterColor">#36C50A</color>
     <color name="btnAcceptStartColor">#3ADE0A</color>
     <color name="btnAcceptEndColor">#3ADE0A</color>
@@ -23,9 +23,10 @@
     <color name="whiteOpacity">#A0FFFFFF</color>
     <color name="grayOpacity">#50DDDDDD</color>
     <color name="transparent">#00FFFFFF</color>
-    <color name="lightRed">#FF0000</color>
-    <color name="lightRedOpacity">#70FF0000</color>
-    <color name="redOpacity">#E0DD0000</color>
-    <color name="lightGreenOpacity">#7000F000</color>
-    <color name="greenOpacity">#E000F000</color>
+    <color name="lightRed">#C61932</color>
+    <color name="lightRedOpacity">#70D31B35</color>
+    <color name="redOpacity">#E0AC162C</color>
+    <color name="darkGreenOpacity">#70049372</color>
+    <color name="greenOpacity">#E004A07C</color>
+    <color name="textColor">#04A07C</color>
 </resources>

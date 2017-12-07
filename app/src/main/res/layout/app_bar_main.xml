@@ -8,20 +8,35 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp">
+        android:background="@color/grayOpacity"
+        android:layout_height="48dp">
 
-        <ImageButton
+        <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/main_ibSynchronize"
-            android:src="@android:drawable/ic_popup_sync"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_height="30dp"
+            android:textSize="10sp"
+            android:background="@color/colorAccent"
+            android:paddingEnd="5dp"
+            android:drawableLeft="@drawable/ic_sync_white_24dp"
+            android:id="@+id/main_btnSynchronize"
+            android:text="@string/btnSynchronize"
+            android:textColor="@android:color/white"
             />
 
-        <ImageButton
+        <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/main_ibLogout"
-            android:src="@android:drawable/ic_menu_myplaces"
+            android:layout_height="30dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:paddingStart="5dp"
+            android:id="@+id/main_btnLogout"
+            android:background="@color/btnDeleteCenterColor"
+            android:textSize="10sp"
+            android:text="@string/btnLogout"
+            android:textColor="@android:color/white"
+            android:drawableLeft="@drawable/ic_exit_to_app_white_24dp"
             android:layout_alignParentEnd="true"/>
 
     </RelativeLayout>
@@ -35,8 +50,7 @@
         android:layout_gravity="bottom|right"
         android:layout_margin="10dp"
         android:alpha="0.9"
-        android:src="@android:drawable/ic_menu_add"
-        app:backgroundTint="@color/colorPrimary"
+        android:src="@drawable/ic_add_white_24dp"
         />
 
 </android.support.design.widget.CoordinatorLayout>

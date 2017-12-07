@@ -2,6 +2,7 @@ package com.kstefancic.nekretnineinfo.buildingdata;
 
 
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,8 +54,7 @@ public class PicturesFragment extends Fragment{
 
     private static final int REQUEST_IMAGE_CAPTURE = 20;
     private static final int GALLERY_REQUEST = 10;
-    private static final String CAPTURE_ERROR = "Dogodila se pogreška pri stvaranju slike";
-    private Button btnFinish, btnBrowse;
+    private Button btnFinish;
     private GridView gvPictures;
     private PictureGridViewAdapter pictureGridViewAdapter;
     private PictureChoosen pictureChoosenListener;
@@ -87,21 +88,7 @@ public class PicturesFragment extends Fragment{
         this.gvPictures = layout.findViewById(R.id.frPictures_gridView);
         pictureGridViewAdapter = new PictureGridViewAdapter(getActivity(), R.layout.picture_grid_item, localImages);
         gvPictures.setAdapter(pictureGridViewAdapter);
-        this.btnBrowse = layout.findViewById(R.id.frPictures_btnBrowse);
-        this.btnBrowse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                File pictureDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-                String picturesDirectoryPath = pictureDirectory.getPath();
 
-                Uri data = Uri.parse(picturesDirectoryPath);
-
-                intent.setDataAndType(data, "image/*");
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                startActivityForResult(intent, GALLERY_REQUEST);
-            }
-        });
         this.btnFinish = layout.findViewById(R.id.frPictures_btnFinish);
         this.btnFinish.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,14 +100,52 @@ public class PicturesFragment extends Fragment{
         this.fabCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                }
+                final CharSequence[] items = {"Otvori galeriju", "Koristi kameru", "Odustani"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Odaberite radnju");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        switch(item){
+                            case 0:
+                                openGallery();
+                                break;
+
+                            case 1:
+                                startCamera();
+                                break;
+
+                        }
+                        // Do something with the selection
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
+
             }
         });
 
 
+    }
+
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        File pictureDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        String picturesDirectoryPath = pictureDirectory.getPath();
+
+        Uri data = Uri.parse(picturesDirectoryPath);
+
+        intent.setDataAndType(data, "image/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        startActivityForResult(intent, GALLERY_REQUEST);
+    }
+
+
+    private void startCamera(){
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
     }
 
     @Override

@@ -72,6 +72,7 @@
             android:id="@+id/registerFr_etFirstName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/textColor"
             android:hint="@string/etFirstName"
             android:background="@drawable/edit_text"
             android:padding="5dp"/>
@@ -93,6 +94,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/edit_text"
+            android:textColor="@color/textColor"
             android:hint="@string/etLastName"
             android:padding="5dp" />
     </android.support.design.widget.TextInputLayout>
@@ -113,6 +115,7 @@
             android:id="@+id/registerFr_etUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/textColor"
             android:background="@drawable/edit_text"
             android:hint="@string/etUsernameHint"
             android:padding="5dp" />
@@ -136,6 +139,7 @@
             android:id="@+id/registerFr_etPassword"
             android:layout_width="match_parent"
             android:layout_height="35dp"
+            android:textColor="@color/textColor"
             android:background="@drawable/edit_text"
             android:hint="@string/etPasswordHint"
             android:inputType="textPassword"
@@ -159,6 +163,7 @@
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:background="@drawable/edit_text"
+            android:textColor="@color/textColor"
             android:hint="@string/etConfirmPass"
             android:inputType="textPassword"
             android:padding="5dp" />
@@ -180,6 +185,7 @@
             android:id="@+id/registerFr_etEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/textColor"
             android:background="@drawable/edit_text"
             android:hint="@string/etEmailHint"
             android:inputType="textEmailAddress"

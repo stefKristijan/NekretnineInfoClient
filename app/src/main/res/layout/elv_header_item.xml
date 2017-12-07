@@ -10,7 +10,7 @@
         android:textColor="@color/colorWhite"
         android:textStyle="bold"
         android:id="@+id/tvElvHeaderItem"
-        android:background="@android:color/darker_gray"
+        android:background="@color/colorAccent"
         android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"/>
 
 </LinearLayout>

@@ -16,7 +16,7 @@
     <string name="tvSynchronized">Sinkronizirano</string>
 
 
-    <string name="tvAddressInfo"><u>Lokacija</u></string>
+    <string name="tvAddressInfo">Lokacija</string>
     <string name="etStreetHint">Ulica</string>
     <string name="etStreetCharHint">A,B...</string>
     <string name="etStreetNumHint">Broj</string>
@@ -73,4 +73,10 @@
     <string name="tvNumberOfFloors">Broj katova:</string>
     <string name="tvFullHeight">Ukupna visina:</string>
     <string name="tvCityAndState">Grad i županija:</string>
+    <string name="tvBuildings">Zgrade</string>
+    <string name="emptyString">____________________________</string>
+    <string name="btnSynchronize">Sinkronizacija</string>
+    <string name="btnLogout">Odjava</string>
+    <string name="btnCancel">Odustani</string>
+    <string name="btnSave">Spremi</string>
 </resources>

@@ -1,15 +1,18 @@
 package com.kstefancic.nekretnineinfo.buildingdata;
 
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -139,6 +142,12 @@ public class AddressInformationFragment extends Fragment {
                         buildingLocations.add(buildingLocation);
                         Log.i("LOCATION", buildingLocation.toString() + " " + locationListItems.size());
                         listViewAdapter.notifyDataSetChanged();
+                        etCadastralParticle.setText("");
+                        etStreetChar.setText("");
+                        etStreetNum.setText("");
+                        actvStreet.setText("");
+                        actvCity.setText("");
+                        actvState.setText("");
                     }
                 }
             }
@@ -149,11 +158,52 @@ public class AddressInformationFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Log.i("ADDRESS","onInsert");
-                Position position = positions.get((int) spPosition.getSelectedItemId());
-                addressInformationInsertedListener.onAddressInformationInserted(buildingLocations,position);
+                if(buildingLocations.size()>0) {
+                    Position position = positions.get((int) spPosition.getSelectedItemId());
+                    addressInformationInsertedListener.onAddressInformationInserted(buildingLocations, position);
+                }else{
+                    Toast.makeText(getActivity(),"Morate dodati barem jednu lokaciju", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
+        this.lvLocations.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                dialogBuilder.setTitle("Brisanje")
+                        .setMessage("Jeste li sigurni da želite obrisati ovu lokaciju?")
+                        .setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .setPositiveButton("Obriši", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                buildingLocations.remove(i);
+                                locationListItems.remove(i);
+                                listViewAdapter.notifyDataSetChanged();
+                            }
+                        })
+                        .show();
+                return false;
+            }
+        });
+        this.lvLocations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                BuildingLocation buildingLocation = buildingLocations.get(i);
+                etCadastralParticle.setText(buildingLocation.getCadastralParticle());
+                if(buildingLocation.getStreetChar()!='\0')
+                    etStreetChar.setText(buildingLocation.getStreetChar());
+                etStreetNum.setText(String.valueOf(buildingLocation.getStreetNumber()));
+                actvCity.setText(buildingLocation.getCity());
+                actvState.setText(buildingLocation.getState());
+                actvStreet.setText(buildingLocation.getStreet());
+            }
+        });
     }
 
     private boolean locationExists(BuildingLocation buildingLocation) {

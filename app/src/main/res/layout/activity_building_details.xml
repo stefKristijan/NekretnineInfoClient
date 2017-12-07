@@ -14,7 +14,7 @@
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@color/colorPrimary">
+            android:background="@color/grayOpacity">
 
         <ImageButton
             android:id="@+id/buildingDetailsActvty_ibBack"
@@ -97,6 +97,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/cv_tv_not_sync"
+                android:paddingStart="10dp"
                 android:padding="5dp"
                 android:textColor="@color/colorWhite"
                 app:layout_constraintBottom_toBottomOf="@+id/buildingDetailsActvty_ivBuilding"
@@ -109,6 +110,7 @@
             android:id="@+id/buildingDetailsActvty_relativelayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/grayOpacity"
             android:layout_marginTop="240dp"
             android:layout_gravity="bottom">
 
@@ -123,6 +125,15 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="@android:color/black" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorAccent"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_below="@id/buildingDetailsActvty_tvAddressInfo"
+                />
+
             <TextView
                 android:id="@+id/buildingDetailsActvty_tvStreet"
                 android:layout_width="wrap_content"
@@ -131,11 +142,13 @@
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvStreet"
+                android:textColor="@android:color/black"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
 
             <TextView
                 android:id="@+id/buildingDetailsActvty_tvStreetItems"
                 android:layout_width="wrap_content"
+                android:textColor="@color/textColor"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/buildingDetailsActvty_tvAddressInfo"
                 android:layout_marginLeft="4dp"
@@ -148,6 +161,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/buildingDetailsActvty_tvStreet"
+                android:textColor="@android:color/black"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvStreetNumber"
@@ -157,6 +171,7 @@
                 android:id="@+id/buildingDetailsActvty_tvStreetNumItems"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/textColor"
                 android:layout_below="@id/buildingDetailsActvty_tvStreet"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
@@ -166,6 +181,7 @@
             <TextView
                 android:id="@+id/buildingDetailsActvty_tvCity"
                 android:layout_width="wrap_content"
+                android:textColor="@android:color/black"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/buildingDetailsActvty_tvStreetNumber"
                 android:layout_marginLeft="24dp"
@@ -180,6 +196,7 @@
                 android:layout_below="@id/buildingDetailsActvty_tvStreetNumber"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
+                android:textColor="@color/textColor"
                 android:layout_toEndOf="@id/buildingDetailsActvty_tvCity"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
 
@@ -187,6 +204,7 @@
                 android:id="@+id/tvState"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
                 android:layout_below="@id/buildingDetailsActvty_tvCity"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
@@ -199,12 +217,14 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/buildingDetailsActvty_tvCity"
                 android:layout_marginLeft="4dp"
+                android:textColor="@color/textColor"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvState"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
 
             <TextView
                 android:id="@+id/buildingDetailsActvty_tvCadastralParticle"
+                android:textColor="@android:color/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvPosition"
@@ -218,6 +238,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvPosition"
+                android:textColor="@color/textColor"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/buildingDetailsActvty_tvCadastralParticle"
@@ -228,6 +249,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvState"
+                android:textColor="@android:color/black"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvPosition"
@@ -238,6 +260,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvState"
+                android:textColor="@color/textColor"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvPosition"
@@ -254,10 +277,20 @@
                 android:textColor="@android:color/black"
                 android:layout_below="@id/buildingDetailsActvty_tvCadastralParticle"/>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorAccent"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_below="@id/buildingDetailsActvty_tvDetails"
+                />
+
             <TextView
                 android:id="@+id/tvYearOfBuild"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
                 android:layout_below="@id/buildingDetailsActvty_tvDetails"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
@@ -268,6 +301,7 @@
                 android:id="@+id/buildingDetailsActvty_tvYearOfBuild"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/textColor"
                 android:layout_below="@id/buildingDetailsActvty_tvDetails"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
@@ -279,6 +313,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvYearOfBuild"
+                android:textColor="@android:color/black"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvPurpose"
@@ -290,6 +325,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvYearOfBuild"
                 android:layout_marginLeft="4dp"
+                android:textColor="@color/textColor"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvPurpose"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -300,6 +336,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvPurpose"
+                android:textColor="@android:color/black"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvWallsMaterial"
@@ -310,6 +347,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvPurpose"
+                android:textColor="@color/textColor"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvMaterial"
@@ -319,6 +357,7 @@
                 android:id="@+id/tvCeiling"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
                 android:layout_below="@id/tvMaterial"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
@@ -331,6 +370,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvMaterial"
                 android:layout_marginLeft="4dp"
+                android:textColor="@color/textColor"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvCeiling"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -339,6 +379,7 @@
                 android:id="@+id/tvRoof"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
                 android:layout_below="@id/tvCeiling"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
@@ -349,6 +390,7 @@
                 android:id="@+id/buildingDetailsActvty_tvRoof"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/textColor"
                 android:layout_below="@id/tvCeiling"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
@@ -360,6 +402,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvRoof"
+                android:textColor="@android:color/black"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvConstructionSystem"
@@ -370,6 +413,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvRoof"
+                android:textColor="@color/textColor"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvConstructionSystem"
@@ -386,11 +430,21 @@
                 android:textColor="@android:color/black"
                 android:layout_below="@id/tvConstructionSystem"/>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorAccent"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_below="@id/buildingDetailsActvty_tvDimensions"
+                />
+
             <TextView
                 android:id="@+id/tvLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/buildingDetailsActvty_tvDimensions"
+                android:textColor="@android:color/black"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvLength"
@@ -400,6 +454,7 @@
                 android:id="@+id/buildingDetailsActvty_tvLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/textColor"
                 android:layout_below="@id/buildingDetailsActvty_tvDimensions"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
@@ -412,6 +467,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvLength"
                 android:layout_marginLeft="24dp"
+                android:textColor="@android:color/black"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvWidth"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -422,6 +478,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvLength"
                 android:layout_marginLeft="4dp"
+                android:textColor="@color/textColor"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvWidth"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -430,6 +487,7 @@
                 android:id="@+id/tvResidentialArea"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
                 android:layout_below="@id/tvWidth"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
@@ -442,6 +500,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvWidth"
                 android:layout_marginLeft="4dp"
+                android:textColor="@color/textColor"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvResidentialArea"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -449,6 +508,7 @@
             <TextView
                 android:id="@+id/tvBusinessArea"
                 android:layout_width="wrap_content"
+                android:textColor="@android:color/black"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvResidentialArea"
                 android:layout_marginLeft="24dp"
@@ -458,6 +518,7 @@
 
             <TextView
                 android:id="@+id/buildingDetailsActvty_tvBusinessArea"
+                android:textColor="@color/textColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvResidentialArea"
@@ -469,6 +530,7 @@
             <TextView
                 android:id="@+id/tvBasementArea"
                 android:layout_width="wrap_content"
+                android:textColor="@android:color/black"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvBusinessArea"
                 android:layout_marginLeft="24dp"
@@ -482,6 +544,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvBusinessArea"
                 android:layout_marginLeft="4dp"
+                android:textColor="@color/textColor"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvBasementArea"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -490,6 +553,7 @@
                 android:id="@+id/tvBrutoArea"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
                 android:layout_below="@id/tvBasementArea"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
@@ -501,6 +565,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvBasementArea"
+                android:textColor="@color/textColor"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvBrutoArea"
@@ -509,6 +574,7 @@
             <TextView
                 android:id="@+id/tvProperGroundPlan"
                 android:layout_width="wrap_content"
+                android:textColor="@android:color/black"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvBrutoArea"
                 android:layout_marginLeft="24dp"
@@ -521,6 +587,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvBrutoArea"
+                android:textColor="@color/textColor"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvProperGroundPlan"
@@ -532,6 +599,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvProperGroundPlan"
                 android:layout_marginLeft="24dp"
+                android:textColor="@android:color/black"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvResidentialArea"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -542,6 +610,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvProperGroundPlan"
                 android:layout_marginLeft="4dp"
+                android:textColor="@color/textColor"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvFloorHeight"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -553,6 +622,7 @@
                 android:layout_below="@id/tvFloorHeight"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
+                android:textColor="@android:color/black"
                 android:text="@string/tvNumberOfFloors"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
 
@@ -562,6 +632,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvFloorHeight"
                 android:layout_marginLeft="4dp"
+                android:textColor="@color/textColor"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvNumberOfFloors"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -570,6 +641,7 @@
                 android:id="@+id/tvFullHeight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
                 android:layout_below="@id/tvNumberOfFloors"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
@@ -581,6 +653,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvNumberOfFloors"
+                android:textColor="@color/textColor"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvFullHeight"

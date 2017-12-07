@@ -19,7 +19,7 @@ public class BuildingLocation implements Serializable {
 
     @Override
     public String toString() {
-        return cadastralParticle+" - "+street+" "+streetNumber+ streetChar +", "+city+", "+state;
+        return "(KČ:"+cadastralParticle+") "+street+" "+streetNumber+ streetChar +", "+city+", "+state;
     }
 
     @Override

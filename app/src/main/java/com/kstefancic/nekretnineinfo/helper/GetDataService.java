@@ -14,6 +14,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.kstefancic.nekretnineinfo.LoginAndRegister.LoginActivity;
 import com.kstefancic.nekretnineinfo.api.exceptionutils.ErrorUtils;
 import com.kstefancic.nekretnineinfo.api.model.Building;
 import com.kstefancic.nekretnineinfo.api.model.ExceptionResponse;
@@ -38,6 +39,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -57,6 +59,7 @@ public class GetDataService extends Service {
     public static final String FINISH = "finish";
     private User mUser;
     private SessionManager mSessionManager;
+    private List<Target> targets = new ArrayList<>();
 
     @Nullable
     @Override
@@ -152,11 +155,14 @@ public class GetDataService extends Service {
             public void onResponse(Call<List<Building>> call, Response<List<Building>> response) {
                 if(response.isSuccessful()){
                     Log.d("ON BUILDING RESPONSE", response.body().toString());
-                    for(Building building : response.body()){
+                    List<ImagePath> allImages = new ArrayList<>();
+                    for(Building building: response.body()){
                         DBHelper.getInstance(getApplicationContext()).insertBuilding(building);
-                        insertPicturesIntoDatabase(building);
+                        for(ImagePath imagePath : building.getImagePaths()){
+                            allImages.add(imagePath);
+                        }
                     }
-
+                    insertPicturesIntoDatabase(allImages);
                 }else {
                     Log.e("ON BUILDING RESPONSE", response.raw().toString());
                 }
@@ -171,35 +177,45 @@ public class GetDataService extends Service {
         });
     }
 
-    private void insertPicturesIntoDatabase(final Building building) {
-        for(int i=0; i<building.getImagePaths().size();i++){
-            final ImagePath imagePath = building.getImagePaths().get(i);
+    private void insertPicturesIntoDatabase(final List<ImagePath> imagePaths) {
+        for(int i=0; i<imagePaths.size();i++){
+            final ImagePath imagePath = imagePaths.get(i);
             final int finalI = i;
+            final Target target = new Target() {
+
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    Log.d("IMAGE LOADED", imagePath.toString() + " "+finalI);
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG,100,outputStream);
+                    String path = saveThumbnailToInternalStorage(bitmap,imagePath.getTitle());
+                    DBHelper.getInstance(getApplicationContext()).insertImage(path,imagePath.getTitle(),outputStream.toByteArray(),imagePath.getBuildingId());
+                    if(finalI == imagePaths.size()-1){
+                        Log.i("SERVICE","DONE");
+                        targets.clear();
+                        notifyFinish();
+                        stopSelf();
+                    }
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+                    Log.d("FAIL INSERTING IMAGE",imagePath.getPath());
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    Log.d("PREPARE INSERTING IMAGE",imagePath.getPath());
+                    /*if(finalI == building.getImagePaths().size()-1){
+                        notifyFinish();
+                    }*/
+                }
+            };
+            targets.add(target);
+
             Picasso.with(this)
                     .load(BASE_URL+"/"+imagePath.getPath())
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG,100,outputStream);
-                            String path = saveThumbnailToInternalStorage(bitmap,imagePath.getTitle());
-                            Log.d("INSERTING IMAGE",imagePath.getPath()+"   "+path);
-                            DBHelper.getInstance(getApplicationContext()).insertImage(path,imagePath.getTitle(),outputStream.toByteArray(),building.getId());
-                            if(finalI == building.getImagePaths().size()-1){
-                                notifyFinish();
-                            }
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-                            Log.d("FAIL INSERTING IMAGE",imagePath.getPath());
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            Log.d("PREPARE INSERTING IMAGE",imagePath.getPath());
-                        }
-                    });
+                    .into(targets.get(i));
         }
     }
 

@@ -5,7 +5,6 @@
         />
     <gradient
         android:angle="45"
-        android:centerX="38%"
         android:centerColor="@color/btnDeleteCenterColor"
         android:startColor="@color/btnDeleteStartColor"
         android:endColor="@color/btnDeleteEndColor"
@@ -19,7 +18,7 @@
         />
 
     <stroke
-        android:width="2dp"
+        android:width="1dp"
         android:color="#B5B5B5"
         />
 </shape>
