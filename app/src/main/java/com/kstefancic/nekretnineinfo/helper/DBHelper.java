@@ -115,6 +115,7 @@ public class DBHelper extends SQLiteOpenHelper {
                                             Schema.SYNCHRONIZED +" BOOLEAN NOT NULL,"+
                                             Schema.WIDTH +" DOUBLE NOT NULL,"+
                                             Schema.YEAR_OF_BUILD +" VARCHAR(10) NOT NULL,"+
+                                            Schema.NUMBER_OF_FLATS+ " INTEGER,"+
                                             Schema.B_CEILING_MATERIAL_ID +" INTEGER NOT NULL,"+
                                             Schema.B_CONSTRUCT_SYS_ID +" INTEGER NOT NULL,"+
                                             Schema.B_MATERIAL_ID+" INTEGER NOT NULL,"+
@@ -791,6 +792,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(Schema.PROPER_GROUND_PLAN, building.isProperGroundPlan());
         contentValues.put(Schema.SYNCHRONIZED, building.isSynchronizedWithDatabase());
         contentValues.put(Schema.WIDTH, building.getWidth());
+        contentValues.put(Schema.NUMBER_OF_FLATS, building.getNumberOfFlats());
         contentValues.put(Schema.BASEMENT_BRUTO_AREA, building.getBasementBrutoArea());
         contentValues.put(Schema.BUSINESS_BRUTO_AREA, building.getBusinessBrutoArea());
         contentValues.put(Schema.RESIDENTIAL_BRUTO_AREA, building.getResidentialBrutoArea());
@@ -830,16 +832,17 @@ public class DBHelper extends SQLiteOpenHelper {
                 boolean isSynchronized=buildingCursor.getInt(12) > 0;
                 double width= buildingCursor.getDouble(13);
                 String yearOfBuild = buildingCursor.getString(14);
-                int ceilingMatId= buildingCursor.getInt(15);
-                int constrSysId= buildingCursor.getInt(16);
-                int materialId= buildingCursor.getInt(17);
-                int positionId= buildingCursor.getInt(18);
-                int purposeId= buildingCursor.getInt(19);
-                int roofId= buildingCursor.getInt(20);
-                long userId=buildingCursor.getLong(21);
+                int numberOfFlats = buildingCursor.getInt(15);
+                int ceilingMatId= buildingCursor.getInt(16);
+                int constrSysId= buildingCursor.getInt(17);
+                int materialId= buildingCursor.getInt(18);
+                int positionId= buildingCursor.getInt(19);
+                int purposeId= buildingCursor.getInt(20);
+                int roofId= buildingCursor.getInt(21);
+                long userId=buildingCursor.getLong(22);
                 Building building = new Building(uId,date,yearOfBuild,properGroundPlan);
                 building.setCeilingMaterial(this.getCeilingMaterialById(ceilingMatId));
-                building.setDimensions(width,length,brutoArea,floorHeight,fullHeight,numberOfFloors,residentialBrutoArea,basementBrutoArea,businessBrutoArea);
+                building.setDimensions(width,length,brutoArea,floorHeight,fullHeight,numberOfFloors,numberOfFlats,residentialBrutoArea,basementBrutoArea,businessBrutoArea);
                 building.setPurpose(this.getPurposeById(purposeId));
                 building.setUser(this.getUser());
                 building.setRoof(this.getRoofById(roofId));
@@ -882,6 +885,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(Schema.PROPER_GROUND_PLAN, building.isProperGroundPlan());
         contentValues.put(Schema.SYNCHRONIZED, building.isSynchronizedWithDatabase());
         contentValues.put(Schema.WIDTH, building.getWidth());
+        contentValues.put(Schema.NUMBER_OF_FLATS, building.getNumberOfFlats());
         contentValues.put(Schema.BASEMENT_BRUTO_AREA, building.getBasementBrutoArea());
         contentValues.put(Schema.BUSINESS_BRUTO_AREA, building.getBusinessBrutoArea());
         contentValues.put(Schema.RESIDENTIAL_BRUTO_AREA, building.getResidentialBrutoArea());
@@ -912,6 +916,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(Schema.PROPER_GROUND_PLAN, building.isProperGroundPlan());
         contentValues.put(Schema.SYNCHRONIZED, building.isSynchronizedWithDatabase());
         contentValues.put(Schema.WIDTH, building.getWidth());
+        contentValues.put(Schema.NUMBER_OF_FLATS, building.getNumberOfFlats());
         contentValues.put(Schema.BASEMENT_BRUTO_AREA, building.getBasementBrutoArea());
         contentValues.put(Schema.BUSINESS_BRUTO_AREA, building.getBusinessBrutoArea());
         contentValues.put(Schema.RESIDENTIAL_BRUTO_AREA, building.getResidentialBrutoArea());
@@ -1198,6 +1203,7 @@ public class DBHelper extends SQLiteOpenHelper {
         static final String FLOOR_HEIGHT = "floor_height";
         static final String FULL_HEIGHT = "full_height";
         static final String NUMBER_OF_FLOORS = "num_of_floors";
+        static final String NUMBER_OF_FLATS = "num_of_flats";
 
         //BUILDING LOCATION table
         static final String TABLE_BUILDING_LOCATION = "building_location";

@@ -24,22 +24,9 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:background="@color/transparent"
-            android:src="@android:drawable/ic_delete"
+            android:src="@drawable/ic_arrow_back_red_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageButton
-            android:id="@+id/buildingDetailsActvty_ibEdit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/transparent"
-            android:src="@android:drawable/ic_menu_edit"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         </android.support.constraint.ConstraintLayout>
@@ -120,7 +107,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="2dp"
+                android:paddingTop="2dp"
+                android:layout_marginTop="8dp"
                 android:text="@string/tvAddressInfo"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textColor="@android:color/black" />
@@ -138,6 +126,7 @@
                 android:id="@+id/buildingDetailsActvty_tvStreet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingTop="2dp"
                 android:layout_below="@id/buildingDetailsActvty_tvAddressInfo"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
@@ -150,6 +139,7 @@
                 android:layout_width="wrap_content"
                 android:textColor="@color/textColor"
                 android:layout_height="wrap_content"
+                android:paddingTop="2dp"
                 android:layout_below="@id/buildingDetailsActvty_tvAddressInfo"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
@@ -161,6 +151,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/buildingDetailsActvty_tvStreet"
+                android:paddingTop="2dp"
                 android:textColor="@android:color/black"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
@@ -172,6 +163,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/textColor"
+                android:paddingTop="2dp"
                 android:layout_below="@id/buildingDetailsActvty_tvStreet"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
@@ -183,6 +175,7 @@
                 android:layout_width="wrap_content"
                 android:textColor="@android:color/black"
                 android:layout_height="wrap_content"
+                android:paddingTop="2dp"
                 android:layout_below="@id/buildingDetailsActvty_tvStreetNumber"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
@@ -195,6 +188,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/buildingDetailsActvty_tvStreetNumber"
                 android:layout_marginLeft="4dp"
+                android:paddingTop="2dp"
                 android:layout_marginTop="4dp"
                 android:textColor="@color/textColor"
                 android:layout_toEndOf="@id/buildingDetailsActvty_tvCity"
@@ -207,6 +201,7 @@
                 android:textColor="@android:color/black"
                 android:layout_below="@id/buildingDetailsActvty_tvCity"
                 android:layout_marginLeft="24dp"
+                android:paddingTop="2dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvCityAndState"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -216,6 +211,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/buildingDetailsActvty_tvCity"
+                android:paddingTop="2dp"
                 android:layout_marginLeft="4dp"
                 android:textColor="@color/textColor"
                 android:layout_marginTop="4dp"
@@ -228,6 +224,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvPosition"
+                android:paddingTop="2dp"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvCadastralParticle"
@@ -241,12 +238,14 @@
                 android:textColor="@color/textColor"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
+                android:paddingTop="2dp"
                 android:layout_toEndOf="@id/buildingDetailsActvty_tvCadastralParticle"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
 
             <TextView
                 android:id="@+id/tvPosition"
                 android:layout_width="wrap_content"
+                android:paddingTop="2dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvState"
                 android:textColor="@android:color/black"
@@ -259,6 +258,7 @@
                 android:id="@+id/buildingDetailsActvty_tvPosition"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingTop="2dp"
                 android:layout_below="@id/tvState"
                 android:textColor="@color/textColor"
                 android:layout_marginLeft="4dp"
@@ -270,6 +270,7 @@
                 android:id="@+id/buildingDetailsActvty_tvDetails"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingTop="2dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/tvDetails"
@@ -283,12 +284,14 @@
                 android:background="@color/colorAccent"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                android:paddingTop="2dp"
                 android:layout_below="@id/buildingDetailsActvty_tvDetails"
                 />
 
             <TextView
                 android:id="@+id/tvYearOfBuild"
                 android:layout_width="wrap_content"
+                android:paddingTop="2dp"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
                 android:layout_below="@id/buildingDetailsActvty_tvDetails"
@@ -304,6 +307,7 @@
                 android:textColor="@color/textColor"
                 android:layout_below="@id/buildingDetailsActvty_tvDetails"
                 android:layout_marginLeft="4dp"
+                android:paddingTop="2dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvYearOfBuild"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -314,6 +318,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvYearOfBuild"
                 android:textColor="@android:color/black"
+                android:paddingTop="2dp"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvPurpose"
@@ -326,6 +331,7 @@
                 android:layout_below="@id/tvYearOfBuild"
                 android:layout_marginLeft="4dp"
                 android:textColor="@color/textColor"
+                android:paddingTop="2dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvPurpose"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -338,6 +344,7 @@
                 android:layout_below="@id/tvPurpose"
                 android:textColor="@android:color/black"
                 android:layout_marginLeft="24dp"
+                android:paddingTop="2dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvWallsMaterial"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -349,6 +356,7 @@
                 android:layout_below="@id/tvPurpose"
                 android:textColor="@color/textColor"
                 android:layout_marginLeft="4dp"
+                android:paddingTop="2dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvMaterial"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -360,6 +368,7 @@
                 android:textColor="@android:color/black"
                 android:layout_below="@id/tvMaterial"
                 android:layout_marginLeft="24dp"
+                android:paddingTop="2dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvCeilingMaterial"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -371,6 +380,7 @@
                 android:layout_below="@id/tvMaterial"
                 android:layout_marginLeft="4dp"
                 android:textColor="@color/textColor"
+                android:paddingTop="2dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvCeiling"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -380,6 +390,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
+                android:paddingTop="2dp"
                 android:layout_below="@id/tvCeiling"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
@@ -390,6 +401,7 @@
                 android:id="@+id/buildingDetailsActvty_tvRoof"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingTop="2dp"
                 android:textColor="@color/textColor"
                 android:layout_below="@id/tvCeiling"
                 android:layout_marginLeft="4dp"
@@ -403,6 +415,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvRoof"
                 android:textColor="@android:color/black"
+                android:paddingTop="2dp"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvConstructionSystem"
@@ -417,12 +430,14 @@
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvConstructionSystem"
+                android:paddingTop="2dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
 
             <TextView
                 android:id="@+id/buildingDetailsActvty_tvDimensions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingTop="2dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/tvDimensions"
@@ -435,6 +450,7 @@
                 android:layout_height="1dp"
                 android:background="@color/colorAccent"
                 android:layout_marginStart="8dp"
+                android:paddingTop="2dp"
                 android:layout_marginEnd="8dp"
                 android:layout_below="@id/buildingDetailsActvty_tvDimensions"
                 />
@@ -447,12 +463,14 @@
                 android:textColor="@android:color/black"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
+                android:paddingTop="2dp"
                 android:text="@string/tvLength"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
 
             <TextView
                 android:id="@+id/buildingDetailsActvty_tvLength"
                 android:layout_width="wrap_content"
+                android:paddingTop="2dp"
                 android:layout_height="wrap_content"
                 android:textColor="@color/textColor"
                 android:layout_below="@id/buildingDetailsActvty_tvDimensions"
@@ -465,6 +483,7 @@
                 android:id="@+id/tvWidth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingTop="2dp"
                 android:layout_below="@id/tvLength"
                 android:layout_marginLeft="24dp"
                 android:textColor="@android:color/black"
@@ -477,6 +496,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvLength"
+                android:paddingTop="2dp"
                 android:layout_marginLeft="4dp"
                 android:textColor="@color/textColor"
                 android:layout_marginTop="4dp"
@@ -489,6 +509,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
                 android:layout_below="@id/tvWidth"
+                android:paddingTop="2dp"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvResidentialArea"
@@ -501,6 +522,7 @@
                 android:layout_below="@id/tvWidth"
                 android:layout_marginLeft="4dp"
                 android:textColor="@color/textColor"
+                android:paddingTop="2dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvResidentialArea"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -511,6 +533,7 @@
                 android:textColor="@android:color/black"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvResidentialArea"
+                android:paddingTop="2dp"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvBusinessArea"
@@ -523,6 +546,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvResidentialArea"
                 android:layout_marginLeft="4dp"
+                android:paddingTop="2dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvBusinessArea"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -531,6 +555,7 @@
                 android:id="@+id/tvBasementArea"
                 android:layout_width="wrap_content"
                 android:textColor="@android:color/black"
+                android:paddingTop="2dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvBusinessArea"
                 android:layout_marginLeft="24dp"
@@ -543,6 +568,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvBusinessArea"
+                android:paddingTop="2dp"
                 android:layout_marginLeft="4dp"
                 android:textColor="@color/textColor"
                 android:layout_marginTop="4dp"
@@ -554,6 +580,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
+                android:paddingTop="2dp"
                 android:layout_below="@id/tvBasementArea"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
@@ -565,6 +592,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvBasementArea"
+                android:paddingTop="2dp"
                 android:textColor="@color/textColor"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
@@ -578,6 +606,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvBrutoArea"
                 android:layout_marginLeft="24dp"
+                android:paddingTop="2dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvProperGroundPlan"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -586,6 +615,7 @@
                 android:id="@+id/buildingDetailsActvty_tvProperGroundPlan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingTop="2dp"
                 android:layout_below="@id/tvBrutoArea"
                 android:textColor="@color/textColor"
                 android:layout_marginLeft="4dp"
@@ -598,6 +628,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvProperGroundPlan"
+                android:paddingTop="2dp"
                 android:layout_marginLeft="24dp"
                 android:textColor="@android:color/black"
                 android:layout_marginTop="4dp"
@@ -610,6 +641,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvProperGroundPlan"
                 android:layout_marginLeft="4dp"
+                android:paddingTop="2dp"
                 android:textColor="@color/textColor"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvFloorHeight"
@@ -622,6 +654,7 @@
                 android:layout_below="@id/tvFloorHeight"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
+                android:paddingTop="2dp"
                 android:textColor="@android:color/black"
                 android:text="@string/tvNumberOfFloors"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
@@ -632,9 +665,34 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvFloorHeight"
                 android:layout_marginLeft="4dp"
+                android:paddingTop="2dp"
                 android:textColor="@color/textColor"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvNumberOfFloors"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/tvNumberOfFlats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvNumberOfFloors"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="4dp"
+                android:paddingTop="2dp"
+                android:textColor="@android:color/black"
+                android:text="@string/tvNumberOfFlats"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+
+            <TextView
+                android:id="@+id/buildingDetailsActvty_tvNumberOfFlats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvNumberOfFloors"
+                android:layout_marginLeft="4dp"
+                android:paddingTop="2dp"
+                android:textColor="@color/textColor"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/tvNumberOfFlats"
                 android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
 
             <TextView
@@ -642,18 +700,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
-                android:layout_below="@id/tvNumberOfFloors"
+                android:layout_below="@id/tvNumberOfFlats"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/tvFullHeight"
-                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info"
+                android:layout_marginBottom="8dp"/>
 
             <TextView
                 android:id="@+id/buildingDetailsActvty_tvFullHeight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tvNumberOfFloors"
+                android:layout_below="@id/tvNumberOfFlats"
                 android:textColor="@color/textColor"
+                android:paddingTop="2dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@id/tvFullHeight"

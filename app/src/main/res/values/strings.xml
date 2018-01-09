@@ -79,4 +79,9 @@
     <string name="btnLogout">Odjava</string>
     <string name="btnCancel">Odustani</string>
     <string name="btnSave">Spremi</string>
+    <string name="tvPictures">Fotografije</string>
+    <string name="tvRegisterTitle">Registracija</string>
+    <string name="tvLogIn">Prijava</string>
+    <string name="tvAddress">Adresa:</string>
+    <string name="tvNumberOfFlats">Broj stanova:</string>
 </resources>

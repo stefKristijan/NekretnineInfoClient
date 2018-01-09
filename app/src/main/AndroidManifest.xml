@@ -8,12 +8,13 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/gfos_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/gfos_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginAndRegister.LoginActivity">
+        <activity android:name=".LoginAndRegister.LoginActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -22,15 +23,18 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" >
 
         </activity>
         <activity
             android:name=".BuildingDataActivity"
             android:label="@string/title_activity_building_data"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
         <activity android:name=".BuildingDetailsActivity"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
 
         <service android:name=".helper.GetDataService"/>
     </application>

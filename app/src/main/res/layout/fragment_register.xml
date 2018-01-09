@@ -8,19 +8,48 @@
 
 <android.support.constraint.ConstraintLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:layout_editor_absoluteY="25dp">
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/tvRegisterTitle"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@color/colorAccent"
+        android:layout_marginTop="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <Button
         android:id="@+id/registerFr_btnRegister"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="35dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
         android:background="@drawable/button_shape"
-        android:paddingLeft="5dp"
+        android:drawableLeft="@drawable/ic_person_add_white_24dp"
+        android:drawablePadding="10dp"
+        android:paddingEnd="10dp"
         android:paddingRight="5dp"
+        android:paddingStart="10dp"
         android:text="@string/btnRegister"
         android:textColor="@color/colorWhite"
         app:layout_constraintBottom_toTopOf="@+id/registerFr_tvHaveAcc"
@@ -32,6 +61,7 @@
         android:id="@+id/registerFr_tvHaveAcc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="2dp"
         android:layout_marginTop="8dp"
         android:text="@string/tvHaveAccount"
@@ -48,7 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
         android:text="@string/tvLoginText"
-        android:textColor="@android:color/holo_blue_light"
+        android:textColor="@color/textColor"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -61,21 +91,22 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toTopOf="@+id/registerFr_tilUsername"
         app:layout_constraintEnd_toStartOf="@+id/registerFr_tilLastName"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view"
         app:layout_constraintVertical_chainStyle="packed">
+
         <EditText
             android:id="@+id/registerFr_etFirstName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/textColor"
-            android:hint="@string/etFirstName"
             android:background="@drawable/edit_text"
-            android:padding="5dp"/>
+            android:hint="@string/etFirstName"
+            android:padding="5dp"
+            android:textColor="@android:color/black" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -94,7 +125,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/edit_text"
-            android:textColor="@color/textColor"
+            android:textColor="@android:color/black"
             android:hint="@string/etLastName"
             android:padding="5dp" />
     </android.support.design.widget.TextInputLayout>
@@ -115,7 +146,7 @@
             android:id="@+id/registerFr_etUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/textColor"
+            android:textColor="@android:color/black"
             android:background="@drawable/edit_text"
             android:hint="@string/etUsernameHint"
             android:padding="5dp" />
@@ -139,7 +170,7 @@
             android:id="@+id/registerFr_etPassword"
             android:layout_width="match_parent"
             android:layout_height="35dp"
-            android:textColor="@color/textColor"
+            android:textColor="@android:color/black"
             android:background="@drawable/edit_text"
             android:hint="@string/etPasswordHint"
             android:inputType="textPassword"
@@ -163,7 +194,7 @@
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:background="@drawable/edit_text"
-            android:textColor="@color/textColor"
+            android:textColor="@android:color/black"
             android:hint="@string/etConfirmPass"
             android:inputType="textPassword"
             android:padding="5dp" />
@@ -185,7 +216,7 @@
             android:id="@+id/registerFr_etEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/textColor"
+            android:textColor="@android:color/black"
             android:background="@drawable/edit_text"
             android:hint="@string/etEmailHint"
             android:inputType="textEmailAddress"

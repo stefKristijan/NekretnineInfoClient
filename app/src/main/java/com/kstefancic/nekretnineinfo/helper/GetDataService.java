@@ -155,6 +155,10 @@ public class GetDataService extends Service {
             public void onResponse(Call<List<Building>> call, Response<List<Building>> response) {
                 if(response.isSuccessful()){
                     Log.d("ON BUILDING RESPONSE", response.body().toString());
+                    if(response.body().size()==0){
+                        notifyFinish();
+                        stopSelf();
+                    }
                     List<ImagePath> allImages = new ArrayList<>();
                     for(Building building: response.body()){
                         DBHelper.getInstance(getApplicationContext()).insertBuilding(building);

@@ -181,7 +181,6 @@ public class BuildingDetailsFragment extends Fragment {
     private List<String> setUpRoofSpinnerItems() {
         List<String> roofsTxts = new ArrayList<>();
         roofs= DBHelper.getInstance(getActivity()).getAllRoofs();
-        Log.i("ROOF ITEMS", String.valueOf(roofs.size()));
         for(Roof roof: roofs){
             roofsTxts.add(roof.getRoofType());
         }
@@ -205,7 +204,6 @@ public class BuildingDetailsFragment extends Fragment {
         ceilingMaterials = DBHelper.getInstance(getActivity()).getAllCeilingMaterials();
 
         for(CeilingMaterial ceilingMaterial: ceilingMaterials){
-            Log.d("SPINNER CMATERIAL",ceilingMaterial.getCeilingMaterial());
             ceilingMaterialTxts.add(ceilingMaterial.getCeilingMaterial());
         }
 
@@ -260,9 +258,9 @@ public class BuildingDetailsFragment extends Fragment {
     }
 
     private void inflateSpinnerWithList(List<String> spinnerItems, Spinner spinner) {
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this.getActivity(),R.layout.support_simple_spinner_dropdown_item,spinnerItems);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this.getActivity(),R.layout.spinner_item,spinnerItems);
 
-        dataAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        dataAdapter.setDropDownViewResource(R.layout.spinner_item);
         spinner.setAdapter(dataAdapter);
     }
 

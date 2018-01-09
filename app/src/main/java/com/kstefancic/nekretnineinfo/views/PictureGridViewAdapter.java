@@ -14,6 +14,7 @@ import android.widget.ImageView;
 
 import com.kstefancic.nekretnineinfo.R;
 import com.kstefancic.nekretnineinfo.api.model.localDBdto.LocalImage;
+import com.kstefancic.nekretnineinfo.buildingdata.PicturesFragment;
 import com.kstefancic.nekretnineinfo.helper.DBHelper;
 
 import java.util.ArrayList;
@@ -27,9 +28,11 @@ public class PictureGridViewAdapter extends ArrayAdapter {
     private Context context;
     private int resourceId;
     private ArrayList images = new ArrayList();
+    private PicturesFragment.PictureChoosen pictureChoosen;
 
-    public PictureGridViewAdapter(Context context, int resourceId, ArrayList data){
+    public PictureGridViewAdapter(Context context, int resourceId, ArrayList data, PicturesFragment.PictureChoosen pictureChoosenListener){
         super(context,resourceId,data);
+        this.pictureChoosen = pictureChoosenListener;
         this.context=context;
         this.resourceId=resourceId;
         this.images =data;
@@ -61,6 +64,7 @@ public class PictureGridViewAdapter extends ArrayAdapter {
                 DBHelper.getInstance(context).deleteImageById(localImage.getId());
                 images.remove(position);
                 notifyDataSetChanged();
+                pictureChoosen.onPictureChoosenListener(images);
             }
         });
 

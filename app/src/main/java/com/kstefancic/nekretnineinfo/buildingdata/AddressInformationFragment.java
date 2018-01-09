@@ -29,6 +29,7 @@ import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.addressMulticho
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.addressMultichoiceData.State;
 import com.kstefancic.nekretnineinfo.api.model.MultiChoiceModels.addressMultichoiceData.Street;
 import com.kstefancic.nekretnineinfo.helper.DBHelper;
+import com.kstefancic.nekretnineinfo.views.LocationAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +63,7 @@ public class AddressInformationFragment extends Fragment {
     private List<Street> streets;
     private List<BuildingLocation> buildingLocations = new ArrayList<>();
     private Building mBuilding;
-    ArrayList<String> locationListItems =new ArrayList<String>();
-    ArrayAdapter<String> listViewAdapter;
+    private LocationAdapter listViewAdapter;
     private AddressInformationInserted addressInformationInsertedListener;
 
     public static AddressInformationFragment newInstance(Building building) {
@@ -91,9 +91,6 @@ public class AddressInformationFragment extends Fragment {
         mBuilding = (Building) getArguments().getSerializable(BUILDING_DATA);
         if(mBuilding!=null){
             buildingLocations = mBuilding.getLocations();
-            for(BuildingLocation buildingLocation : buildingLocations){
-                locationListItems.add(buildingLocation.toString());
-            }
         }
         setUI(layout);
         setUpSpinners();
@@ -102,7 +99,7 @@ public class AddressInformationFragment extends Fragment {
 
     private void setUI(View layout) {
         this.lvLocations = layout.findViewById(R.id.frAddressInfo_lvAddresses);
-        this.listViewAdapter=new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, locationListItems);
+        this.listViewAdapter=new LocationAdapter(getActivity(), R.layout.location_item, buildingLocations);
         this.lvLocations.setAdapter(listViewAdapter);
         this.tilCadastralParticle = layout.findViewById(R.id.frAddressInfo_tilCadastralParticle);
         this.tilState = layout.findViewById(R.id.frAddressInfo_tilState);
@@ -138,9 +135,7 @@ public class AddressInformationFragment extends Fragment {
                     }
                     BuildingLocation buildingLocation = new BuildingLocation(street, streetNum, streetCharacter, city, state, cadastralParticle);
                     if (!locationExists(buildingLocation)) {
-                        locationListItems.add(buildingLocation.toString());
                         buildingLocations.add(buildingLocation);
-                        Log.i("LOCATION", buildingLocation.toString() + " " + locationListItems.size());
                         listViewAdapter.notifyDataSetChanged();
                         etCadastralParticle.setText("");
                         etStreetChar.setText("");
@@ -157,7 +152,6 @@ public class AddressInformationFragment extends Fragment {
         this.btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("ADDRESS","onInsert");
                 if(buildingLocations.size()>0) {
                     Position position = positions.get((int) spPosition.getSelectedItemId());
                     addressInformationInsertedListener.onAddressInformationInserted(buildingLocations, position);
@@ -172,7 +166,7 @@ public class AddressInformationFragment extends Fragment {
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
                 dialogBuilder.setTitle("Brisanje")
-                        .setMessage("Jeste li sigurni da želite obrisati ovu lokaciju?")
+                        .setMessage("Jeste li sigurni da želite obrisati lokaciju?")
                         .setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -183,7 +177,6 @@ public class AddressInformationFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 buildingLocations.remove(i);
-                                locationListItems.remove(i);
                                 listViewAdapter.notifyDataSetChanged();
                             }
                         })
@@ -249,6 +242,10 @@ public class AddressInformationFragment extends Fragment {
         }
 
         if(streetChar.length()>1){
+            isValid=false;
+            tilStreetChar.setError(CHAR_ONLY);
+        }else if(streetChar.length()!=0 && Character.isDigit(streetChar.charAt(0))){
+
             isValid=false;
             tilStreetChar.setError(CHAR_ONLY);
         }
@@ -334,20 +331,18 @@ public class AddressInformationFragment extends Fragment {
         List<String> positionTexts = new ArrayList<>();
         positions = DBHelper.getInstance(getActivity()).getAllPositions();
         for(Position position : positions){
-            Log.d("POSITION TEXT SPINNER",position.getPosition());
             positionTexts.add(position.getPosition());
         }
 
 
-        ArrayAdapter<String> positionAdapter = new ArrayAdapter<>(this.getActivity(),R.layout.support_simple_spinner_dropdown_item,positionTexts);
+        ArrayAdapter<String> positionAdapter = new ArrayAdapter<>(this.getActivity(),R.layout.spinner_item,positionTexts);
 
-        positionAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        positionAdapter.setDropDownViewResource(R.layout.spinner_item);
         spPosition.setAdapter(positionAdapter);
 
 
         if(mBuilding!=null){
             for(int i=0; i<positionTexts.size(); i++){
-                Log.i("POZICIJA", positionTexts.get(i)+ " "+mBuilding.getPosition().getPosition());
                 if(positionTexts.get(i).equals(mBuilding.getPosition().getPosition())){
                     spPosition.setSelection(i);
                     break;
@@ -360,7 +355,6 @@ public class AddressInformationFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.i("ADDRESSFRAGMENT","onAtach()");
         if(context instanceof AddressInformationInserted)
         {
             this.addressInformationInsertedListener = (AddressInformationInserted) context;
@@ -371,49 +365,8 @@ public class AddressInformationFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         this.addressInformationInsertedListener =null;
-        Log.i("ADDRESSFRAGMENT","onDetach()");
-    }
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        Log.i("ADDRESSFRAGMENT","onViewCreated()");
     }
 
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        Log.i("ADDRESSFRAGMENT","onViewStateRestored()");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.i("ADDRESSFRAGMENT","onResume()");
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Log.i("ADDRESSFRAGMENT","onSaveInstanceState()");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.i("ADDRESSFRAGMENT","onPause()");
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.i("ADDRESSFRAGMENT","onDestroyView()");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.i("ADDRESSFRAGMENT","onDestroy()");
-    }
 
     public interface AddressInformationInserted{
         void onAddressInformationInserted(List<BuildingLocation> buildingLocations, Position position);

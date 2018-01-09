@@ -2,8 +2,10 @@ package com.kstefancic.nekretnineinfo.views;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -83,16 +85,36 @@ public class BuildingAdapter extends RecyclerView.Adapter<ViewHolder> {
         holder.ibDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (int i = 0; i < buildings.size(); i++) {
-                    if (Objects.equals(buildings.get(i).getId(), building.getId())) {
-                        buildings.remove(i);
-                        break;
-                    }
-                }
-                notifyDataSetChanged();
-                DBHelper.getInstance(context).deleteBuilding(building.getId());
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+                dialogBuilder.setTitle("Brisanje")
+                        .setMessage("Jeste li sigurni da želite obrisati podatke o zgradi?")
+                        .setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .setPositiveButton("Obriši", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                removeBuilding(building);
+                            }
+                        })
+                        .show();
+
             }
         });
+    }
+
+    private void removeBuilding(Building building) {
+        for (int i = 0; i < buildings.size(); i++) {
+            if (Objects.equals(buildings.get(i).getId(), building.getId())) {
+                buildings.remove(i);
+                break;
+            }
+        }
+        notifyDataSetChanged();
+        DBHelper.getInstance(context).deleteBuilding(building.getId());
     }
 
     private void setEditButton(ViewHolder holder, final Building building) {

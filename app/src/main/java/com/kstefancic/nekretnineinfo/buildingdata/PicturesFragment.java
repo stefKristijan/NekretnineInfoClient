@@ -54,7 +54,6 @@ public class PicturesFragment extends Fragment{
 
     private static final int REQUEST_IMAGE_CAPTURE = 20;
     private static final int GALLERY_REQUEST = 10;
-    private Button btnFinish;
     private GridView gvPictures;
     private PictureGridViewAdapter pictureGridViewAdapter;
     private PictureChoosen pictureChoosenListener;
@@ -86,16 +85,9 @@ public class PicturesFragment extends Fragment{
 
     private void setUI(View layout) {
         this.gvPictures = layout.findViewById(R.id.frPictures_gridView);
-        pictureGridViewAdapter = new PictureGridViewAdapter(getActivity(), R.layout.picture_grid_item, localImages);
+        pictureGridViewAdapter = new PictureGridViewAdapter(getActivity(), R.layout.picture_grid_item, localImages, pictureChoosenListener);
         gvPictures.setAdapter(pictureGridViewAdapter);
 
-        this.btnFinish = layout.findViewById(R.id.frPictures_btnFinish);
-        this.btnFinish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                pictureChoosenListener.onPictureChoosenListener(localImages);
-            }
-        });
         this.fabCamera = layout.findViewById(R.id.frPictures_fabCamera);
         this.fabCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,6 +150,7 @@ public class PicturesFragment extends Fragment{
             Log.i("CAMERA IMAGE",path);
             addImageToList(imageBitmap, path);
             pictureGridViewAdapter.notifyDataSetChanged();
+            pictureChoosenListener.onPictureChoosenListener(localImages);
         }
         else if (requestCode == 10 && resultCode == RESULT_OK && data != null) {
             ClipData clipData = data.getClipData();
@@ -171,6 +164,7 @@ public class PicturesFragment extends Fragment{
                 Log.d("INSERTING IMAGE", uri.toString() + " size: " + localImages.size()+ " realPath:"+path);
             }
             pictureGridViewAdapter.notifyDataSetChanged();
+            pictureChoosenListener.onPictureChoosenListener(localImages);
 
         }
     }
@@ -257,7 +251,7 @@ public class PicturesFragment extends Fragment{
     }
 
     public interface PictureChoosen {
-        void onPictureChoosenListener( ArrayList<LocalImage> images);
+        void onPictureChoosenListener(ArrayList<LocalImage> images);
     }
 
 }

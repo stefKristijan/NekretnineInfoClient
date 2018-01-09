@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/grayOpacity"
+    android:layout_height="wrap_content"
+    android:paddingBottom="8dp">
+
+    <ImageView
+        android:id="@+id/locationItem_ivLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_place_black_48dp" />
+
+    <TextView
+        android:id="@+id/locationItem_tvCadastralPart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:textColor="@android:color/black"
+        android:text="@string/tvCadastralParticle"
+        android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info"
+        app:layout_constraintStart_toEndOf="@+id/locationItem_ivLocation"
+        app:layout_constraintTop_toTopOf="@+id/locationItem_ivLocation" />
+
+    <TextView
+        android:id="@+id/locationItem_tvAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginStart="8dp"
+        android:textColor="@android:color/black"
+        android:text="@string/tvAddress"
+        android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info"
+        app:layout_constraintBottom_toBottomOf="@+id/locationItem_ivLocation"
+        app:layout_constraintStart_toEndOf="@+id/locationItem_ivLocation" />
+
+    <TextView
+        android:id="@+id/locationItem_tvCPitem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info"
+        android:textColor="@color/textColor"
+        app:layout_constraintStart_toEndOf="@+id/locationItem_tvCadastralPart"
+        app:layout_constraintTop_toTopOf="@+id/locationItem_tvCadastralPart" />
+
+    <TextView
+        android:id="@+id/locationItem_tvAddressItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info"
+        android:textColor="@color/textColor"
+        app:layout_constraintStart_toEndOf="@+id/locationItem_tvAddress"
+        app:layout_constraintTop_toTopOf="@+id/locationItem_tvAddress" />
+</android.support.constraint.ConstraintLayout>

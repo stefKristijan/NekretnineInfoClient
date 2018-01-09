@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.kstefancic.nekretnineinfo.api.model.Building;
@@ -60,7 +61,7 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
      */
     private ViewPager mViewPager;
     private TabLayout tabLayout;
-    private Button btnCancel, btnSave;
+    private ImageButton btnCancel, btnSave;
     private int[] tabIcons={
             R.drawable.ic_business_white_24dp,
             R.drawable.ic_place_white_24dp,
@@ -145,13 +146,9 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
     }
     private void setUpTabIcons() {
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
-        Log.d("TAB ICON", String.valueOf(tabIcons[0]));
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
-        Log.d("TAB ICON", String.valueOf(tabIcons[1]));
         tabLayout.getTabAt(2).setIcon(tabIcons[2]);
-        Log.d("TAB ICON", String.valueOf(tabIcons[2]));
         tabLayout.getTabAt(3).setIcon(tabIcons[3]);
-        Log.d("TAB ICON", String.valueOf(tabIcons[3]));
     }
 
     private void setUpViewPager() {
@@ -170,7 +167,7 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onDimensionsInformationInserted(double length, double width, double brutoArea, double basementArea, double residentalArea, double businessArea, double fullHeight, double floorHeight, int numOfFloors, boolean properGroundPlan) {
-        this.mBuilding.setDimensions(width,length,brutoArea,floorHeight,fullHeight,numOfFloors,residentalArea,basementArea,businessArea);
+        this.mBuilding.setDimensions(width,length,brutoArea,floorHeight,fullHeight,numOfFloors,5,residentalArea,basementArea,businessArea);
         this.mBuilding.setProperGroundPlan(properGroundPlan);
         this.mViewPager.setCurrentItem(3,true);
         this.hasDimensions=true;

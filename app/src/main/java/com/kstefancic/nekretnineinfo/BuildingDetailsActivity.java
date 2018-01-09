@@ -24,8 +24,8 @@ public class BuildingDetailsActivity extends AppCompatActivity {
     private TextView tvDate, tvStreet, tvStreetNum, tvCity, tvState, tvPosition, tvCadastralParticle;
     private TextView tvYearOfBuild, tvPurpose, tvMaterial, tvCeiling, tvRoof, tvConstSyst;
     private TextView tvLength, tvWidth, tvResidentialArea, tvBusinessArea, tvBasementArea, tvBrutoArea;
-    private TextView tvFloorHeight, tvFullHeight, tvNumOfFloors, tvProperGroundPlan;
-    private ImageButton ibPrevious, ibNext, ibBack, ibEdit;
+    private TextView tvFloorHeight, tvFullHeight, tvNumOfFloors, tvProperGroundPlan, tvNumOfFlats;
+    private ImageButton ibPrevious, ibNext, ibBack;
     private ImageView ivBuilding;
     private Building mBuilding;
 
@@ -50,7 +50,6 @@ public class BuildingDetailsActivity extends AppCompatActivity {
 
     private void setUpActionBarButtons() {
         this.ibBack = findViewById(R.id.buildingDetailsActvty_ibBack);
-        this.ibEdit = findViewById(R.id.buildingDetailsActvty_ibEdit);
 
         this.ibBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,12 +58,6 @@ public class BuildingDetailsActivity extends AppCompatActivity {
             }
         });
 
-        this.ibEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
     }
 
     private void setDateView() {
@@ -133,7 +126,7 @@ public class BuildingDetailsActivity extends AppCompatActivity {
         this.tvFullHeight = findViewById(R.id.buildingDetailsActvty_tvFullHeight);
         this.tvFloorHeight = findViewById(R.id.buildingDetailsActvty_tvFloorHeight);
         this.tvNumOfFloors = findViewById(R.id.buildingDetailsActvty_tvNumberOfFloors);
-
+        this.tvNumOfFlats = findViewById(R.id.buildingDetailsActvty_tvNumberOfFlats);
         this.tvLength.setText(mBuilding.getLength()+" m");
         this.tvWidth.setText(mBuilding.getWidth()+" m");
         if(mBuilding.isProperGroundPlan()){
@@ -148,6 +141,7 @@ public class BuildingDetailsActivity extends AppCompatActivity {
         this.tvFullHeight.setText(mBuilding.getFullHeight()+"m");
         this.tvFloorHeight.setText(mBuilding.getFloorHeight()+"m");
         this.tvNumOfFloors.setText(String.valueOf(mBuilding.getNumberOfFloors()));
+        this.tvNumOfFlats.setText(String.valueOf(mBuilding.getNumberOfFlats()));
     }
 
     private void setUpDetailsInfo() {

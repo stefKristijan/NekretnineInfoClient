@@ -47,6 +47,7 @@ public class Building implements Serializable{
     private double floorHeight;
     private double fullHeight;
     private int numberOfFloors;
+    private int numberOfFlats;
     private boolean properGroundPlan;
 
     @Override
@@ -90,6 +91,7 @@ public class Building implements Serializable{
                 ", floorHeight=" + floorHeight +
                 ", fullHeight=" + fullHeight +
                 ", numberOfFloors=" + numberOfFloors +
+                ", numberOfFlats=" + numberOfFlats +
                 ", properGroundPlan=" + properGroundPlan +
                 '}';
     }
@@ -154,12 +156,13 @@ public class Building implements Serializable{
     }
 
     public void setDimensions(double width, double length, double brutoArea, double floorHeight, double fullHeight,
-                              int numberOfFloors, double residentialBrutoArea, double basementBrutoArea, double businessBrutoArea) {
+                              int numberOfFloors, int numberOfFlats, double residentialBrutoArea, double basementBrutoArea, double businessBrutoArea) {
         this.width = width;
         this.length = length;
         this.floorHeight = floorHeight;
         this.brutoArea = brutoArea;
         this.fullHeight = fullHeight;
+        this.numberOfFlats = numberOfFlats;
         this.numberOfFloors = numberOfFloors;
         this.residentialBrutoArea = residentialBrutoArea;
         this.basementBrutoArea = basementBrutoArea;
@@ -195,13 +198,13 @@ public class Building implements Serializable{
         this.length = length;
     }
 
-    // public double getFloorArea() {
-    // return floorArea;
-    // }
-    //
-    // public void setFloorArea(double floorArea) {
-    // this.floorArea = floorArea;
-    // }
+    public int getNumberOfFlats() {
+        return numberOfFlats;
+    }
+
+    public void setNumberOfFlats(int numberOfFlats) {
+        this.numberOfFlats = numberOfFlats;
+    }
 
     public double getBrutoArea() {
         return brutoArea;
