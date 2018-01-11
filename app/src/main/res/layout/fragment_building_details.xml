@@ -31,8 +31,8 @@
             android:layout_height="2dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:background="@color/colorAccent"
             android:layout_marginTop="4dp"
+            android:background="@color/colorAccent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -44,7 +44,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_tvPurpose"
+            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_tilCompanyInBuilding"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view"
@@ -66,8 +66,8 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="@string/tvWallsMaterial"
-            android:textColor="@android:color/black"
             android:textAppearance="@style/TextAppearance.AppCompat.Notification"
+            android:textColor="@android:color/black"
             app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_spMaterials"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_elvPurpose" />
@@ -105,8 +105,8 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="@string/tvCeilingMaterial"
-            android:textColor="@android:color/black"
             android:textAppearance="@style/TextAppearance.AppCompat.Notification"
+            android:textColor="@android:color/black"
             app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_spCeilingMaterials"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_spMaterials" />
@@ -118,7 +118,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
-            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_btnNext"
+            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_tvMaintenanceGrade"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -131,8 +131,8 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="@string/tvConstructionSystem"
-            android:textColor="@android:color/black"
             android:textAppearance="@style/TextAppearance.AppCompat.Notification"
+            android:textColor="@android:color/black"
             app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_spConstrSys"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_spRoof" />
@@ -145,14 +145,14 @@
             android:layout_marginEnd="8dp"
             android:layout_marginTop="16dp"
             android:background="@drawable/button_shape"
-            android:paddingStart="5dp"
-            android:paddingEnd="10dp"
             android:drawableLeft="@drawable/ic_done_white_24dp"
+            android:paddingEnd="10dp"
+            android:paddingStart="5dp"
             android:text="@string/btnAccept"
             android:textColor="@color/colorWhite"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_spConstrSys" />
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_spMaintenanceGrade" />
 
         <com.kstefancic.nekretnineinfo.views.NonScrollExpandableListView
             android:id="@+id/buildingDetailsFr_elvPurpose"
@@ -174,12 +174,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:textColor="@android:color/black"
             android:text="@string/tvPurpose"
             android:textAppearance="@style/TextAppearance.AppCompat.Notification"
+            android:textColor="@android:color/black"
             app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_elvPurpose"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_tilYear" />
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_tilCompanyInBuilding" />
 
         <TextView
             android:id="@+id/buildingDetailsFr_tvRoof"
@@ -187,9 +187,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:textColor="@android:color/black"
             android:text="@string/tvRoof"
             android:textAppearance="@style/TextAppearance.AppCompat.Notification"
+            android:textColor="@android:color/black"
             app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_spRoof"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_spCeilingMaterials" />
@@ -215,5 +215,54 @@
             app:layout_constraintBottom_toBottomOf="@+id/buildingDetailsFr_tvPurpose"
             app:layout_constraintStart_toEndOf="@+id/buildingDetailsFr_tvPurpose"
             app:layout_constraintTop_toTopOf="@+id/buildingDetailsFr_tvPurpose" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/buildingDetailsFr_tilCompanyInBuilding"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_tvPurpose"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_tilYear"
+            app:layout_constraintVertical_chainStyle="packed">
+
+            <EditText
+                android:id="@+id/buildingDetailsFr_etCompanyInBuilding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text"
+                android:hint="@string/etCompanyInBuilding"
+                android:padding="5dp" />
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/buildingDetailsFr_tvMaintenanceGrade"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tvMaintenanceGrade"
+            android:textAppearance="@style/TextAppearance.AppCompat.Notification"
+            android:textColor="@android:color/black"
+            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_spMaintenanceGrade"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_spConstrSys" />
+
+        <Spinner
+            android:id="@+id/buildingDetailsFr_spMaintenanceGrade"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_btnNext"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_tvMaintenanceGrade" />
+
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

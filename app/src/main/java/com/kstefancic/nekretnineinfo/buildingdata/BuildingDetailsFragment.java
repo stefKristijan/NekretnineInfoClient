@@ -3,6 +3,7 @@ package com.kstefancic.nekretnineinfo.buildingdata;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kstefancic.nekretnineinfo.R;
 import com.kstefancic.nekretnineinfo.api.model.Building;
@@ -28,6 +30,7 @@ import com.kstefancic.nekretnineinfo.helper.DBHelper;
 import com.kstefancic.nekretnineinfo.helper.PurposeExpandableListAdapter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -42,12 +45,13 @@ public class BuildingDetailsFragment extends Fragment {
     private static final String FUTURE_YEAR = "Ne možete unijeti godinu veću od trenutne";
     private static final String FIRST_YEAR_GREATER = "Prva godina mora biti manja od druge godine";
     private static final String FORMAT_NOT_VALID = "Godina mora biti formata ####. ili ####.-####.";
+    private static final String CHOOSE_PURPOSE = "Odaberite namjenu iz padajućeg izbornika";
     private Button btnAccept;
-    private EditText etYearOfBuild;
-    private Spinner spMaterial, spCeilingMaterial, spConstructionSystem, spRoof;
+    private EditText etYearOfBuild, etCompanyInBuilding;
+    private Spinner spMaterial, spCeilingMaterial, spConstructionSystem, spRoof, spMaintenanceGrade;
     private TextView tvSelectedPurpose;
     private ExpandableListView expandableListView;
-    private TextInputLayout tilYearOfBuild;
+    private TextInputLayout tilYearOfBuild, tilCompanyInBuilding;
     private List<Material> materials;
     private List<CeilingMaterial> ceilingMaterials;
     private List<ConstructionSystem> constructionSystems;
@@ -93,9 +97,11 @@ public class BuildingDetailsFragment extends Fragment {
         this.spMaterial = layout.findViewById(R.id.buildingDetailsFr_spMaterials);
         this.spCeilingMaterial =layout.findViewById(R.id.buildingDetailsFr_spCeilingMaterials);
         this.spConstructionSystem =layout.findViewById(R.id.buildingDetailsFr_spConstrSys);
+        this.spMaintenanceGrade = layout.findViewById(R.id.buildingDetailsFr_spMaintenanceGrade);
         this.etYearOfBuild = layout.findViewById(R.id.buildingDetailsFr_etYearOfBuild);
         this.tilYearOfBuild = layout.findViewById(R.id.buildingDetailsFr_tilYear);
-
+        this.tilCompanyInBuilding = layout.findViewById(R.id.buildingDetailsFr_tilCompanyInBuilding);
+        this.etCompanyInBuilding = layout.findViewById(R.id.buildingDetailsFr_etCompanyInBuilding);
         this.expandableListView = layout.findViewById(R.id.buildingDetailsFr_elvPurpose);
         this.expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
@@ -119,6 +125,7 @@ public class BuildingDetailsFragment extends Fragment {
 
         if(mBuilding!=null){
             this.etYearOfBuild.setText(mBuilding.getYearOfBuild());
+            this.etCompanyInBuilding.setText(mBuilding.getCompanyInBuilding());
             this.tvSelectedPurpose.setText(mBuilding.getPurpose().getPurpose());
             this.selectedPurpose=mBuilding.getPurpose();
         }
@@ -131,10 +138,12 @@ public class BuildingDetailsFragment extends Fragment {
                 CeilingMaterial ceilingMaterial = ceilingMaterials.get(spCeilingMaterial.getSelectedItemPosition());
                 ConstructionSystem constructionSystem = constructionSystems.get(spConstructionSystem.getSelectedItemPosition());
                 Roof roof = roofs.get(spRoof.getSelectedItemPosition());
-                if(checkYearFormat(etYearOfBuild.getText().toString())){
-                    String yearOfBuild = etYearOfBuild.getText().toString();
+                if(checkData(etYearOfBuild.getText().toString().trim(), etCompanyInBuilding.getText().toString().trim())){
+                    String yearOfBuild = etYearOfBuild.getText().toString().trim();
+                    String companyInBuilding = etCompanyInBuilding.getText().toString().trim();
+                    String maintenanceGrade = spMaintenanceGrade.getSelectedItem().toString();
                     Log.i("BUILDING","onInsert");
-                    buildingDetailsInserted.onBuildingDetailsInserted(material,ceilingMaterial,constructionSystem,roof,selectedPurpose,yearOfBuild);
+                    buildingDetailsInserted.onBuildingDetailsInserted(material,ceilingMaterial,constructionSystem,roof,selectedPurpose,yearOfBuild, companyInBuilding, maintenanceGrade);
                 }
             }
         });
@@ -160,11 +169,14 @@ public class BuildingDetailsFragment extends Fragment {
         List<String> materialSpinnerItems = setUpMaterialSpinnerItems();
         inflateSpinnerWithList(materialSpinnerItems,spMaterial);
 
+        inflateSpinnerWithList(Arrays.asList(getResources().getStringArray(R.array.maintenanceGrades)),spMaintenanceGrade);
+
         if(mBuilding!=null){
             setSpinnersToBuildingData(constSysSpinnerItems,mBuilding.getConstructionSystem().getConstructionSystem(),spConstructionSystem);
             setSpinnersToBuildingData(roofSpinnerItems,mBuilding.getRoof().getRoofType(),spRoof);
             setSpinnersToBuildingData(ceilingMaterialSpinnerItems,mBuilding.getCeilingMaterial().getCeilingMaterial(),spCeilingMaterial);
             setSpinnersToBuildingData(materialSpinnerItems, mBuilding.getMaterial().getMaterial(),spMaterial);
+            setSpinnersToBuildingData(Arrays.asList(getResources().getStringArray(R.array.maintenanceGrades)), mBuilding.getMaintenanceGrade(), spMaintenanceGrade);
         }
     }
 
@@ -221,8 +233,10 @@ public class BuildingDetailsFragment extends Fragment {
         return  constrSysTexts;
     }
 
-    private boolean checkYearFormat(String yearOfBuild){
+    private boolean checkData(String yearOfBuild, String companyInBuilding){
         tilYearOfBuild.setErrorEnabled(false);
+        tilCompanyInBuilding.setErrorEnabled(false);
+
         boolean isValid = true;
 
         if(!Pattern.matches("^[0-9]{4}\\.$|^[0-9]{4}\\.-[0-9]{4}\\.$",yearOfBuild)){
@@ -254,6 +268,10 @@ public class BuildingDetailsFragment extends Fragment {
             }
         }
 
+        if(selectedPurpose==null){
+            isValid=false;
+            Toast.makeText(getContext(), CHOOSE_PURPOSE, Toast.LENGTH_SHORT).show();
+        }
         return isValid;
     }
 
@@ -282,7 +300,7 @@ public class BuildingDetailsFragment extends Fragment {
     public interface BuildingDetailsInserted {
         void onBuildingDetailsInserted(Material wallMaterial, CeilingMaterial ceilingMaterial,
                                        ConstructionSystem constructionSystem, Roof roof,
-                                       Purpose purpose, String yearOfBuild);
+                                       Purpose purpose, String yearOfBuild, String companyInBuilding, String maintenanceGrade);
     }
 
 

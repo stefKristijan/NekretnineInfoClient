@@ -29,8 +29,8 @@ public class DimensionsFragment extends Fragment {
     private static final String NUM_OF_FLOORS_SMALL = "Broj katova mora biti 1 (samo prizemlje) ili veći";
     private static final String FULL_HEIGHT_SMALL = "Ukupna visina ne može biti manja od visine kata x broj katova";
     private Button btnAccept;
-    private TextInputLayout tilLength, tilWidth, tilBrutoArea, tilFullHeight, tilFloorHeight, tilNumOfFloors, tilResidentArea, tilBasementArea, tilBusinessArea;
-    private EditText etLength, etWidth, etBrutoArea, etFullHeight, etFloorHeight, etNumberOfFloors, etResidentArea, etBasementArea, etBusinessArea;
+    private TextInputLayout tilLength, tilWidth, tilBrutoArea, tilFullHeight, tilFloorHeight, tilNumOfFloors, tilResidentArea, tilBasementArea, tilBusinessArea, tilNumOfFlats;
+    private EditText etLength, etWidth, etBrutoArea, etFullHeight, etFloorHeight, etNumberOfFloors, etResidentArea, etBasementArea, etBusinessArea, etNumOfFlats;
     private CheckBox cbProperGroundPlan;
     private DimensionsInserted dimensionsInsertedListener;
 
@@ -65,7 +65,8 @@ public class DimensionsFragment extends Fragment {
         this.tilLength = layout.findViewById(R.id.frDims_tilLength);
         this.tilWidth = layout.findViewById(R.id.frDims_tilWidth);
         this.tilNumOfFloors = layout.findViewById(R.id.frDims_tilNumOfFloors);
-
+        this.tilNumOfFlats = layout.findViewById(R.id.frDims_tilNumOfFlats);
+        this.etNumOfFlats = layout.findViewById(R.id.frDims_etNumOfFlats);
         this.etBasementArea = layout.findViewById(R.id.frDims_etBasementBA);
         this.etResidentArea = layout.findViewById(R.id.frDims_etResidentialBA);
         this.etBusinessArea=layout.findViewById(R.id.frDims_etBusinessBA);
@@ -81,24 +82,25 @@ public class DimensionsFragment extends Fragment {
             public void onClick(View view) {
                 boolean properGroundPlan = cbProperGroundPlan.isChecked();
                 if(checkData(properGroundPlan)){
-                    double length = Double.parseDouble(etLength.getText().toString());
-                    double width = Double.parseDouble(etWidth.getText().toString());
-                    double brutoArea = Double.parseDouble(etBrutoArea.getText().toString());
+                    int numofFlats = Integer.parseInt(etNumOfFlats.getText().toString().trim());
+                    double length = Double.parseDouble(etLength.getText().toString().trim());
+                    double width = Double.parseDouble(etWidth.getText().toString().trim());
+                    double brutoArea = Double.parseDouble(etBrutoArea.getText().toString().trim());
                     double basementArea=0, residentialArea=0, businessArea=0;
-                    if(!etBasementArea.getText().toString().isEmpty()){
-                        basementArea = Double.parseDouble(etBasementArea.getText().toString());
+                    if(!etBasementArea.getText().toString().trim().isEmpty()){
+                        basementArea = Double.parseDouble(etBasementArea.getText().toString().trim());
                     }
-                    if(!etResidentArea.getText().toString().isEmpty()){
-                        residentialArea = Double.parseDouble(etResidentArea.getText().toString());
+                    if(!etResidentArea.getText().toString().trim().isEmpty()){
+                        residentialArea = Double.parseDouble(etResidentArea.getText().toString().trim());
                     }
-                    if(!etBusinessArea.getText().toString().isEmpty()){
-                        businessArea = Double.parseDouble(etBusinessArea.getText().toString());
+                    if(!etBusinessArea.getText().toString().trim().isEmpty()){
+                        businessArea = Double.parseDouble(etBusinessArea.getText().toString().trim());
                     }
-                    double fullHeight = Double.parseDouble(etFullHeight.getText().toString());
-                    double floorHeight = Double.parseDouble(etFloorHeight.getText().toString());
-                    int numOfFloors = Integer.parseInt(etNumberOfFloors.getText().toString());
+                    double fullHeight = Double.parseDouble(etFullHeight.getText().toString().trim());
+                    double floorHeight = Double.parseDouble(etFloorHeight.getText().toString().trim());
+                    int numOfFloors = Integer.parseInt(etNumberOfFloors.getText().toString().trim());
                     Log.i("DIMENSIONS","onInsert");
-                    dimensionsInsertedListener.onDimensionsInformationInserted(length,width,brutoArea,basementArea,residentialArea,businessArea,fullHeight,floorHeight,numOfFloors,properGroundPlan);
+                    dimensionsInsertedListener.onDimensionsInformationInserted(length,width,brutoArea,basementArea,residentialArea,businessArea,fullHeight,floorHeight,numOfFloors,numofFlats,properGroundPlan);
                 }
             }
         });
@@ -119,20 +121,22 @@ public class DimensionsFragment extends Fragment {
         this.etBasementArea.setText(String.valueOf(mBuilding.getBasementBrutoArea()));
         this.etResidentArea.setText(String.valueOf(mBuilding.getResidentialBrutoArea()));
         this.cbProperGroundPlan.setChecked(mBuilding.isProperGroundPlan());
+        this.etNumOfFlats.setText(String.valueOf(mBuilding.getNumberOfFlats()));
     }
 
     private boolean checkData(boolean properGroundPlan) {
         boolean isValid=true;
         refreshErrors();
-        String length= etLength.getText().toString();
-        String width = etWidth.getText().toString();
-        String brutoArea = etBrutoArea.getText().toString();
+        String length= etLength.getText().toString().trim();
+        String width = etWidth.getText().toString().trim();
+        String brutoArea = etBrutoArea.getText().toString().trim();
         /*String basementArea = etBasementArea.getText().toString();
         String businessArea = etBusinessArea.getText().toString();
         String residentialArea = etResidentArea.getText().toString();*/
-        String fullHeight = etFullHeight.getText().toString();
-        String floorHeight = etFloorHeight.getText().toString();
-        String numOfFloors = etNumberOfFloors.getText().toString();
+        String fullHeight = etFullHeight.getText().toString().trim();
+        String floorHeight = etFloorHeight.getText().toString().trim();
+        String numOfFloors = etNumberOfFloors.getText().toString().trim();
+        String numOfFlats = etNumOfFlats.getText().toString().trim();
 
         if(length.isEmpty()){
             isValid=false;
@@ -221,7 +225,7 @@ public class DimensionsFragment extends Fragment {
     public interface DimensionsInserted{
         void onDimensionsInformationInserted(double length, double width, double brutoArea,
                                              double basementArea, double residentalArea, double businessArea,
-                                             double fullHeight, double floorHeight, int numOfFloors, boolean properGroundPlan);
+                                             double fullHeight, double floorHeight, int numOfFloors, int numOfFlats, boolean properGroundPlan);
     }
 
 }

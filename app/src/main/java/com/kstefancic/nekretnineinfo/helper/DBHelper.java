@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.kstefancic.nekretnineinfo.api.model.Building;
@@ -95,6 +96,9 @@ public class DBHelper extends SQLiteOpenHelper {
                     Schema.STATE+" VARCHAR(100) NOT NULL,"+
                     Schema.CADASTRAL_PARTICLE+" VARCHAR(11) NOT NULL,"+
                     Schema.LOC_BUILDING_ID+ " BIGINT NOT NULL,"+
+                    Schema.SETTLEMENT+ " VARCHAR(100) NOT NULL,"+
+                    Schema.CITY_DISTRICT+ " VARCHAR(100),"+
+                    Schema.CADASTRAL_MUNICIPALITY+ " VARCHAR(100) NOT NULL,"+
                     "CONSTRAINT location_building_fk FOREIGN KEY ("+Schema.LOC_BUILDING_ID+") REFERENCES "+Schema.TABLE_BUILDING+"("+Schema.BUILDING_ID+"),"+
                     "CONSTRAINT unique_location UNIQUE ("+Schema.STREET+", "+Schema.STREET_NUM+", "+Schema.STREET_CHAR+", "+Schema.CADASTRAL_PARTICLE+"));";
 
@@ -123,6 +127,10 @@ public class DBHelper extends SQLiteOpenHelper {
                                             Schema.B_PURPOSE_ID +" INTEGER NOT NULL,"+
                                             Schema.B_ROOF_ID +" INTEGER NOT NULL,"+
                                             Schema.B_USER_ID+" BIGINT NOT NULL," +
+                                            Schema.COMPANY_IN_BUILDING+" VARCHAR(100)," +
+                                            Schema.MAINTENANCE_GRADE+" VARCHAR(20)," +
+                                            Schema.NUMBER_OF_RESIDENTS+" INTEGER," +
+                                            Schema.NETO_AREA+" BIGINT NOT NULL," +
                                             "CONSTRAINT building_user_fk FOREIGN KEY("+Schema.B_USER_ID+") REFERENCES "+Schema.TABLE_USER+"("+Schema.USER_ID+"),"+
                                             "CONSTRAINT building_roof_fk FOREIGN KEY("+Schema.B_ROOF_ID+") REFERENCES "+Schema.TABLE_ROOF+"("+Schema.ROOF_ID+"),"+
                                             "CONSTRAINT building_material_fk FOREIGN KEY("+Schema.B_MATERIAL_ID+") REFERENCES "+Schema.TABLE_USER+"("+Schema.MATERIAL_ID+"),"+
@@ -780,11 +788,22 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void insertBuilding(Building building){
         Log.d("DB_INSERT_BUILD",building.toString());
-        ContentValues contentValues = new ContentValues();
+        ContentValues contentValues = getBuildingContentValues(building);
         contentValues.put(Schema.BUILDING_ID, building.getId());
         contentValues.put(Schema.BUILDING_UID, building.getuId());
-        contentValues.put(Schema.BRUTO_AREA, building.getBrutoArea());
         contentValues.put(Schema.DATE, String.valueOf(building.getDate()));
+        contentValues.put(Schema.B_USER_ID, building.getUser().getId());
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        wdb.insert(Schema.TABLE_BUILDING,null,contentValues);
+        wdb.close();
+
+        insertBuildingLocations(building.getLocations(), building.getId());
+    }
+
+    @NonNull
+    private ContentValues getBuildingContentValues(Building building) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Schema.BRUTO_AREA, building.getBrutoArea());
         contentValues.put(Schema.FLOOR_HEIGHT, building.getFloorHeight());
         contentValues.put(Schema.FULL_HEIGHT, building.getFullHeight());
         contentValues.put(Schema.LENGTH, building.getLength());
@@ -799,16 +818,15 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(Schema.YEAR_OF_BUILD, building.getYearOfBuild());
         contentValues.put(Schema.B_CEILING_MATERIAL_ID, building.getCeilingMaterial().getId());
         contentValues.put(Schema.B_CONSTRUCT_SYS_ID, building.getConstructionSystem().getId());
-        contentValues.put(Schema.B_USER_ID, building.getUser().getId());
         contentValues.put(Schema.B_MATERIAL_ID, building.getMaterial().getId());
         contentValues.put(Schema.B_PURPOSE_ID, building.getPurpose().getId());
         contentValues.put(Schema.B_POSITION_ID, building.getPosition().getId());
         contentValues.put(Schema.B_ROOF_ID,building.getRoof().getId());
-        SQLiteDatabase wdb = this.getWritableDatabase();
-        wdb.insert(Schema.TABLE_BUILDING,null,contentValues);
-        wdb.close();
-
-        insertBuildingLocations(building.getLocations(), building.getId());
+        contentValues.put(Schema.COMPANY_IN_BUILDING, building.getCompanyInBuilding());
+        contentValues.put(Schema.MAINTENANCE_GRADE, building.getMaintenanceGrade());
+        contentValues.put(Schema.NUMBER_OF_RESIDENTS,building.getNumberOfResidents());
+        contentValues.put(Schema.NETO_AREA, building.getNetoArea());
+        return contentValues;
     }
 
     public List<Building> getAllBuildings(){
@@ -840,6 +858,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 int purposeId= buildingCursor.getInt(20);
                 int roofId= buildingCursor.getInt(21);
                 long userId=buildingCursor.getLong(22);
+                String companyInBuilding = buildingCursor.getString(23);
+                String maintenanceGrade = buildingCursor.getString(24);
+                int numberOfResidents = buildingCursor.getInt(25);
+                double netoArea = buildingCursor.getDouble(26);
                 Building building = new Building(uId,date,yearOfBuild,properGroundPlan);
                 building.setCeilingMaterial(this.getCeilingMaterialById(ceilingMatId));
                 building.setDimensions(width,length,brutoArea,floorHeight,fullHeight,numberOfFloors,numberOfFlats,residentialBrutoArea,basementBrutoArea,businessBrutoArea);
@@ -852,6 +874,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 building.setSynchronizedWithDatabase(isSynchronized);
                 building.setId(id);
                 building.setLocations(getBuildingLocationsByBuildingId(id));
+                building.setCompanyInBuilding(companyInBuilding);
+                building.setNumberOfResidents(numberOfResidents);
+                building.setMaintenanceGrade(maintenanceGrade);
+                building.setNetoArea(netoArea);
                 buildings.add(building);
             }while(buildingCursor.moveToNext());
         }
@@ -876,26 +902,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void updateBuildingById(Building building){
         Log.d("DB UPDATE BUILD",building.toString());
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(Schema.BRUTO_AREA, building.getBrutoArea());
-        contentValues.put(Schema.FLOOR_HEIGHT, building.getFloorHeight());
-        contentValues.put(Schema.FULL_HEIGHT, building.getFullHeight());
-        contentValues.put(Schema.LENGTH, building.getLength());
-        contentValues.put(Schema.NUMBER_OF_FLOORS, building.getNumberOfFloors());
-        contentValues.put(Schema.PROPER_GROUND_PLAN, building.isProperGroundPlan());
-        contentValues.put(Schema.SYNCHRONIZED, building.isSynchronizedWithDatabase());
-        contentValues.put(Schema.WIDTH, building.getWidth());
-        contentValues.put(Schema.NUMBER_OF_FLATS, building.getNumberOfFlats());
-        contentValues.put(Schema.BASEMENT_BRUTO_AREA, building.getBasementBrutoArea());
-        contentValues.put(Schema.BUSINESS_BRUTO_AREA, building.getBusinessBrutoArea());
-        contentValues.put(Schema.RESIDENTIAL_BRUTO_AREA, building.getResidentialBrutoArea());
-        contentValues.put(Schema.YEAR_OF_BUILD, building.getYearOfBuild());
-        contentValues.put(Schema.B_CEILING_MATERIAL_ID, building.getCeilingMaterial().getId());
-        contentValues.put(Schema.B_CONSTRUCT_SYS_ID, building.getConstructionSystem().getId());
-        contentValues.put(Schema.B_MATERIAL_ID, building.getMaterial().getId());
-        contentValues.put(Schema.B_PURPOSE_ID, building.getPurpose().getId());
-        contentValues.put(Schema.B_POSITION_ID, building.getPosition().getId());
-        contentValues.put(Schema.B_ROOF_ID,building.getRoof().getId());
+        ContentValues contentValues = getBuildingContentValues(building);
         SQLiteDatabase wdb = this.getWritableDatabase();
         wdb.update(Schema.TABLE_BUILDING,contentValues,Schema.BUILDING_ID+"="+building.getId(),null);
         wdb.close();
@@ -906,27 +913,8 @@ public class DBHelper extends SQLiteOpenHelper {
     //For update database after synchronization
     public void updateBuildingByuId(Building building){
         Log.d("DB UPDATE BUILD UID",building.toString());
-        ContentValues contentValues = new ContentValues();
+        ContentValues contentValues = getBuildingContentValues(building);
         contentValues.put(Schema.BUILDING_ID,building.getId());
-        contentValues.put(Schema.BRUTO_AREA, building.getBrutoArea());
-        contentValues.put(Schema.FLOOR_HEIGHT, building.getFloorHeight());
-        contentValues.put(Schema.FULL_HEIGHT, building.getFullHeight());
-        contentValues.put(Schema.LENGTH, building.getLength());
-        contentValues.put(Schema.NUMBER_OF_FLOORS, building.getNumberOfFloors());
-        contentValues.put(Schema.PROPER_GROUND_PLAN, building.isProperGroundPlan());
-        contentValues.put(Schema.SYNCHRONIZED, building.isSynchronizedWithDatabase());
-        contentValues.put(Schema.WIDTH, building.getWidth());
-        contentValues.put(Schema.NUMBER_OF_FLATS, building.getNumberOfFlats());
-        contentValues.put(Schema.BASEMENT_BRUTO_AREA, building.getBasementBrutoArea());
-        contentValues.put(Schema.BUSINESS_BRUTO_AREA, building.getBusinessBrutoArea());
-        contentValues.put(Schema.RESIDENTIAL_BRUTO_AREA, building.getResidentialBrutoArea());
-        contentValues.put(Schema.YEAR_OF_BUILD, building.getYearOfBuild());
-        contentValues.put(Schema.B_CEILING_MATERIAL_ID, building.getCeilingMaterial().getId());
-        contentValues.put(Schema.B_CONSTRUCT_SYS_ID, building.getConstructionSystem().getId());
-        contentValues.put(Schema.B_MATERIAL_ID, building.getMaterial().getId());
-        contentValues.put(Schema.B_PURPOSE_ID, building.getPurpose().getId());
-        contentValues.put(Schema.B_POSITION_ID, building.getPosition().getId());
-        contentValues.put(Schema.B_ROOF_ID,building.getRoof().getId());
         SQLiteDatabase wdb = this.getWritableDatabase();
         wdb.update(Schema.TABLE_BUILDING,contentValues,Schema.BUILDING_UID+"='"+building.getuId()+"'",null);
         wdb.close();
@@ -949,33 +937,34 @@ public class DBHelper extends SQLiteOpenHelper {
      */
 
     public void insertBuildingLocation(BuildingLocation buildingLocation){
+        ContentValues contentValues = getBuildLocationContentValues(buildingLocation);
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        wdb.insert(Schema.TABLE_BUILDING_LOCATION,null, contentValues);
+        wdb.close();
+    }
+
+    @NonNull
+    private ContentValues getBuildLocationContentValues(BuildingLocation buildingLocation) {
         ContentValues contentValues = new ContentValues();
         Random random = new Random();
         contentValues.put(Schema.LOCATION_ID,random.nextInt());
         contentValues.put(Schema.STREET,buildingLocation.getStreet());
         contentValues.put(Schema.STREET_NUM,buildingLocation.getStreetNumber());
         contentValues.put(Schema.STREET_CHAR, String.valueOf(buildingLocation.getStreetChar()));
+        contentValues.put(Schema.CITY_DISTRICT, buildingLocation.getCityDistrict());
+        contentValues.put(Schema.SETTLEMENT, buildingLocation.getSettlement());
+        contentValues.put(Schema.CADASTRAL_MUNICIPALITY, buildingLocation.getCadastralMunicipality());
         contentValues.put(Schema.CADASTRAL_PARTICLE,buildingLocation.getCadastralParticle());
         contentValues.put(Schema.CITY, buildingLocation.getCity());
         contentValues.put(Schema.STATE,buildingLocation.getState());
         contentValues.put(Schema.IP_BUILDING_ID,buildingLocation.getBuildingId());
-        SQLiteDatabase wdb = this.getWritableDatabase();
-        wdb.insert(Schema.TABLE_BUILDING_LOCATION,null, contentValues);
-        wdb.close();
+        return contentValues;
     }
 
     public void insertBuildingLocations(List<BuildingLocation> buildingLocations, long buildingId){
         SQLiteDatabase wdb = this.getWritableDatabase();
         for(BuildingLocation buildingLocation : buildingLocations){
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(Schema.LOCATION_ID,getLocationMaxId(wdb)+1);
-            contentValues.put(Schema.STREET,buildingLocation.getStreet());
-            contentValues.put(Schema.STREET_NUM,buildingLocation.getStreetNumber());
-            contentValues.put(Schema.STREET_CHAR, String.valueOf(buildingLocation.getStreetChar()));
-            contentValues.put(Schema.CADASTRAL_PARTICLE,buildingLocation.getCadastralParticle());
-            contentValues.put(Schema.CITY, buildingLocation.getCity());
-            contentValues.put(Schema.STATE,buildingLocation.getState());
-            contentValues.put(Schema.IP_BUILDING_ID,buildingId);
+            ContentValues contentValues = getBuildLocationContentValues(buildingLocation);
             wdb.insert(Schema.TABLE_BUILDING_LOCATION,null, contentValues);
         }
 
@@ -1006,7 +995,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 String state = locationCursor.getString(5);
                 String cadastralParticle = locationCursor.getString(6);
                 long buildingIdDB = locationCursor.getLong(7);
-                BuildingLocation buildingLocation = new BuildingLocation(street,streetNum,streetChar,city,state,cadastralParticle);
+                String settlement = locationCursor.getString(8);
+                String cityDistrict = locationCursor.getString(9);
+                String cadastralMunicipality = locationCursor.getString(10);
+                BuildingLocation buildingLocation = new BuildingLocation(street,streetNum,streetChar, settlement, cityDistrict,city,state,cadastralParticle, cadastralMunicipality);
                 buildingLocation.setId(id);
                 buildingLocation.setBuildingId(buildingIdDB);
                 Log.d("BUILDING LOC DB",buildingLocation.toString());
@@ -1197,6 +1189,7 @@ public class DBHelper extends SQLiteOpenHelper {
         static final String WIDTH = "width";
         static final String LENGTH = "length";
         static final String BRUTO_AREA = "bruto_area";
+        static final String NETO_AREA = "neto_area";
         static final String RESIDENTIAL_BRUTO_AREA = "residential_bruto_area";
         static final String BASEMENT_BRUTO_AREA = "basement_bruto_area";
         static final String BUSINESS_BRUTO_AREA = "business_bruto_area";
@@ -1204,6 +1197,9 @@ public class DBHelper extends SQLiteOpenHelper {
         static final String FULL_HEIGHT = "full_height";
         static final String NUMBER_OF_FLOORS = "num_of_floors";
         static final String NUMBER_OF_FLATS = "num_of_flats";
+        static final String NUMBER_OF_RESIDENTS = "num_of_residents";
+        static final String COMPANY_IN_BUILDING = "comp_in_building";
+        static final String MAINTENANCE_GRADE = "maintenance_grade";
 
         //BUILDING LOCATION table
         static final String TABLE_BUILDING_LOCATION = "building_location";
@@ -1215,6 +1211,9 @@ public class DBHelper extends SQLiteOpenHelper {
         static final String CITY = "city";
         static final String STATE ="state";
         static final String LOC_BUILDING_ID = "building_id";
+        static final String CADASTRAL_MUNICIPALITY = "cad_municipality";
+        static final String CITY_DISTRICT = "city_district";
+        static final String SETTLEMENT = "settlement";
 
         //IMAGE PATH table
         static final String TABLE_IMAGES = "images";

@@ -12,9 +12,12 @@ public class BuildingLocation implements Serializable {
     private String street;
     private int streetNumber;
     private char streetChar;
+    private String settlement; // naselje
+    private String cityDistrict; // gradska četvrt
     private String city;
     private String state;
     private String cadastralParticle;
+    private String cadastralMunicipality;
     private long buildingId;
 
     @Override
@@ -32,9 +35,14 @@ public class BuildingLocation implements Serializable {
         if (streetNumber != that.streetNumber) return false;
         if (streetChar != that.streetChar) return false;
         if (!street.equals(that.street)) return false;
+        if (settlement != null ? !settlement.equals(that.settlement) : that.settlement != null)
+            return false;
+        if (cityDistrict != null ? !cityDistrict.equals(that.cityDistrict) : that.cityDistrict != null)
+            return false;
         if (!city.equals(that.city)) return false;
         if (!state.equals(that.state)) return false;
-        return cadastralParticle.equals(that.cadastralParticle);
+        if (!cadastralParticle.equals(that.cadastralParticle)) return false;
+        return cadastralMunicipality.equals(that.cadastralMunicipality);
     }
 
     @Override
@@ -42,9 +50,12 @@ public class BuildingLocation implements Serializable {
         int result = street.hashCode();
         result = 31 * result + streetNumber;
         result = 31 * result + (int) streetChar;
+        result = 31 * result + (settlement != null ? settlement.hashCode() : 0);
+        result = 31 * result + (cityDistrict != null ? cityDistrict.hashCode() : 0);
         result = 31 * result + city.hashCode();
         result = 31 * result + state.hashCode();
         result = 31 * result + cadastralParticle.hashCode();
+        result = 31 * result + cadastralMunicipality.hashCode();
         return result;
     }
 
@@ -52,15 +63,40 @@ public class BuildingLocation implements Serializable {
         super();
     }
 
-    public BuildingLocation(String street, int streetNumber, char streetChar, String city, String state,
-                            String cadastralParticle) {
-        super();
+    public BuildingLocation(String street, int streetNumber, char streetChar, String settlement, String cityDistrict, String city, String state, String cadastralParticle, String cadastralMunicipality) {
         this.street = street;
         this.streetNumber = streetNumber;
         this.streetChar = streetChar;
+        this.settlement = settlement;
+        this.cityDistrict = cityDistrict;
         this.city = city;
         this.state = state;
         this.cadastralParticle = cadastralParticle;
+        this.cadastralMunicipality = cadastralMunicipality;
+    }
+
+    public String getSettlement() {
+        return settlement;
+    }
+
+    public void setSettlement(String settlement) {
+        this.settlement = settlement;
+    }
+
+    public String getCityDistrict() {
+        return cityDistrict;
+    }
+
+    public void setCityDistrict(String cityDistrict) {
+        this.cityDistrict = cityDistrict;
+    }
+
+    public String getCadastralMunicipality() {
+        return cadastralMunicipality;
+    }
+
+    public void setCadastralMunicipality(String cadastralMunicipality) {
+        this.cadastralMunicipality = cadastralMunicipality;
     }
 
     public long getId() {

@@ -41,6 +41,7 @@ public class Building implements Serializable{
     private double width;
     private double length;
     private double brutoArea;
+    private double netoArea;
     private double residentialBrutoArea;
     private double businessBrutoArea;
     private double basementBrutoArea;
@@ -49,6 +50,9 @@ public class Building implements Serializable{
     private int numberOfFloors;
     private int numberOfFlats;
     private boolean properGroundPlan;
+    private int numberOfResidents;
+    private String companyInBuilding;
+    private String maintenanceGrade;
 
     @Override
     public boolean equals(Object o) {
@@ -85,6 +89,7 @@ public class Building implements Serializable{
                 ", width=" + width +
                 ", length=" + length +
                 ", brutoArea=" + brutoArea +
+                ", netoArea=" + netoArea +
                 ", residentialBrutoArea=" + residentialBrutoArea +
                 ", businessBrutoArea=" + businessBrutoArea +
                 ", basementBrutoArea=" + basementBrutoArea +
@@ -93,6 +98,9 @@ public class Building implements Serializable{
                 ", numberOfFloors=" + numberOfFloors +
                 ", numberOfFlats=" + numberOfFlats +
                 ", properGroundPlan=" + properGroundPlan +
+                ", numberOfResidents=" + numberOfResidents +
+                ", companyInBuilding='" + companyInBuilding + '\'' +
+                ", maintenanceGrade='" + maintenanceGrade + '\'' +
                 '}';
     }
 
@@ -105,6 +113,38 @@ public class Building implements Serializable{
         this.date = date;
         this.yearOfBuild = yearOfBuild;
         this.properGroundPlan = properGroundPlan;
+    }
+
+    public double getNetoArea() {
+        return netoArea;
+    }
+
+    public void setNetoArea(double netoArea) {
+        this.netoArea = netoArea;
+    }
+
+    public int getNumberOfResidents() {
+        return numberOfResidents;
+    }
+
+    public void setNumberOfResidents(int numberOfResidents) {
+        this.numberOfResidents = numberOfResidents;
+    }
+
+    public String getCompanyInBuilding() {
+        return companyInBuilding;
+    }
+
+    public void setCompanyInBuilding(String companyInBuilding) {
+        this.companyInBuilding = companyInBuilding;
+    }
+
+    public String getMaintenanceGrade() {
+        return maintenanceGrade;
+    }
+
+    public void setMaintenanceGrade(String maintenanceGrade) {
+        this.maintenanceGrade = maintenanceGrade;
     }
 
     public String getuId() {
@@ -139,6 +179,14 @@ public class Building implements Serializable{
         this.basementBrutoArea = basementBrutoArea;
     }
 
+    public int getNumberOfFlats() {
+        return numberOfFlats;
+    }
+
+    public void setNumberOfFlats(int numberOfFlats) {
+        this.numberOfFlats = numberOfFlats;
+    }
+
     public List<BuildingLocation> getLocations() {
         return locations;
     }
@@ -156,18 +204,21 @@ public class Building implements Serializable{
     }
 
     public void setDimensions(double width, double length, double brutoArea, double floorHeight, double fullHeight,
-                              int numberOfFloors, int numberOfFlats, double residentialBrutoArea, double basementBrutoArea, double businessBrutoArea) {
+                              int numberOfFloors, int numberOfFlats, double residentialBrutoArea, double basementBrutoArea,
+                              double netoArea) {
         this.width = width;
         this.length = length;
+        this.numberOfFlats = numberOfFlats;
+        // this.floorArea = floorArea;
         this.floorHeight = floorHeight;
         this.brutoArea = brutoArea;
+        this.netoArea = netoArea;
         this.fullHeight = fullHeight;
-        this.numberOfFlats = numberOfFlats;
         this.numberOfFloors = numberOfFloors;
         this.residentialBrutoArea = residentialBrutoArea;
         this.basementBrutoArea = basementBrutoArea;
-        this.businessBrutoArea = businessBrutoArea;
     }
+
 
     public void setLocation(List<BuildingLocation> locations, Position position) {
         this.locations = locations;
@@ -198,13 +249,13 @@ public class Building implements Serializable{
         this.length = length;
     }
 
-    public int getNumberOfFlats() {
-        return numberOfFlats;
-    }
-
-    public void setNumberOfFlats(int numberOfFlats) {
-        this.numberOfFlats = numberOfFlats;
-    }
+    // public double getFloorArea() {
+    // return floorArea;
+    // }
+    //
+    // public void setFloorArea(double floorArea) {
+    // this.floorArea = floorArea;
+    // }
 
     public double getBrutoArea() {
         return brutoArea;
@@ -327,4 +378,3 @@ public class Building implements Serializable{
     }
 
 }
-

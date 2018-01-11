@@ -46,6 +46,7 @@ import static com.kstefancic.nekretnineinfo.MainActivity.BUILDING_DATA;
 public class BuildingDataActivity extends AppCompatActivity implements View.OnClickListener,BuildingDetailsFragment.BuildingDetailsInserted, AddressInformationFragment.AddressInformationInserted, DimensionsFragment.DimensionsInserted,PicturesFragment.PictureChoosen{
 
     private static final String VALIDATE = "Potvrdite podatke radi validacije";
+    private static final String NO_CONSTRUCTION_SYSTEM = "Morate odabrati konstrukcijski sustav kako bi spremili dimenzije";
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -63,8 +64,8 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
     private TabLayout tabLayout;
     private ImageButton btnCancel, btnSave;
     private int[] tabIcons={
-            R.drawable.ic_business_white_24dp,
             R.drawable.ic_place_white_24dp,
+            R.drawable.ic_business_white_24dp,
             R.drawable.ic_straighten_white_24dp,
             R.drawable.ic_photo_library_white_24dp
     };
@@ -156,8 +157,8 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
         Fragment detailsFragment = BuildingDetailsFragment.newInstance(mBuilding);
         Fragment dimensionFragment = DimensionsFragment.newInstance(mBuilding);
         Fragment picturesFragment = PicturesFragment.newInstance(mBuilding);
-        mSectionsPagerAdapter.addFragment(detailsFragment);
         mSectionsPagerAdapter.addFragment(addressFragment);
+        mSectionsPagerAdapter.addFragment(detailsFragment);
         mSectionsPagerAdapter.addFragment(dimensionFragment);
         mSectionsPagerAdapter.addFragment(picturesFragment);
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -166,23 +167,43 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
 
 
     @Override
-    public void onDimensionsInformationInserted(double length, double width, double brutoArea, double basementArea, double residentalArea, double businessArea, double fullHeight, double floorHeight, int numOfFloors, boolean properGroundPlan) {
-        this.mBuilding.setDimensions(width,length,brutoArea,floorHeight,fullHeight,numOfFloors,5,residentalArea,basementArea,businessArea);
+    public void onDimensionsInformationInserted(double length, double width, double brutoArea, double basementArea, double residentalArea, double businessArea, double fullHeight, double floorHeight, int numOfFloors, int numOfFlats, boolean properGroundPlan) {
+        this.mBuilding.setDimensions(width,length,brutoArea,floorHeight,fullHeight,numOfFloors,numOfFlats,residentalArea,basementArea,businessArea);
         this.mBuilding.setProperGroundPlan(properGroundPlan);
-        this.mViewPager.setCurrentItem(3,true);
-        this.hasDimensions=true;
+        if(numOfFlats>0){
+            this.mBuilding.setNumberOfResidents((int) (numOfFlats*2.56));
+        }else{
+            this.mBuilding.setNumberOfResidents(0);
+        }
+        if(mBuilding.getConstructionSystem()==null){
+            Toast.makeText(this, NO_CONSTRUCTION_SYSTEM, Toast.LENGTH_SHORT).show();
+            this.mViewPager.setCurrentItem(1,true);
+            this.hasDimensions = false;
+        }else {
+            this.mBuilding.setNetoArea(calculateNetoArea(brutoArea, numOfFloors));
+            this.mViewPager.setCurrentItem(3, true);
+            this.hasDimensions = true;
+        }
+    }
 
+    private double calculateNetoArea(double brutoArea, int numofFloors) {
+        /*
+        With switch case(constructionSystem) AB - 0.83, zidane - 0.75
+         */
+        return brutoArea*numofFloors*0.8;
     }
 
     @Override
-    public void onBuildingDetailsInserted(Material wallMaterial, CeilingMaterial ceilingMaterial, ConstructionSystem constructionSystem, Roof roof, Purpose purpose, String yearOfBuild) {
+    public void onBuildingDetailsInserted(Material wallMaterial, CeilingMaterial ceilingMaterial, ConstructionSystem constructionSystem, Roof roof, Purpose purpose, String yearOfBuild, String companyInBuilding, String maintenanceGrade) {
         this.mBuilding.setMaterial(wallMaterial);
         this.mBuilding.setCeilingMaterial(ceilingMaterial);
         this.mBuilding.setConstructionSystem(constructionSystem);
         this.mBuilding.setRoof(roof);
         this.mBuilding.setPurpose(purpose);
         this.mBuilding.setYearOfBuild(yearOfBuild);
-        this.mViewPager.setCurrentItem(1,true);
+        this.mBuilding.setMaintenanceGrade(maintenanceGrade);
+        this.mBuilding.setCompanyInBuilding(companyInBuilding);
+        this.mViewPager.setCurrentItem(2,true);
         this.hasDetails=true;
     }
 
@@ -190,7 +211,7 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
     public void onAddressInformationInserted(List<BuildingLocation> buildingLocations, Position position) {
         this.mBuilding.setLocations(buildingLocations);
         this.mBuilding.setPosition(position);
-        this.mViewPager.setCurrentItem(2,true);
+        this.mViewPager.setCurrentItem(1,true);
         this.hasLocations=true;
     }
 
@@ -228,11 +249,11 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
 
     private boolean dataValidationCheck() {
 
-        if(!hasDetails){
+        if(!hasLocations){
             this.mViewPager.setCurrentItem(0,true);
             Toast.makeText(this,VALIDATE,Toast.LENGTH_SHORT).show();
             return false;
-        }else if(!hasLocations){
+        }else if(!hasDetails){
             this.mViewPager.setCurrentItem(1,true);
             Toast.makeText(this,VALIDATE,Toast.LENGTH_SHORT).show();
             return false;
