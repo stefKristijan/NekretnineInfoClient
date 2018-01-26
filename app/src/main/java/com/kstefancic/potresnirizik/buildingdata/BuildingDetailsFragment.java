@@ -174,7 +174,7 @@ public class BuildingDetailsFragment extends Fragment {
             setSpinnersToBuildingData(constSysSpinnerItems,mBuilding.getConstruction().getConstruction(),spConstructionSystem);
             setSpinnersToBuildingData(roofSpinnerItems,mBuilding.getRoof().getRoofType(),spRoof);
             setSpinnersToBuildingData(ceilingMaterialSpinnerItems,mBuilding.getCeilingMaterial().getCeilingMaterial(),spCeilingMaterial);
-            setSpinnersToBuildingData(materialSpinnerItems, mBuilding.getMaterial().getMaterial(),spMaterial);
+            //setSpinnersToBuildingData(materialSpinnerItems, mBuilding.getMaterial().getMaterial(),spMaterial);
             setSpinnersToBuildingData(Arrays.asList(getResources().getStringArray(R.array.maintenanceGrades)), mBuilding.getMaintenanceGrade(), spMaintenanceGrade);
         }
     }

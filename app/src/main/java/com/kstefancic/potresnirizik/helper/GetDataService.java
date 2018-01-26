@@ -25,6 +25,7 @@ import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Position;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Purpose;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Roof;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Sector;
+import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.SupportingSystem;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.City;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.State;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.Street;
@@ -92,14 +93,16 @@ public class GetDataService extends Service {
             public void onResponse(Call<MultiChoiceDataResponse> call, Response<MultiChoiceDataResponse> response) {
                 if (response.isSuccessful()){
                     Log.i("SERVICE","multichoice data success");
-                    insertPositionsInLocalDatabase(response.body().getPosition());
-                    insertMaterialsInLocalDatabase(response.body().getMaterial());
-                    insertConstructionSystemsInLocalDatabase(response.body().getConstruction());
-                    insertPurposesInLocalDatabase(response.body().getPurpose());
-                    insertCeilingMaterialsInLocalDatabase(response.body().getCeilingMaterial());
+                    insertPositionsInLocalDatabase(response.body().getPositions());
+                    //insertMaterialsInLocalDatabase(response.body().getMaterial());
+                    insertConstructionsInLocalDatabase(response.body().getConstructions());
+                    insertPurposesInLocalDatabase(response.body().getPurposes());
+                    insertCeilingMaterialsInLocalDatabase(response.body().getCeilingMaterials());
                     insertSectorsInLocalDatabase(response.body().getSectors());
                     insertRoofsInLocalDatabase(response.body().getRoofs());
-                    getMultichoiceAddressDataAndSaveToLocalDatabase();
+                    insertSupportingSystemsInLocalDatabase(response.body().getSupportingSystems());
+                    //getMultichoiceAddressDataAndSaveToLocalDatabase();
+                    getBuildingsFromServer();
                 }else{
                     Log.e("MULTICHOICE DATA RESP", response.body().toString());
                     showErrorResponse(response);
@@ -294,9 +297,15 @@ public class GetDataService extends Service {
         }
     }
 
-    private void insertConstructionSystemsInLocalDatabase(List<Construction> constructions) {
+    private void insertConstructionsInLocalDatabase(List<Construction> constructions) {
         for(Construction construction : constructions){
-            DBHelper.getInstance(this).insertConstructSys(construction);
+            DBHelper.getInstance(this).insertConstruction(construction);
+        }
+    }
+
+    private void insertSupportingSystemsInLocalDatabase(List<SupportingSystem> supportingSystems) {
+        for(SupportingSystem supportingSystem: supportingSystems){
+            DBHelper.getInstance(this).insertSupportingSystem(supportingSystem);
         }
     }
 

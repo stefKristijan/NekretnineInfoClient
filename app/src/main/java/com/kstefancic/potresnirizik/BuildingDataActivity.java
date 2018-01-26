@@ -170,16 +170,16 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
         this.mBuilding.setDimensions(width,length,brutoArea,floorHeight,fullHeight,numOfFloors,numOfFlats,residentalArea,basementArea,businessArea);
         this.mBuilding.setProperGroundPlan(properGroundPlan);
         if(numOfFlats>0){
-            this.mBuilding.setNumberOfResidents((int) (numOfFlats*2.56));
+            //this.mBuilding.setNumberOfResidents((int) (numOfFlats*2.56));
         }else{
-            this.mBuilding.setNumberOfResidents(0);
+            //this.mBuilding.setNumberOfResidents(0);
         }
         if(mBuilding.getConstruction()==null){
             Toast.makeText(this, NO_CONSTRUCTION_SYSTEM, Toast.LENGTH_SHORT).show();
             this.mViewPager.setCurrentItem(1,true);
             this.hasDimensions = false;
         }else {
-            this.mBuilding.setNetoArea(calculateNetoArea(brutoArea, numOfFloors));
+            //this.mBuilding.setNetoArea(calculateNetoArea(brutoArea, numOfFloors));
             this.mViewPager.setCurrentItem(3, true);
             this.hasDimensions = true;
         }
@@ -194,7 +194,7 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onBuildingDetailsInserted(Material wallMaterial, CeilingMaterial ceilingMaterial, Construction construction, Roof roof, Purpose purpose, String yearOfBuild, String companyInBuilding, String maintenanceGrade) {
-        this.mBuilding.setMaterial(wallMaterial);
+        //this.mBuilding.setMaterial(wallMaterial);
         this.mBuilding.setCeilingMaterial(ceilingMaterial);
         this.mBuilding.setConstruction(construction);
         this.mBuilding.setRoof(roof);

@@ -16,11 +16,11 @@ import java.util.List;
 
 public class MultiChoiceDataResponse {
 
-    private List<Construction> constructionSystem;
+    private List<Construction> constructions;
     // private List<Material> material;
-    private List<Position> position;
-    private List<Purpose> purpose;
-    private List<CeilingMaterial> ceilingMaterial;
+    private List<Position> positions;
+    private List<Purpose> purposes;
+    private List<CeilingMaterial> ceilingMaterials;
     private List<Roof> roofs;
     private List<Sector> sectors;
     private List<SupportingSystem> supportingSystems;
@@ -28,15 +28,15 @@ public class MultiChoiceDataResponse {
     public MultiChoiceDataResponse() {
     }
 
-    public MultiChoiceDataResponse(List<Construction> constructionSystem, List<SupportingSystem> supportingSystems,
-                                   List<Position> position, List<Purpose> purpose, List<CeilingMaterial> ceilingMaterial, List<Roof> roofs,
+    public MultiChoiceDataResponse(List<Construction> constructions, List<SupportingSystem> supportingSystems,
+                                   List<Position> positions, List<Purpose> purposes, List<CeilingMaterial> ceilingMaterials, List<Roof> roofs,
                                    List<Sector> sectors) {
         super();
-        this.constructionSystem = constructionSystem;
+        this.constructions = constructions;
         this.supportingSystems = supportingSystems;
-        this.position = position;
-        this.purpose = purpose;
-        this.ceilingMaterial = ceilingMaterial;
+        this.positions = positions;
+        this.purposes = purposes;
+        this.ceilingMaterials = ceilingMaterials;
         this.roofs = roofs;
         this.sectors = sectors;
     }
@@ -65,20 +65,20 @@ public class MultiChoiceDataResponse {
         this.roofs = roofs;
     }
 
-    public List<CeilingMaterial> getCeilingMaterial() {
-        return ceilingMaterial;
+    public List<CeilingMaterial> getCeilingMaterials() {
+        return ceilingMaterials;
     }
 
-    public void setCeilingMaterial(List<CeilingMaterial> ceilingMaterial) {
-        this.ceilingMaterial = ceilingMaterial;
+    public void setCeilingMaterials(List<CeilingMaterial> ceilingMaterials) {
+        this.ceilingMaterials = ceilingMaterials;
     }
 
-    public List<Construction> getConstructionSystem() {
-        return constructionSystem;
+    public List<Construction> getConstructions() {
+        return constructions;
     }
 
-    public void setConstructionSystem(List<Construction> constructionSystem) {
-        this.constructionSystem = constructionSystem;
+    public void setConstructions(List<Construction> constructions) {
+        this.constructions = constructions;
     }
 
     // public List<Material> getMaterial() {
@@ -89,20 +89,20 @@ public class MultiChoiceDataResponse {
     // this.material = material;
     // }
 
-    public List<Position> getPosition() {
-        return position;
+    public List<Position> getPositions() {
+        return positions;
     }
 
-    public void setPosition(List<Position> position) {
-        this.position = position;
+    public void setPositions(List<Position> positions) {
+        this.positions = positions;
     }
 
-    public List<Purpose> getPurpose() {
-        return purpose;
+    public List<Purpose> getPurposes() {
+        return purposes;
     }
 
-    public void setPurpose(List<Purpose> purpose) {
-        this.purpose = purpose;
+    public void setPurposes(List<Purpose> purposes) {
+        this.purposes = purposes;
     }
 
 }

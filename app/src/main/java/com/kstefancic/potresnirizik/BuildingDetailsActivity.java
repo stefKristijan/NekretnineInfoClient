@@ -135,8 +135,8 @@ public class BuildingDetailsActivity extends AppCompatActivity {
         }else{
             this.tvProperGroundPlan.setText("NE");
         }
-        this.tvBrutoArea.setText(Html.fromHtml(mBuilding.getBrutoArea()+" m<sup>2</sup>"));
-        this.tvNetoArea.setText(Html.fromHtml(mBuilding.getNetoArea()+" m<sup>2</sup>"));
+        //this.tvBrutoArea.setText(Html.fromHtml(mBuilding.getBrutoArea()+" m<sup>2</sup>"));
+        //this.tvNetoArea.setText(Html.fromHtml(mBuilding.getNetoArea()+" m<sup>2</sup>"));
         this.tvBusinessArea.setText(Html.fromHtml(mBuilding.getBusinessBrutoArea()+" m<sup>2</sup>"));
         this.tvBasementArea.setText(Html.fromHtml(mBuilding.getBasementBrutoArea()+" m<sup>2</sup>"));
         this.tvResidentialArea.setText(Html.fromHtml(mBuilding.getResidentialBrutoArea()+" m<sup>2</sup>"));
@@ -159,12 +159,12 @@ public class BuildingDetailsActivity extends AppCompatActivity {
 
         this.tvYearOfBuild.setText(mBuilding.getYearOfBuild());
         this.tvPurpose.setText(mBuilding.getPurpose().getPurpose());
-        this.tvMaterial.setText(mBuilding.getMaterial().getMaterial());
+        //this.tvMaterial.setText(mBuilding.getMaterial().getMaterial());
         this.tvCeiling.setText(mBuilding.getCeilingMaterial().getCeilingMaterial());
         this.tvRoof.setText(mBuilding.getRoof().getRoofType());
         this.tvConstSyst.setText(mBuilding.getConstruction().getConstruction());
         this.tvCompanyInBuilding.setText(mBuilding.getCompanyInBuilding());
-        this.tvNumOfResidents.setText(String.valueOf(mBuilding.getNumberOfResidents()));
+        //this.tvNumOfResidents.setText(String.valueOf(mBuilding.getNumberOfResidents()));
         this.tvMaintenanceGrade.setText(mBuilding.getMaintenanceGrade());
     }
 

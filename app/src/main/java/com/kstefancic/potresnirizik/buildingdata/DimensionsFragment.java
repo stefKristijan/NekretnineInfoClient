@@ -116,7 +116,7 @@ public class DimensionsFragment extends Fragment {
         this.etFloorHeight.setText(String.valueOf(mBuilding.getFloorHeight()));
         this.etFullHeight.setText(String.valueOf(mBuilding.getFullHeight()));
         this.etNumberOfFloors.setText(String.valueOf(mBuilding.getNumberOfFloors()));
-        this.etBrutoArea.setText(String.valueOf(mBuilding.getBrutoArea()));
+        //this.etBrutoArea.setText(String.valueOf(mBuilding.getBrutoArea()));
         this.etBusinessArea.setText(String.valueOf(mBuilding.getBusinessBrutoArea()));
         this.etBasementArea.setText(String.valueOf(mBuilding.getBasementBrutoArea()));
         this.etResidentArea.setText(String.valueOf(mBuilding.getResidentialBrutoArea()));

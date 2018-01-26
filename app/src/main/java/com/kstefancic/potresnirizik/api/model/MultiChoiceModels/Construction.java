@@ -20,6 +20,12 @@ public class Construction implements Serializable {
         this.construction = construction;
     }
 
+    public Construction(int id, String constrSyst, SupportingSystem supportingSystem) {
+        this.id = id;
+        this.construction = constrSyst;
+        this.supportingSystem = supportingSystem;
+    }
+
     @Override
     public String toString() {
         return "Construction{" +

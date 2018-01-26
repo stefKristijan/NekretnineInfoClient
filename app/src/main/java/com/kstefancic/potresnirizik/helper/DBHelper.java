@@ -19,7 +19,11 @@ import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Position;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Purpose;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Roof;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Sector;
+import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.SupportingSystem;
+import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.CadastralMunicipality;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.City;
+import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.CityDistrict;
+import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.Settlement;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.State;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.Street;
 import com.kstefancic.potresnirizik.api.model.User;
@@ -75,11 +79,18 @@ public class DBHelper extends SQLiteOpenHelper {
                                             Schema.P_SECTOR_ID+" INTEGER NOT NULL," +
                                             "CONSTRAINT purpose_sector_fk FOREIGN KEY("+Schema.P_SECTOR_ID+") REFERENCES "+Schema.TABLE_SECTOR+"("+Schema.SECTOR_ID+"))";
 
+    private static final String CREATE_TABLE_SUPP_SYS =
+            "CREATE TABLE " + Schema.TABLE_SUPPORTING_SYS + " (" +
+                    Schema.SUPPORTING_SYS_ID+" INTEGER PRIMARY KEY," +
+                    Schema.SUPPORTING_SYSTEM+" VARCHAR(100) NOT NULL);";
 
-    private static final String CREATE_TABLE_CONSTRUCT_SYS =
-            "CREATE TABLE " + Schema.TABLE_CONSTUCT_SYS + " (" +
-                                            Schema.CONSTR_SYS_ID+" INTEGER PRIMARY KEY," +
-                                            Schema.CONSTR_SYS+" VARCHAR(100) NOT NULL);";
+    private static final String CREATE_TABLE_CONSTRUCTION =
+            "CREATE TABLE " + Schema.TABLE_CONSTRUCTION + " (" +
+                                            Schema.CONSTRUCTION_ID +" INTEGER PRIMARY KEY," +
+                                            Schema.CONSTRUCTION +" VARCHAR(100) NOT NULL," +
+                                            Schema.C_SUPPORTING_SYS_ID+ " INTEGER NOT NULL," +
+                                            "CONSTRAINT constr_supp_sys_fk FOREIGN KEY ("+Schema.C_SUPPORTING_SYS_ID+") REFERENCES "+Schema.TABLE_SUPPORTING_SYS+"("+Schema.SUPPORTING_SYS_ID+"))";
+
 
     private static final String CREATE_TABLE_CEILING_MATERIAL=
             "CREATE TABLE " + Schema.TABLE_CEILING_MATERIAL + " (" +
@@ -96,9 +107,9 @@ public class DBHelper extends SQLiteOpenHelper {
                     Schema.STATE+" VARCHAR(100) NOT NULL,"+
                     Schema.CADASTRAL_PARTICLE+" VARCHAR(11) NOT NULL,"+
                     Schema.LOC_BUILDING_ID+ " BIGINT NOT NULL,"+
-                    Schema.SETTLEMENT+ " VARCHAR(100) NOT NULL,"+
-                    Schema.CITY_DISTRICT+ " VARCHAR(100),"+
-                    Schema.CADASTRAL_MUNICIPALITY+ " VARCHAR(100) NOT NULL,"+
+                    Schema.BL_SETTLEMENT + " VARCHAR(100) NOT NULL,"+
+                    Schema.BL_CITY_DISTRICT + " VARCHAR(100),"+
+                    Schema.BL_CADASTRAL_MUNI + " VARCHAR(100) NOT NULL,"+
                     "CONSTRAINT location_building_fk FOREIGN KEY ("+Schema.LOC_BUILDING_ID+") REFERENCES "+Schema.TABLE_BUILDING+"("+Schema.BUILDING_ID+"),"+
                     "CONSTRAINT unique_location UNIQUE ("+Schema.STREET+", "+Schema.STREET_NUM+", "+Schema.STREET_CHAR+", "+Schema.CADASTRAL_PARTICLE+"));";
 
@@ -106,7 +117,7 @@ public class DBHelper extends SQLiteOpenHelper {
             "CREATE TABLE "+ Schema.TABLE_BUILDING + " ("+
                                             Schema.BUILDING_ID +" BIGINT PRIMARY KEY,"+
                                             Schema.BUILDING_UID +" VARCHAR(255) NOT NULL UNIQUE,"+
-                                            Schema.BRUTO_AREA + " DOUBLE NOT NULL,"+
+                                            Schema.ATTIC_BRUTO_AREA + " DOUBLE,"+
                                             Schema.BASEMENT_BRUTO_AREA + " DOUBLE,"+
                                             Schema.RESIDENTIAL_BRUTO_AREA + " DOUBLE,"+
                                             Schema.BUSINESS_BRUTO_AREA + " DOUBLE,"+
@@ -121,21 +132,18 @@ public class DBHelper extends SQLiteOpenHelper {
                                             Schema.YEAR_OF_BUILD +" VARCHAR(10) NOT NULL,"+
                                             Schema.NUMBER_OF_FLATS+ " INTEGER,"+
                                             Schema.B_CEILING_MATERIAL_ID +" INTEGER NOT NULL,"+
-                                            Schema.B_CONSTRUCT_SYS_ID +" INTEGER NOT NULL,"+
-                                            Schema.B_MATERIAL_ID+" INTEGER NOT NULL,"+
+                                            Schema.B_CONSTRUCTION_ID +" INTEGER NOT NULL,"+
                                             Schema.B_POSITION_ID +" INTEGER NOT NULL,"+
                                             Schema.B_PURPOSE_ID +" INTEGER NOT NULL,"+
                                             Schema.B_ROOF_ID +" INTEGER NOT NULL,"+
                                             Schema.B_USER_ID+" BIGINT NOT NULL," +
                                             Schema.COMPANY_IN_BUILDING+" VARCHAR(100)," +
                                             Schema.MAINTENANCE_GRADE+" VARCHAR(20)," +
-                                            Schema.NUMBER_OF_RESIDENTS+" INTEGER," +
-                                            Schema.NETO_AREA+" BIGINT NOT NULL," +
+                                            Schema.FLOOR_AREA+" DOUBLE NOT NULL," +
                                             "CONSTRAINT building_user_fk FOREIGN KEY("+Schema.B_USER_ID+") REFERENCES "+Schema.TABLE_USER+"("+Schema.USER_ID+"),"+
                                             "CONSTRAINT building_roof_fk FOREIGN KEY("+Schema.B_ROOF_ID+") REFERENCES "+Schema.TABLE_ROOF+"("+Schema.ROOF_ID+"),"+
-                                            "CONSTRAINT building_material_fk FOREIGN KEY("+Schema.B_MATERIAL_ID+") REFERENCES "+Schema.TABLE_USER+"("+Schema.MATERIAL_ID+"),"+
                                             "CONSTRAINT building_c_material_fk FOREIGN KEY("+Schema.B_CEILING_MATERIAL_ID+") REFERENCES "+Schema.TABLE_USER+"("+Schema.CEILING_MATERIAL_ID+"),"+
-                                            "CONSTRAINT building_constr_sys_fk FOREIGN KEY("+Schema.B_CONSTRUCT_SYS_ID+") REFERENCES "+Schema.TABLE_USER+"("+Schema.CONSTR_SYS_ID+"),"+
+                                            "CONSTRAINT building_constr_sys_fk FOREIGN KEY("+Schema.B_CONSTRUCTION_ID +") REFERENCES "+Schema.TABLE_USER+"("+Schema.CONSTRUCTION_ID +"),"+
                                             "CONSTRAINT building_position_fk FOREIGN KEY("+Schema.B_POSITION_ID+") REFERENCES "+Schema.TABLE_USER+"("+Schema.POSITION_ID+"),"+
                                             "CONSTRAINT building_purpose_fk FOREIGN KEY("+Schema.B_PURPOSE_ID+") REFERENCES "+Schema.TABLE_USER+"("+Schema.PURPOSE_ID+"))";
 
@@ -168,12 +176,36 @@ public class DBHelper extends SQLiteOpenHelper {
                     Schema.STREET_CITY_ID+" INTEGER NOT NULL,"+
                     "CONSTRAINT street_city_fk FOREIGN KEY("+Schema.STREET_CITY_ID+") REFERENCES "+Schema.TABLE_CITY+"("+Schema.CITY_ID+"));";
 
+    private static final String CREATE_TABLE_SETTLEMENTS=
+            "CREATE TABLE " + Schema.TABLE_SETTLEMENT + " (" +
+                    Schema.SETTLEMENT_ID +" INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    Schema.SETTLEMENT_NAME+" VARCHAR(100) NOT NULL,"+
+                    Schema.SETT_CITY_ID+" INTEGER NOT NULL,"+
+                    "CONSTRAINT settlement_city_fk FOREIGN KEY("+Schema.SETT_CITY_ID+") REFERENCES "+Schema.TABLE_CITY+"("+Schema.CITY_ID+"));";
+
+    private static final String CREATE_TABLE_CITY_DISTRICTS=
+            "CREATE TABLE " + Schema.TABLE_CITY_DISTRICT + " (" +
+                    Schema.CITY_DISTRICT_ID +" INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    Schema.BL_CITY_DISTRICT +" VARCHAR(100) NOT NULL,"+
+                    Schema.CD_CITY_ID+" INTEGER NOT NULL,"+
+                    "CONSTRAINT district_city_fk FOREIGN KEY("+Schema.CD_CITY_ID+") REFERENCES "+Schema.TABLE_CITY+"("+Schema.CITY_ID+"));";
+
+    private static final String CREATE_TABLE_CAD_MUNI=
+            "CREATE TABLE " + Schema.TABLE_CAD_MUNICIPALITY + " (" +
+                    Schema.CAD_MUNI_ID +" INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    Schema.CAD_MUNI_NAME+" VARCHAR(100) NOT NULL,"+
+                    Schema.CAD_MUNI_MBR+" BIGINT,"+
+                    Schema.CM_CITY_ID+" INTEGER NOT NULL,"+
+                    "CONSTRAINT cad_muni_city_fk FOREIGN KEY("+Schema.CM_CITY_ID+") REFERENCES "+Schema.TABLE_CITY+"("+Schema.CITY_ID+"));";
+
+
     //DROPING TABLES
     private static final String DROP_TABLE_USER = "DROP TABLE IF EXISTS "+ Schema.TABLE_USER;
     private static final String DROP_TABLE_PURPOSE = "DROP TABLE IF EXISTS "+ Schema.TABLE_PURPOSE;
     private static final String DROP_TABLE_POSITION = "DROP TABLE IF EXISTS "+ Schema.TABLE_POSITION;
     private static final String DROP_TABLE_MATERIAL = "DROP TABLE IF EXISTS "+ Schema.TABLE_MATERIAL;
-    private static final String DROP_TABLE_CONSTRUCT_SYS = "DROP TABLE IF EXISTS "+ Schema.TABLE_CONSTUCT_SYS;
+    private static final String DROP_TABLE_SUPPORTING_SYS = "DROP TABLE IF EXISTS "+Schema.TABLE_SUPPORTING_SYS;
+    private static final String DROP_TABLE_CONSTRUCT_SYS = "DROP TABLE IF EXISTS "+ Schema.TABLE_CONSTRUCTION;
     private static final String DROP_TABLE_CEILING_MATERIAL = "DROP TABLE IF EXISTS "+ Schema.TABLE_CEILING_MATERIAL;
     private static final String DROP_TABLE_BUILDING = "DROP TABLE IF EXISTS " + Schema.TABLE_BUILDING;
     private static final String DROP_TABLE_IMAGES = "DROP TABLE IF EXISTS "+Schema.TABLE_IMAGES;
@@ -182,7 +214,10 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DROP_TABLE_ROOF = "DROP TABLE IF EXISTS "+Schema.TABLE_ROOF;
     private static final String DROP_TABLE_STATES = "DROP TABLE IF EXISTS "+Schema.TABLE_STATES;
     private static final String DROP_TABLE_STREETS = "DROP TABLE IF EXISTS "+Schema.TABLE_STREET;
-    private static final String DROP_TABLE_CITIES = "DROP TABLE IF EXISTS "+Schema.TABLE_CITY;
+    private static final String DROP_TABLE_CITY = "DROP TABLE IF EXISTS "+Schema.TABLE_CITY;
+    private static final String DROP_TABLE_CAD_MUNICPS = "DROP TABLE IF EXISTS "+Schema.TABLE_CAD_MUNICIPALITY;
+    private static final String DROP_TABLE_SETTLEMENT = "DROP TABLE IF EXISTS "+Schema.TABLE_SETTLEMENT;
+    private static final String DROP_TABLE_CITY_DISTR = "DROP TABLE IF EXISTS "+Schema.TABLE_CITY_DISTRICT;
 
 
     //DELETING DATA
@@ -190,7 +225,8 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DELETE_TABLE_PURPOSE = "DELETE FROM "+ Schema.TABLE_PURPOSE;
     private static final String DELETE_TABLE_POSITION = "DELETE FROM "+ Schema.TABLE_POSITION;
     private static final String DELETE_TABLE_MATERIAL ="DELETE FROM "+ Schema.TABLE_MATERIAL;
-    private static final String DELETE_TABLE_CONSTRUCT_SYS = "DELETE FROM "+ Schema.TABLE_CONSTUCT_SYS;
+    private static final String DELETE_TABLE_SUPP_SYS = "DELETE FROM "+Schema.TABLE_SUPPORTING_SYS;
+    private static final String DELETE_TABLE_CONSTRUCT_SYS = "DELETE FROM "+ Schema.TABLE_CONSTRUCTION;
     private static final String DELETE_TABLE_CEILING_MATERIAL = "DELETE FROM "+ Schema.TABLE_CEILING_MATERIAL;
     private static final String DELETE_TABLE_BUILDING = "DELETE FROM " + Schema.TABLE_BUILDING;
     private static final String DELETE_TABLE_IMAGES = "DELETE FROM "+Schema.TABLE_IMAGES;
@@ -200,6 +236,9 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DELETE_TABLE_CITY = "DELETE FROM "+Schema.TABLE_CITY;
     private static final String DELETE_TABLE_STREET = "DELETE FROM "+Schema.TABLE_STREET;
     private static final String DELETE_TABLE_STATES = "DELETE FROM "+Schema.TABLE_STATES;
+    private static final String DELETE_TABLE_CITY_DIS = "DELETE FROM "+Schema.TABLE_CITY_DISTRICT;
+    private static final String DELETE_TABLE_SETTLEMENT = "DELETE FROM "+Schema.TABLE_SETTLEMENT;
+    private static final String DELETE_TABLE_CAD_MUNI = "DELETE FROM "+Schema.TABLE_CAD_MUNICIPALITY;
 
     //SELECTING TABLES
     private static final String SELECT_USER = "SELECT * FROM " + Schema.TABLE_USER;
@@ -226,7 +265,8 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_TABLE_POSITION);
         sqLiteDatabase.execSQL(CREATE_TABLE_PURPOSE);
         sqLiteDatabase.execSQL(CREATE_TABLE_MATERIAL);
-        sqLiteDatabase.execSQL(CREATE_TABLE_CONSTRUCT_SYS);
+        sqLiteDatabase.execSQL(CREATE_TABLE_SUPP_SYS);
+        sqLiteDatabase.execSQL(CREATE_TABLE_CONSTRUCTION);
         sqLiteDatabase.execSQL(CREATE_TABLE_BUILDING);
         sqLiteDatabase.execSQL(CREATE_TABLE_CEILING_MATERIAL);
         sqLiteDatabase.execSQL(CREATE_TABLE_IMAGES);
@@ -236,6 +276,9 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_TABLE_STATES);
         sqLiteDatabase.execSQL(CREATE_TABLE_CITIES);
         sqLiteDatabase.execSQL(CREATE_TABLE_STREETS);
+        sqLiteDatabase.execSQL(CREATE_TABLE_CITY_DISTRICTS);
+        sqLiteDatabase.execSQL(CREATE_TABLE_SETTLEMENTS);
+        sqLiteDatabase.execSQL(CREATE_TABLE_CAD_MUNI);
     }
 
     @Override
@@ -244,6 +287,7 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DROP_TABLE_POSITION);
         sqLiteDatabase.execSQL(DROP_TABLE_PURPOSE);
         sqLiteDatabase.execSQL(DROP_TABLE_MATERIAL);
+        sqLiteDatabase.execSQL(DROP_TABLE_SUPPORTING_SYS);
         sqLiteDatabase.execSQL(DROP_TABLE_CONSTRUCT_SYS);
         sqLiteDatabase.execSQL(DROP_TABLE_BUILDING);
         sqLiteDatabase.execSQL(DROP_TABLE_CEILING_MATERIAL);
@@ -253,7 +297,10 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DROP_TABLE_ROOF);
         sqLiteDatabase.execSQL(DROP_TABLE_STATES);
         sqLiteDatabase.execSQL(DROP_TABLE_STREETS);
-        sqLiteDatabase.execSQL(DROP_TABLE_CITIES);
+        sqLiteDatabase.execSQL(DROP_TABLE_CITY);
+        sqLiteDatabase.execSQL(DROP_TABLE_CITY_DISTR);
+        sqLiteDatabase.execSQL(DROP_TABLE_CAD_MUNICPS);
+        sqLiteDatabase.execSQL(DROP_TABLE_SETTLEMENT);
         this.onCreate(sqLiteDatabase);
     }
 
@@ -291,6 +338,7 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DELETE_TABLE_POSITION);
         sqLiteDatabase.execSQL(DELETE_TABLE_PURPOSE);
         sqLiteDatabase.execSQL(DELETE_TABLE_MATERIAL);
+        sqLiteDatabase.execSQL(DELETE_TABLE_SUPP_SYS);
         sqLiteDatabase.execSQL(DELETE_TABLE_CONSTRUCT_SYS);
         sqLiteDatabase.execSQL(DELETE_TABLE_BUILDING);
         sqLiteDatabase.execSQL(DELETE_TABLE_CEILING_MATERIAL);
@@ -301,6 +349,9 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DELETE_TABLE_STREET);
         sqLiteDatabase.execSQL(DELETE_TABLE_STATES);
         sqLiteDatabase.execSQL(DELETE_TABLE_CITY);
+        sqLiteDatabase.execSQL(DELETE_TABLE_CAD_MUNI);
+        sqLiteDatabase.execSQL(DELETE_TABLE_CITY_DIS);
+        sqLiteDatabase.execSQL(DELETE_TABLE_SETTLEMENT);
         sqLiteDatabase.close();
     }
 
@@ -579,29 +630,32 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /*
     CONSTRUCTION SYSTEM QUERIES
-    - insertConstructSys(Construction constructionSystem)
-    - getConstructionSystemById(int constructionSystemId
+    - insertConstruction(Construction constructionSystem)
+    - getConstructionById(int constructionSystemId
     - getAllConstructionSystems()
      */
 
-    public void insertConstructSys(Construction construction){
+    public void insertConstruction(Construction construction){
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Schema.CONSTR_SYS, construction.getConstruction());
-        contentValues.put(Schema.CONSTR_SYS_ID, construction.getId());
+        contentValues.put(Schema.CONSTRUCTION, construction.getConstruction());
+        contentValues.put(Schema.CONSTRUCTION_ID, construction.getId());
+        contentValues.put(Schema.C_SUPPORTING_SYS_ID, construction.getSupportingSystem().getId());
         SQLiteDatabase wdb = this.getWritableDatabase();
-        wdb.insert(Schema.TABLE_CONSTUCT_SYS,null,contentValues);
+        wdb.insert(Schema.TABLE_CONSTRUCTION,null,contentValues);
         wdb.close();
     }
 
-    public Construction getConstructionSystemById(int constructionSystemId){
-        String getConstrSystQuery = "SELECT * FROM "+Schema.TABLE_CONSTUCT_SYS+" WHERE "+Schema.CONSTR_SYS_ID+"="+constructionSystemId;
+    public Construction getConstructionById(int constructionSystemId){
+        String getConstrSystQuery = "SELECT * FROM "+Schema.TABLE_CONSTRUCTION +" WHERE "+Schema.CONSTRUCTION_ID +"="+constructionSystemId;
         SQLiteDatabase wdb = this.getWritableDatabase();
         Cursor constrSysCursor = wdb.rawQuery(getConstrSystQuery,null);
         Construction constrSystObj = null;
         if(constrSysCursor.moveToFirst()){
             int id = constrSysCursor.getInt(0);
             String constrSyst = constrSysCursor.getString(1);
-            constrSystObj=new Construction(id,constrSyst);
+            int suppSysId = constrSysCursor.getInt(2);
+            SupportingSystem supportingSystem = getSupportingSystemById(suppSysId);
+            constrSystObj=new Construction(id,constrSyst, supportingSystem);
         }
         constrSysCursor.close();
         wdb.close();
@@ -610,20 +664,69 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public List<Construction> getAllConstructionSystems(){
         List<Construction> constructions = new ArrayList<>();
-        String getConstrSysQ = "SELECT * FROM "+Schema.TABLE_CONSTUCT_SYS;
+        String getConstrSysQ = "SELECT * FROM "+Schema.TABLE_CONSTRUCTION;
         SQLiteDatabase wdb = this.getWritableDatabase();
         Cursor constSysCursor = wdb.rawQuery(getConstrSysQ,null);
         if(constSysCursor.moveToFirst()){
             do{
                 int id = constSysCursor.getInt(0);
                 String constructionSys = constSysCursor.getString(1);
-                Construction constSysObj=new Construction(id,constructionSys);
+                int suppSysId = constSysCursor.getInt(2);
+                Construction constSysObj=new Construction(id,constructionSys, getSupportingSystemById(suppSysId));
                 constructions.add(constSysObj);
             }while(constSysCursor.moveToNext());
         }
         constSysCursor.close();
         wdb.close();
         return constructions;
+    }
+
+    /*
+    SUPPORTING SYSTEM QUERIES
+    -insert()
+    -getSuppSystems()
+    -getAllSuppSystems()
+     */
+
+    public void insertSupportingSystem(SupportingSystem supportingSystem){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Schema.SUPPORTING_SYS_ID, supportingSystem.getId());
+        contentValues.put(Schema.SUPPORTING_SYSTEM, supportingSystem.getSupportingSystem());
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        wdb.insert(Schema.TABLE_SUPPORTING_SYS,null,contentValues);
+        wdb.close();
+    }
+
+    public SupportingSystem getSupportingSystemById(int supportingSystemId){
+        String getSuppSystQuery = "SELECT * FROM "+Schema.TABLE_SUPPORTING_SYS +" WHERE "+Schema.SUPPORTING_SYS_ID +"="+supportingSystemId;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor suppSysCursor = wdb.rawQuery(getSuppSystQuery,null);
+        SupportingSystem supportingSystem = null;
+        if(suppSysCursor.moveToFirst()){
+            int id = suppSysCursor.getInt(0);
+            String suppSystem = suppSysCursor.getString(1);
+            supportingSystem = new SupportingSystem(id,suppSystem);
+        }
+        suppSysCursor.close();
+        wdb.close();
+        return supportingSystem;
+    }
+
+    public List<SupportingSystem> getAllSupportingSystems(){
+        List<SupportingSystem> supportingSystems = new ArrayList<>();
+        String getSupppSysQ = "SELECT * FROM "+Schema.TABLE_SUPPORTING_SYS;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor suppSysCursor = wdb.rawQuery(getSupppSysQ,null);
+        if(suppSysCursor.moveToFirst()){
+            do{
+                int id = suppSysCursor.getInt(0);
+                String suppSys = suppSysCursor.getString(1);
+                supportingSystems.add(new SupportingSystem(id,suppSys));
+            }while(suppSysCursor.moveToNext());
+        }
+        suppSysCursor.close();
+        wdb.close();
+        return supportingSystems;
     }
 
     /*
@@ -778,6 +881,113 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /*
+    SETTLEMENT QUERIES
+   - insertSettlement(Settlement settlement)
+   - getAllSettlements()
+    */
+    public void insertSettlement(Settlement settlement){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Schema.SETTLEMENT_ID, settlement.getId());
+        contentValues.put(Schema.SETTLEMENT_NAME, settlement.getSettlement());
+        contentValues.put(Schema.SETT_CITY_ID, settlement.getCityId());
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        wdb.insert(Schema.TABLE_SETTLEMENT,null,contentValues);
+        wdb.close();
+    }
+
+
+    public List<Settlement> getAllSettlements(){
+        List<Settlement> settlements = new ArrayList<>();
+        String getSettlementsQ = "SELECT * FROM "+Schema.TABLE_SETTLEMENT;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor settlementCursor = wdb.rawQuery(getSettlementsQ,null);
+        if(settlementCursor.moveToFirst()){
+            do{
+                int id = settlementCursor.getInt(0);
+                String settlement = settlementCursor.getString(1);
+                int cityId = settlementCursor.getInt(2);
+                settlements.add(new Settlement(id,settlement,cityId));
+            }while(settlementCursor.moveToNext());
+        }
+        settlementCursor.close();
+        wdb.close();
+        return settlements;
+    }
+
+    /*
+    CITY DISTRICT QUERIES
+   - insertCityDistrict(CityDistrict cityDistrict)
+   - getAllCityDistricts()
+    */
+    public void insertCityDistrict(CityDistrict cityDistrict){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Schema.CITY_DISTRICT_ID, cityDistrict.getId());
+        contentValues.put(Schema.CITY_DISTRICT_NAME, cityDistrict.getCityDistrict());
+        contentValues.put(Schema.CD_CITY_ID, cityDistrict.getCityId());
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        wdb.insert(Schema.TABLE_CITY_DISTRICT,null,contentValues);
+        wdb.close();
+    }
+
+
+    public List<CityDistrict> getAllCityDistricts(){
+        List<CityDistrict> cityDistricts = new ArrayList<>();
+        String getCityDistrictsQ = "SELECT * FROM "+Schema.TABLE_CITY_DISTRICT;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor cityDistrictCursor = wdb.rawQuery(getCityDistrictsQ,null);
+        if(cityDistrictCursor.moveToFirst()){
+            do{
+                int id = cityDistrictCursor.getInt(0);
+                String cityDistrict = cityDistrictCursor.getString(1);
+                int cityId = cityDistrictCursor.getInt(2);
+                cityDistricts.add(new CityDistrict(id,cityDistrict,cityId));
+            }while(cityDistrictCursor.moveToNext());
+        }
+        cityDistrictCursor.close();
+        wdb.close();
+        return cityDistricts;
+    }
+
+
+    /*
+    CADASTRAL MUNICIPALITY QUERIES
+   - insertCadMunicipality(CadastralMunicipality cadastralMunicipality)
+   - getAllCadastralMunicipalities()
+    */
+    public void insertCadastralMunicipality(CadastralMunicipality cadastralMunicipality){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Schema.CAD_MUNI_ID, cadastralMunicipality.getId());
+        contentValues.put(Schema.CAD_MUNI_NAME, cadastralMunicipality.getCadastralMunicipality());
+        contentValues.put(Schema.CAD_MUNI_MBR, cadastralMunicipality.getMbr());
+        contentValues.put(Schema.CM_CITY_ID, cadastralMunicipality.getCityId());
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        wdb.insert(Schema.TABLE_CAD_MUNICIPALITY,null,contentValues);
+        wdb.close();
+    }
+
+
+    public List<CadastralMunicipality> getAllCadastralMunicipalities(){
+        List<CadastralMunicipality> cadastralMunicipalities = new ArrayList<>();
+        String getCadMuniQ = "SELECT * FROM "+Schema.TABLE_CAD_MUNICIPALITY;
+        SQLiteDatabase wdb = this.getWritableDatabase();
+        Cursor cadMuniCursor = wdb.rawQuery(getCadMuniQ,null);
+        if(cadMuniCursor.moveToFirst()){
+            do{
+                int id = cadMuniCursor.getInt(0);
+                String cadMuni = cadMuniCursor.getString(1);
+                long mbr = cadMuniCursor.getLong(2);
+                int cityId = cadMuniCursor.getInt(3);
+                cadastralMunicipalities.add(new CadastralMunicipality(id,cadMuni,mbr,cityId));
+            }while(cadMuniCursor.moveToNext());
+        }
+        cadMuniCursor.close();
+        wdb.close();
+        return cadastralMunicipalities;
+    }
+
+
+
+    /*
     BUILDING QUERIES
     - insertBuilding(Building building)
     - getAllBuildings()
@@ -803,7 +1013,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @NonNull
     private ContentValues getBuildingContentValues(Building building) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Schema.BRUTO_AREA, building.getBrutoArea());
+        contentValues.put(Schema.ATTIC_BRUTO_AREA, building.getAtticBrutoArea());
         contentValues.put(Schema.FLOOR_HEIGHT, building.getFloorHeight());
         contentValues.put(Schema.FULL_HEIGHT, building.getFullHeight());
         contentValues.put(Schema.LENGTH, building.getLength());
@@ -817,15 +1027,13 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(Schema.RESIDENTIAL_BRUTO_AREA, building.getResidentialBrutoArea());
         contentValues.put(Schema.YEAR_OF_BUILD, building.getYearOfBuild());
         contentValues.put(Schema.B_CEILING_MATERIAL_ID, building.getCeilingMaterial().getId());
-        contentValues.put(Schema.B_CONSTRUCT_SYS_ID, building.getConstruction().getId());
-        contentValues.put(Schema.B_MATERIAL_ID, building.getMaterial().getId());
+        contentValues.put(Schema.B_CONSTRUCTION_ID, building.getConstruction().getId());
         contentValues.put(Schema.B_PURPOSE_ID, building.getPurpose().getId());
         contentValues.put(Schema.B_POSITION_ID, building.getPosition().getId());
         contentValues.put(Schema.B_ROOF_ID,building.getRoof().getId());
         contentValues.put(Schema.COMPANY_IN_BUILDING, building.getCompanyInBuilding());
         contentValues.put(Schema.MAINTENANCE_GRADE, building.getMaintenanceGrade());
-        contentValues.put(Schema.NUMBER_OF_RESIDENTS,building.getNumberOfResidents());
-        contentValues.put(Schema.NETO_AREA, building.getNetoArea());
+        contentValues.put(Schema.FLOOR_AREA, building.getFloorArea());
         return contentValues;
     }
 
@@ -837,7 +1045,7 @@ public class DBHelper extends SQLiteOpenHelper {
             do{
                 Long id = buildingCursor.getLong(0);
                 String uId = buildingCursor.getString(1);
-                double brutoArea= buildingCursor.getDouble(2);
+                double atticBrutoArea= buildingCursor.getDouble(2);
                 double basementBrutoArea= buildingCursor.getDouble(3);
                 double residentialBrutoArea= buildingCursor.getDouble(4);
                 double businessBrutoArea= buildingCursor.getDouble(5);
@@ -853,31 +1061,28 @@ public class DBHelper extends SQLiteOpenHelper {
                 int numberOfFlats = buildingCursor.getInt(15);
                 int ceilingMatId= buildingCursor.getInt(16);
                 int constrSysId= buildingCursor.getInt(17);
-                int materialId= buildingCursor.getInt(18);
-                int positionId= buildingCursor.getInt(19);
-                int purposeId= buildingCursor.getInt(20);
-                int roofId= buildingCursor.getInt(21);
-                long userId=buildingCursor.getLong(22);
-                String companyInBuilding = buildingCursor.getString(23);
-                String maintenanceGrade = buildingCursor.getString(24);
-                int numberOfResidents = buildingCursor.getInt(25);
-                double netoArea = buildingCursor.getDouble(26);
+                //int materialId= buildingCursor.getInt(18);
+                int positionId= buildingCursor.getInt(18);
+                int purposeId= buildingCursor.getInt(19);
+                int roofId= buildingCursor.getInt(20);
+                long userId=buildingCursor.getLong(21);
+                String companyInBuilding = buildingCursor.getString(22);
+                String maintenanceGrade = buildingCursor.getString(23);
+                double floorArea = buildingCursor.getDouble(24);
                 Building building = new Building(uId,date,yearOfBuild,properGroundPlan);
                 building.setCeilingMaterial(this.getCeilingMaterialById(ceilingMatId));
-                building.setDimensions(width,length,brutoArea,floorHeight,fullHeight,numberOfFloors,numberOfFlats,residentialBrutoArea,basementBrutoArea,businessBrutoArea);
+                building.setDimensions(width,length,atticBrutoArea,floorHeight,fullHeight,numberOfFloors,numberOfFlats,residentialBrutoArea,basementBrutoArea,floorArea);
                 building.setPurpose(this.getPurposeById(purposeId));
                 building.setUser(this.getUser());
                 building.setRoof(this.getRoofById(roofId));
                 building.setPosition(this.getPositionById(positionId));
-                building.setMaterial(this.getMaterialById(materialId));
-                building.setConstruction(this.getConstructionSystemById(constrSysId));
+                building.setConstruction(this.getConstructionById(constrSysId));
                 building.setSynchronizedWithDatabase(isSynchronized);
                 building.setId(id);
                 building.setLocations(getBuildingLocationsByBuildingId(id));
                 building.setCompanyInBuilding(companyInBuilding);
-                building.setNumberOfResidents(numberOfResidents);
                 building.setMaintenanceGrade(maintenanceGrade);
-                building.setNetoArea(netoArea);
+                building.setFloorArea(floorArea);
                 buildings.add(building);
             }while(buildingCursor.moveToNext());
         }
@@ -946,14 +1151,13 @@ public class DBHelper extends SQLiteOpenHelper {
     @NonNull
     private ContentValues getBuildLocationContentValues(BuildingLocation buildingLocation) {
         ContentValues contentValues = new ContentValues();
-        Random random = new Random();
-        contentValues.put(Schema.LOCATION_ID,random.nextInt());
+        contentValues.put(Schema.LOCATION_ID,buildingLocation.getId());
         contentValues.put(Schema.STREET,buildingLocation.getStreet());
         contentValues.put(Schema.STREET_NUM,buildingLocation.getStreetNumber());
         contentValues.put(Schema.STREET_CHAR, String.valueOf(buildingLocation.getStreetChar()));
-        contentValues.put(Schema.CITY_DISTRICT, buildingLocation.getCityDistrict());
-        contentValues.put(Schema.SETTLEMENT, buildingLocation.getSettlement());
-        contentValues.put(Schema.CADASTRAL_MUNICIPALITY, buildingLocation.getCadastralMunicipality());
+        contentValues.put(Schema.BL_CITY_DISTRICT, buildingLocation.getCityDistrict());
+        contentValues.put(Schema.BL_SETTLEMENT, buildingLocation.getSettlement());
+        contentValues.put(Schema.BL_CADASTRAL_MUNI, buildingLocation.getCadastralMunicipality());
         contentValues.put(Schema.CADASTRAL_PARTICLE,buildingLocation.getCadastralParticle());
         contentValues.put(Schema.CITY, buildingLocation.getCity());
         contentValues.put(Schema.STATE,buildingLocation.getState());
@@ -1010,7 +1214,8 @@ public class DBHelper extends SQLiteOpenHelper {
         return locations;
     }
 
-    public long getLocationMaxId(SQLiteDatabase wdb){
+    public long getLocationMaxId(){
+        SQLiteDatabase wdb = getWritableDatabase();
         String query="SELECT "+ Schema.LOCATION_ID+ " FROM "+ Schema.TABLE_BUILDING_LOCATION+
                 " ORDER BY " + Schema.LOCATION_ID+ " DESC LIMIT 1";
         Cursor idCursor = wdb.rawQuery(query,null);
@@ -1019,6 +1224,7 @@ public class DBHelper extends SQLiteOpenHelper {
             id = idCursor.getLong(0);
         }
         idCursor.close();
+        wdb.close();
         return id;
     }
 
@@ -1162,9 +1368,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
         //CONSTRUCTION SYSTEM table
-        static final String TABLE_CONSTUCT_SYS = "construction_systems";
-        static final String CONSTR_SYS_ID = "constr_sys_id";
-        static final String CONSTR_SYS = "construction_system";
+        static final String TABLE_CONSTRUCTION = "constructions";
+        static final String CONSTRUCTION_ID = "constr_id";
+        static final String CONSTRUCTION = "construction";
+        static final String C_SUPPORTING_SYS_ID = "supporting_system_id";
+
+        //SUPPORTING SYSTEM table
+        static final String TABLE_SUPPORTING_SYS = "supporting_systems";
+        static final String SUPPORTING_SYS_ID = "id";
+        static final String SUPPORTING_SYSTEM = "supporting_system";
 
         //CEILING MATERIAL table
         static final String TABLE_CEILING_MATERIAL= "ceiling_materials";
@@ -1181,23 +1393,23 @@ public class DBHelper extends SQLiteOpenHelper {
         static final String B_USER_ID="user_id";
         static final String B_PURPOSE_ID ="purpose_id";
         static final String B_POSITION_ID = "position_id";
-        static final String B_MATERIAL_ID = "material_id";
+        //static final String B_MATERIAL_ID = "material_id";
         static final String B_CEILING_MATERIAL_ID = "ceiling_material_id";
-        static final String B_CONSTRUCT_SYS_ID = "construction_sys_id";
+        static final String B_CONSTRUCTION_ID = "construction_sys_id";
         static final String B_ROOF_ID = "roof_id";
         static final String SYNCHRONIZED = "synchronized";
         static final String WIDTH = "width";
         static final String LENGTH = "length";
-        static final String BRUTO_AREA = "bruto_area";
-        static final String NETO_AREA = "neto_area";
-        static final String RESIDENTIAL_BRUTO_AREA = "residential_bruto_area";
-        static final String BASEMENT_BRUTO_AREA = "basement_bruto_area";
-        static final String BUSINESS_BRUTO_AREA = "business_bruto_area";
+        static final String ATTIC_BRUTO_AREA = "attic_area";
+        static final String FLOOR_AREA = "floor_area";
+        static final String RESIDENTIAL_BRUTO_AREA = "residential_area";
+        static final String BASEMENT_BRUTO_AREA = "basement_area";
+        static final String BUSINESS_BRUTO_AREA = "business_area";
         static final String FLOOR_HEIGHT = "floor_height";
         static final String FULL_HEIGHT = "full_height";
         static final String NUMBER_OF_FLOORS = "num_of_floors";
         static final String NUMBER_OF_FLATS = "num_of_flats";
-        static final String NUMBER_OF_RESIDENTS = "num_of_residents";
+        //static final String NUMBER_OF_RESIDENTS = "num_of_residents";
         static final String COMPANY_IN_BUILDING = "comp_in_building";
         static final String MAINTENANCE_GRADE = "maintenance_grade";
 
@@ -1211,9 +1423,9 @@ public class DBHelper extends SQLiteOpenHelper {
         static final String CITY = "city";
         static final String STATE ="state";
         static final String LOC_BUILDING_ID = "building_id";
-        static final String CADASTRAL_MUNICIPALITY = "cad_municipality";
-        static final String CITY_DISTRICT = "city_district";
-        static final String SETTLEMENT = "settlement";
+        static final String BL_CADASTRAL_MUNI = "cad_municipality";
+        static final String BL_CITY_DISTRICT = "city_district";
+        static final String BL_SETTLEMENT = "settlement";
 
         //IMAGE PATH table
         static final String TABLE_IMAGES = "images";
@@ -1239,6 +1451,25 @@ public class DBHelper extends SQLiteOpenHelper {
         static final String STREET_ID= "id";
         static final String STREET_NAME = "street_name";
         static final String STREET_CITY_ID = "city_id";
+
+        //BL_SETTLEMENT table
+        static final String TABLE_SETTLEMENT = "settlements";
+        static final String SETTLEMENT_ID= "id";
+        static final String SETTLEMENT_NAME = "settlement";
+        static final String SETT_CITY_ID = "city_id";
+
+        //CITY DISTRICT table
+        static final String TABLE_CITY_DISTRICT = "city_districts";
+        static final String CITY_DISTRICT_ID= "id";
+        static final String CITY_DISTRICT_NAME = "city_district";
+        static final String CD_CITY_ID = "city_id";
+
+        //BL_CADASTRAL_MUNI table
+        static final String TABLE_CAD_MUNICIPALITY = "cadastral_municipalities";
+        static final String CAD_MUNI_ID= "id";
+        static final String CAD_MUNI_NAME = "cadastral_municipality";
+        static final String CAD_MUNI_MBR = "mbr";
+        static final String CM_CITY_ID = "city_id";
 
 
     }
