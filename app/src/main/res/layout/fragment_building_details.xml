@@ -154,7 +154,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_spMaintenanceGrade" />
 
-        <com.kstefancic.nekretnineinfo.views.NonScrollExpandableListView
+        <com.kstefancic.potresnirizik.views.NonScrollExpandableListView
             android:id="@+id/buildingDetailsFr_elvPurpose"
             android:layout_width="0dp"
             android:layout_height="200dp"
@@ -211,6 +211,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:textColor="@color/textColor"
             android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info"
             app:layout_constraintBottom_toBottomOf="@+id/buildingDetailsFr_tvPurpose"
             app:layout_constraintStart_toEndOf="@+id/buildingDetailsFr_tvPurpose"

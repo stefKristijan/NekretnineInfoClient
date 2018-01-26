@@ -71,7 +71,7 @@
     <string name="tvNumberOfFloors">Broj katova:</string>
     <string name="tvFullHeight">Ukupna visina:</string>
     <string name="tvCityAndState">Grad i županija:</string>
-    <string name="tvBuildings">Zgrade</string>
+    <string name="tvBuildings">Upisane zgrade</string>
     <string name="emptyString">____________________________</string>
     <string name="btnSynchronize">Sinkronizacija</string>
     <string name="btnLogout">Odjava</string>
@@ -85,9 +85,17 @@
     <string name="etCadastralMunicipalityHint">Katastarska općina</string>
     <string name="etSettlementHint">Naselje</string>
     <string name="etCityDistrictHint">Gradska četvrt</string>
-    <string name="etCompanyInBuilding">Tvrtka koja djeluje u zgradi</string>
+    <string name="etCompanyInBuilding">Tvrtka unutar zgrade</string>
     <string name="etNumOfFlatsHint">Broj stanova</string>
     <string name="tvMaintenanceGrade">Ocjena održavanja:</string>
+    <string name="tvExplorer">Istraživač:</string>
+    <string name="tvState">Županija:</string>
+    <string name="tvSettlement">Naselje:</string>
+    <string name="tvCityDistrict">Gradska četvrt:</string>
+    <string name="tvCadastralMunicipality">Katastarska općina:</string>
+    <string name="tvNetoArea">Neto ploština:</string>
+    <string name="tvNumOfResidents">Broj stanara:</string>
+    <string name="tvCompanyInBuilding">Tvrtka unutar zgrade:</string>
     <string-array name="maintenanceGrades">
         <item>Vrlo dobro</item>
         <item>Prihvatljivo</item>

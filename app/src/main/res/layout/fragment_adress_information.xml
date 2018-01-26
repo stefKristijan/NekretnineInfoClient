@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grayOpacity"
-    tools:context="com.kstefancic.nekretnineinfo.buildingdata.AddressInformationFragment"
+    tools:context="com.kstefancic.potresnirizik.buildingdata.AddressInformationFragment"
     tools:layout_editor_absoluteY="25dp">
 
     <android.support.constraint.ConstraintLayout
@@ -265,7 +265,7 @@
                 android:padding="5dp" />
         </android.support.design.widget.TextInputLayout>
 
-        <com.kstefancic.nekretnineinfo.views.NoScrollListView
+        <com.kstefancic.potresnirizik.views.NoScrollListView
             android:id="@+id/frAddressInfo_lvAddresses"
             android:layout_width="0dp"
             android:layout_height="200dp"

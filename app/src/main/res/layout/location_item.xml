@@ -13,10 +13,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/locationItem_tvAddress"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/locationItem_tvCadastralMunicipality"
         app:srcCompat="@drawable/ic_place_black_48dp" />
+
+    <TextView
+        android:id="@+id/locationItem_tvCadastralMunicipality"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/tvCadastralMunicipality"
+        android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info"
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toEndOf="@+id/locationItem_ivLocation"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/locationItem_tvCMunicipalityitem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info"
+        android:textColor="@color/textColor"
+        app:layout_constraintStart_toEndOf="@+id/locationItem_tvCadastralMunicipality"
+        app:layout_constraintTop_toTopOf="@+id/locationItem_tvCadastralMunicipality" />
 
     <TextView
         android:id="@+id/locationItem_tvCadastralPart"
@@ -24,23 +46,23 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
-        android:textColor="@android:color/black"
         android:text="@string/tvCadastralParticle"
         android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info"
+        android:textColor="@android:color/black"
         app:layout_constraintStart_toEndOf="@+id/locationItem_ivLocation"
-        app:layout_constraintTop_toTopOf="@+id/locationItem_ivLocation" />
+        app:layout_constraintTop_toBottomOf="@+id/locationItem_tvCadastralMunicipality" />
 
     <TextView
         android:id="@+id/locationItem_tvAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
         android:layout_marginStart="8dp"
-        android:textColor="@android:color/black"
+        android:layout_marginTop="4dp"
         android:text="@string/tvAddress"
         android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info"
-        app:layout_constraintBottom_toBottomOf="@+id/locationItem_ivLocation"
-        app:layout_constraintStart_toEndOf="@+id/locationItem_ivLocation" />
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toEndOf="@+id/locationItem_ivLocation"
+        app:layout_constraintTop_toBottomOf="@+id/locationItem_tvCadastralPart" />
 
     <TextView
         android:id="@+id/locationItem_tvCPitem"
