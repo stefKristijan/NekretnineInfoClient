@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,10 @@ import com.kstefancic.potresnirizik.R;
 import com.kstefancic.potresnirizik.api.model.Building;
 import com.kstefancic.potresnirizik.api.model.BuildingLocation;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Position;
+import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.CadastralMunicipality;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.City;
+import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.CityDistrict;
+import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.Settlement;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.State;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.Street;
 import com.kstefancic.potresnirizik.helper.DBHelper;
@@ -45,14 +49,17 @@ public class AddressInformationFragment extends Fragment {
     private static final String FORMAT_NOT_VALID = "Dopušteni formati katastarske čestice i općine su: # ili #/#";
     private static final String EMPTY_FIELD = "*Obavezno polje";
     private static final String CHAR_ONLY = "Dopušteno jedno slovo";
-    private static final String UNKNOWN_STREET = "Ulica ne postoji na popisu ulica";
-    private static final String UNKNOWN_CITY= "Grad ne postoji na popisu gradova";
-    private static final String UNKNOWN_STATE= "Županija ne postoji na popisu županija";
+    private static final String UNKNOWN_STREET = "Ulica ne postoji";
+    private static final String UNKNOWN_CITY= "Grad ne postoji";
+    private static final String UNKNOWN_STATE= "Županija ne postoji";
     private static final String LOCATION_EXISTS = "Lokacija već postoji";
+    private static final String UNKNOWN_CITY_DISTRICT = "Gradska četvrt ne postoji";
+    private static final String UNKNOWN_SETTLEMENT = "Naselje ne postoji";
+    private static final String UNKNOWN_CAD_MUNI = "Katastarska općina ne postoji";
 
     private Button btnAdd, btnAccept;
-    private AutoCompleteTextView actvStreet, actvCity, actvSettlement;
-    private EditText etStreetNum, etStreetChar, etCadastralParticle, etCityDistrict, etCadastralMunicipality;
+    private AutoCompleteTextView actvStreet, actvCity, actvSettlement, actvCityDistrict, actvCadastralMunicipality;;
+    private EditText etStreetNum, etStreetChar, etCadastralParticle;
     private ListView lvLocations;
     private Spinner spPosition;
     private TextInputLayout tilStreet, tilCity, tilCadastralParticle, tilCadastralMunicipality, tilCityDistrict, tilSettlement, tilStreetChar,tilStreetNum;
@@ -61,6 +68,9 @@ public class AddressInformationFragment extends Fragment {
     private List<City> cities;
     private List<Street> streets;
     //private List<Settlement> settlements /popis naselja
+    private List<CadastralMunicipality> cadastralMunicipalities;
+    private List<CityDistrict> cityDistricts;
+    private List<Settlement> settlements;
     private List<BuildingLocation> buildingLocations = new ArrayList<>();
     private Building mBuilding;
     private LocationAdapter listViewAdapter;
@@ -82,6 +92,9 @@ public class AddressInformationFragment extends Fragment {
         states = DBHelper.getInstance(getActivity()).getAllStates();
         cities = DBHelper.getInstance(getActivity()).getAllCities();
         streets = DBHelper.getInstance(getActivity()).getAllStreets();
+        cadastralMunicipalities = DBHelper.getInstance(getActivity()).getAllCadastralMunicipalities();
+        cityDistricts = DBHelper.getInstance(getActivity()).getAllCityDistricts();
+        settlements = DBHelper.getInstance(getActivity()).getAllSettlements();
 
     }
 
@@ -112,12 +125,12 @@ public class AddressInformationFragment extends Fragment {
         this.actvStreet = layout.findViewById(R.id.frAddressInfo_actvStreet);
         this.actvCity = layout.findViewById(R.id.frAddressInfo_actvCity);
         this.actvSettlement = layout.findViewById(R.id.frAddressInfo_actvSettlement);
+        this.actvCadastralMunicipality = layout.findViewById(R.id.frAddressInfo_actvCadastralMunicipality);
+        this.actvCityDistrict = layout.findViewById(R.id.frAddressInfo_actvCityDistrict);
         setUpAutoCompleteTextViews();
         this.etCadastralParticle = layout.findViewById(R.id.frAddressInfo_etCadastralParticle);
         this.etStreetChar = layout.findViewById(R.id.frAddressInfo_etStreetChar);
         this.etStreetNum = layout.findViewById(R.id.frAddressInfo_etStreetNum);
-        this.etCadastralMunicipality = layout.findViewById(R.id.frAddressInfo_etCadastralMunicipality);
-        this.etCityDistrict = layout.findViewById(R.id.frAddressInfo_etCityDistrict);
         this.spPosition=layout.findViewById(R.id.frAddressInfo_spPosition);
         this.btnAdd =layout.findViewById(R.id.frAddressInfo_btnAdd);
         this.btnAdd.setOnClickListener(new View.OnClickListener() {
@@ -128,8 +141,8 @@ public class AddressInformationFragment extends Fragment {
                 String city = actvCity.getText().toString().trim();
                 String cadastralParticle= etCadastralParticle.getText().toString().trim();
                 String settlement = actvSettlement.getText().toString().trim();
-                String cadastralMunicipality = etCadastralMunicipality.getText().toString().trim();
-                String cityDistrict = etCityDistrict.getText().toString().trim();
+                String cadastralMunicipality = actvCadastralMunicipality.getText().toString().trim();
+                String cityDistrict = actvCityDistrict.getText().toString().trim();
 
                 if(checkData(street,streetChar, city, cadastralParticle, settlement, cadastralMunicipality, cityDistrict)) {
 
@@ -150,8 +163,8 @@ public class AddressInformationFragment extends Fragment {
                         actvStreet.setText("");
                         actvCity.setText("");
                         actvSettlement.setText("");
-                        etCadastralMunicipality.setText("");
-                        etCityDistrict.setText("");
+                        actvCadastralMunicipality.setText("");
+                        actvCityDistrict.setText("");
                     }
                 }
             }
@@ -198,8 +211,8 @@ public class AddressInformationFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 BuildingLocation buildingLocation = buildingLocations.get(i);
                 etCadastralParticle.setText(buildingLocation.getCadastralParticle());
-                etCadastralMunicipality.setText(buildingLocation.getCadastralMunicipality());
-                etCityDistrict.setText(buildingLocation.getCityDistrict());
+                actvCadastralMunicipality.setText(buildingLocation.getCadastralMunicipality());
+                actvCityDistrict.setText(buildingLocation.getCityDistrict());
                 if(buildingLocation.getStreetChar()!='\0')
                     etStreetChar.setText(String.valueOf(buildingLocation.getStreetChar()));
                 etStreetNum.setText(String.valueOf(buildingLocation.getStreetNumber()));
@@ -259,6 +272,15 @@ public class AddressInformationFragment extends Fragment {
             tilCity.setError(UNKNOWN_CITY);
         }
 
+        if(cityDistrict.isEmpty()){
+            isValid=false;
+            tilCityDistrict.setError(EMPTY_FIELD);
+        }
+        else if(!getCityDistrictNames().contains(cityDistrict)){
+            isValid=false;
+            tilCityDistrict.setError(UNKNOWN_CITY_DISTRICT);
+        }
+
         if(streetChar.length()>1){
             isValid=false;
             tilStreetChar.setError(CHAR_ONLY);
@@ -271,6 +293,9 @@ public class AddressInformationFragment extends Fragment {
         if(settlement.isEmpty()){
             isValid=false;
             tilSettlement.setError(EMPTY_FIELD);
+        } else if(!getSettlementNames().contains(settlements)){
+            isValid=false;
+            tilSettlement.setError(UNKNOWN_SETTLEMENT);
         }
 
         if(cadastralParticle.isEmpty()){
@@ -285,6 +310,9 @@ public class AddressInformationFragment extends Fragment {
         if(cadastralMunicipality.isEmpty()){
             isValid = false;
             tilCadastralMunicipality.setError(EMPTY_FIELD);
+        }else if(!getCadastralMuniNames().contains(cadastralMunicipality)){
+            isValid=false;
+            tilCadastralMunicipality.setError(UNKNOWN_CAD_MUNI);
         }
 
 
@@ -309,17 +337,54 @@ public class AddressInformationFragment extends Fragment {
     private void setUpAutoCompleteTextViews() {
         setUpStreetAutocomplete();
         setUpCityAutocomplete();
+        setUpCityDistrictAutocomplete();
+        setUpSettlementAutocomplete();
+        setUpCadastralMunicipalityAutocomplete();
     }
 
+    private void setUpCityDistrictAutocomplete() {
+        List<String> cityDistrictNames = getCityDistrictNames();
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, getCityDistrictNames());
+        actvCityDistrict.setAdapter(adapter);
+    }
 
     @NonNull
-    private List<String> getStateNames() {
-        List<String> stateNames = new ArrayList<>();
-        for(State state : states){
-            stateNames.add(state.getStateName());
+    private List<String> getCityDistrictNames() {
+        List<String> cityDistrictsNames = new ArrayList<>();
+        for(CityDistrict cityDistrict : cityDistricts){
+            cityDistrictsNames.add(cityDistrict.getCityDistrict());
         }
-        return stateNames;
+        return cityDistrictsNames;
     }
+
+    private void setUpSettlementAutocomplete() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,  getSettlementNames());
+        actvSettlement.setAdapter(adapter);
+    }
+
+    @NonNull
+    private List<String> getSettlementNames() {
+        List<String> settlementNames = new ArrayList<>();
+        for(Settlement settlement: settlements){
+            settlementNames.add(settlement.getSettlement());
+        }
+        return settlementNames;
+    }
+
+    private void setUpCadastralMunicipalityAutocomplete() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, getCadastralMuniNames());
+        actvCadastralMunicipality.setAdapter(adapter);
+    }
+
+    @NonNull
+    private List<String> getCadastralMuniNames() {
+        List<String> cadMuniNames = new ArrayList<>();
+        for(CadastralMunicipality cadastralMunicipality: cadastralMunicipalities){
+            cadMuniNames.add(cadastralMunicipality.getCadastralMunicipality());
+        }
+        return cadMuniNames;
+    }
+
 
     private void setUpCityAutocomplete() {
         List<String> cityNames = getCityNames();

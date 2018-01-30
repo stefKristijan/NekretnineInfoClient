@@ -183,8 +183,8 @@
             app:layout_constraintStart_toEndOf="@+id/frAddressInfo_tilSettlement"
             app:layout_constraintTop_toTopOf="@+id/frAddressInfo_tilSettlement">
 
-            <EditText
-                android:id="@+id/frAddressInfo_etCityDistrict"
+            <AutoCompleteTextView
+                android:id="@+id/frAddressInfo_actvCityDistrict"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/edit_text"
@@ -254,8 +254,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/frAddressInfo_tilCadastralParticle">
 
-            <EditText
-                android:id="@+id/frAddressInfo_etCadastralMunicipality"
+            <AutoCompleteTextView
+                android:id="@+id/frAddressInfo_actvCadastralMunicipality"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/edit_text"

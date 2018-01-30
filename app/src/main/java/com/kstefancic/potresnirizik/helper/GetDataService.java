@@ -26,7 +26,10 @@ import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Purpose;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Roof;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Sector;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.SupportingSystem;
+import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.CadastralMunicipality;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.City;
+import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.CityDistrict;
+import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.Settlement;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.State;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.addressMultichoiceData.Street;
 import com.kstefancic.potresnirizik.api.model.MultichoiceLocationDataResponse;
@@ -101,8 +104,7 @@ public class GetDataService extends Service {
                     insertSectorsInLocalDatabase(response.body().getSectors());
                     insertRoofsInLocalDatabase(response.body().getRoofs());
                     insertSupportingSystemsInLocalDatabase(response.body().getSupportingSystems());
-                    //getMultichoiceAddressDataAndSaveToLocalDatabase();
-                    getBuildingsFromServer();
+                    getMultichoiceAddressDataAndSaveToLocalDatabase();
                 }else{
                     Log.e("MULTICHOICE DATA RESP", response.body().toString());
                     showErrorResponse(response);
@@ -132,6 +134,9 @@ public class GetDataService extends Service {
                     insertStatesInLocalDatabase(response.body().getStates());
                     insertCitiesInLocalDatabase(response.body().getCities());
                     insertStreetsInLocalDatabase(response.body().getStreets());
+                    insertCadMunicipsInLocalDatabase(response.body().getCadastralMunicipalities());
+                    insertSettlementsInLocalDatabase(response.body().getSettlements());
+                    insertCityDistrictsInLocalDatabase(response.body().getCityDistricts());
                     getBuildingsFromServer();
                 }else{
                     Log.e("LOCATION DATA RESP", response.body().toString());
@@ -264,6 +269,25 @@ public class GetDataService extends Service {
             DBHelper.getInstance(this).insertRoof(roof);
         }
     }
+
+    private void insertCityDistrictsInLocalDatabase(List<CityDistrict> cityDistricts){
+        for(CityDistrict cityDistrict : cityDistricts){
+            DBHelper.getInstance(this).insertCityDistrict(cityDistrict);
+        }
+    }
+
+    private void insertSettlementsInLocalDatabase(List<Settlement> settlements){
+        for(Settlement settlement : settlements){
+            DBHelper.getInstance(this).insertSettlement(settlement);
+        }
+    }
+
+    private void insertCadMunicipsInLocalDatabase(List<CadastralMunicipality> cadastralMunicipalities){
+        for(CadastralMunicipality cadastralMunicipality : cadastralMunicipalities){
+            DBHelper.getInstance(this).insertCadastralMunicipality(cadastralMunicipality);
+        }
+    }
+
 
 
     private void insertStatesInLocalDatabase(List<State> states) {
