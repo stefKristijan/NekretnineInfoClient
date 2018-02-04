@@ -1071,7 +1071,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 double floorArea = buildingCursor.getDouble(24);
                 Building building = new Building(uId,date,yearOfBuild,properGroundPlan);
                 building.setCeilingMaterial(this.getCeilingMaterialById(ceilingMatId));
-                building.setDimensions(width,length,atticBrutoArea,floorHeight,fullHeight,numberOfFloors,numberOfFlats,residentialBrutoArea,basementBrutoArea,floorArea);
+                building.setDimensions(width,length,atticBrutoArea,floorHeight,fullHeight,numberOfFloors,numberOfFlats,residentialBrutoArea,businessBrutoArea,basementBrutoArea,floorArea);
                 building.setPurpose(this.getPurposeById(purposeId));
                 building.setUser(this.getUser());
                 building.setRoof(this.getRoofById(roofId));
@@ -1082,7 +1082,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 building.setLocations(getBuildingLocationsByBuildingId(id));
                 building.setCompanyInBuilding(companyInBuilding);
                 building.setMaintenanceGrade(maintenanceGrade);
-                building.setFloorArea(floorArea);
                 buildings.add(building);
             }while(buildingCursor.moveToNext());
         }
@@ -1142,14 +1141,14 @@ public class DBHelper extends SQLiteOpenHelper {
      */
 
     public void insertBuildingLocation(BuildingLocation buildingLocation){
-        ContentValues contentValues = getBuildLocationContentValues(buildingLocation);
+        ContentValues contentValues = getBuildLocationContentValues(buildingLocation,buildingLocation.getBuildingId());
         SQLiteDatabase wdb = this.getWritableDatabase();
         wdb.insert(Schema.TABLE_BUILDING_LOCATION,null, contentValues);
         wdb.close();
     }
 
     @NonNull
-    private ContentValues getBuildLocationContentValues(BuildingLocation buildingLocation) {
+    private ContentValues getBuildLocationContentValues(BuildingLocation buildingLocation, long buildingId) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(Schema.LOCATION_ID,buildingLocation.getId());
         contentValues.put(Schema.STREET,buildingLocation.getStreet());
@@ -1161,14 +1160,14 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(Schema.CADASTRAL_PARTICLE,buildingLocation.getCadastralParticle());
         contentValues.put(Schema.CITY, buildingLocation.getCity());
         contentValues.put(Schema.STATE,buildingLocation.getState());
-        contentValues.put(Schema.IP_BUILDING_ID,buildingLocation.getBuildingId());
+        contentValues.put(Schema.IP_BUILDING_ID,buildingId);
         return contentValues;
     }
 
     public void insertBuildingLocations(List<BuildingLocation> buildingLocations, long buildingId){
         SQLiteDatabase wdb = this.getWritableDatabase();
         for(BuildingLocation buildingLocation : buildingLocations){
-            ContentValues contentValues = getBuildLocationContentValues(buildingLocation);
+            ContentValues contentValues = getBuildLocationContentValues(buildingLocation,buildingId);
             wdb.insert(Schema.TABLE_BUILDING_LOCATION,null, contentValues);
         }
 

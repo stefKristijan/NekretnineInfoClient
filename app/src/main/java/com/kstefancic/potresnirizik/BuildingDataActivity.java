@@ -168,35 +168,15 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
 
 
     @Override
-    public void onDimensionsInformationInserted(double length, double width, double brutoArea, double basementArea, double residentalArea, double businessArea, double fullHeight, double floorHeight, int numOfFloors, int numOfFlats, boolean properGroundPlan) {
-        this.mBuilding.setDimensions(width,length,brutoArea,floorHeight,fullHeight,numOfFloors,numOfFlats,residentalArea,basementArea,businessArea);
+    public void onDimensionsInformationInserted(double length, double width, double atticBrutoArea, double basementArea, double residentalArea, double businessArea, double fullHeight, double floorHeight, int numOfFloors, int numOfFlats, double floorArea, boolean properGroundPlan) {
+        this.mBuilding.setDimensions(width,length,atticBrutoArea,floorHeight,fullHeight,numOfFloors,numOfFlats,residentalArea,businessArea,basementArea,floorArea);
         this.mBuilding.setProperGroundPlan(properGroundPlan);
-        if(numOfFlats>0){
-            //this.mBuilding.setNumberOfResidents((int) (numOfFlats*2.56));
-        }else{
-            //this.mBuilding.setNumberOfResidents(0);
-        }
-        if(mBuilding.getConstruction()==null){
-            Toast.makeText(this, NO_CONSTRUCTION_SYSTEM, Toast.LENGTH_SHORT).show();
-            this.mViewPager.setCurrentItem(1,true);
-            this.hasDimensions = false;
-        }else {
-            //this.mBuilding.setNetoArea(calculateNetoArea(brutoArea, numOfFloors));
-            this.mViewPager.setCurrentItem(3, true);
-            this.hasDimensions = true;
-        }
+        this.hasDimensions=true;
     }
 
-    private double calculateNetoArea(double brutoArea, int numofFloors) {
-        /*
-        With switch case(constructionSystem) AB - 0.83, zidane - 0.75
-         */
-        return brutoArea*numofFloors*0.8;
-    }
 
     @Override
     public void onBuildingDetailsInserted( CeilingMaterial ceilingMaterial, Construction construction, Roof roof, Purpose purpose, String yearOfBuild, String companyInBuilding, String maintenanceGrade) {
-        //this.mBuilding.setMaterial(wallMaterial);
         this.mBuilding.setCeilingMaterial(ceilingMaterial);
         this.mBuilding.setConstruction(construction);
         this.mBuilding.setRoof(roof);
@@ -206,6 +186,7 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
         this.mBuilding.setCompanyInBuilding(companyInBuilding);
         this.mViewPager.setCurrentItem(2,true);
         this.hasDetails=true;
+        this.hasDimensions=false;
         detailsUpdated();
     }
 

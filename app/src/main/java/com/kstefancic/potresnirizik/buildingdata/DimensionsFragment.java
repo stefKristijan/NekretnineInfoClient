@@ -1,13 +1,10 @@
 package com.kstefancic.potresnirizik.buildingdata;
 
-import android.app.Activity;
-import android.hardware.Camera;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,11 +13,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kstefancic.potresnirizik.BuildingDataActivity;
 import com.kstefancic.potresnirizik.R;
 import com.kstefancic.potresnirizik.api.model.Building;
-import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.SupportingSystem;
 import com.kstefancic.potresnirizik.helper.AreaCalculator;
 
 import static com.kstefancic.potresnirizik.MainActivity.BUILDING_DATA;
@@ -36,12 +33,14 @@ public class DimensionsFragment extends Fragment implements DetailsUpdateListene
     private static final String BRUTO_AREA_TOO_BIG = "Bruto površina ne može biti veća od umnoška duljine i širine";
     private static final String NUM_OF_FLOORS_SMALL = "Broj katova mora biti 1 (samo prizemlje) ili veći";
     private static final String FULL_HEIGHT_SMALL = "Ukupna visina ne može biti manja od visine kata x broj katova";
+    private static final String PARSING_ERROR = "Negdje ste unijeli krivi format broja";
+    private static final String CHECK_DETAILS_FIRST = "Prvo potvrdite detalje, a zatim upišite vrijednosti";
     private Button btnAccept;
     private TextInputLayout tilLength, tilWidth, tilAtticArea, tilFullHeight, tilFloorHeight, tilNumOfFloors, tilResidentArea, tilBasementArea, tilBusinessArea, tilNumOfFlats, tilFloorArea;
     private EditText etLength, etWidth, etAtticArea, etFullHeight, etFloorHeight, etNumberOfFloors, etResidentArea, etBasementArea, etBusinessArea, etNumOfFlats, etFloorArea;
     private CheckBox cbProperGroundPlan;
     private DimensionsInserted dimensionsInsertedListener;
-    private TextView tvFloorArea, tvBrutoArea, tvNetoArea;
+    private TextView tvFloorArea, tvBrutoArea, tvNetoArea, tvWarning;
     private static final String RESIDENTIAL = "Stambena zgrada";
     private static final String RES_BUSSINES = "Stambeno-poslovna zgrada";
 
@@ -78,6 +77,7 @@ public class DimensionsFragment extends Fragment implements DetailsUpdateListene
         this.tvBrutoArea = layout.findViewById(R.id.frDims_tvBrutoArea);
         this.tvNetoArea = layout.findViewById(R.id.frDims_tvNetoArea);
         this.tvFloorArea = layout.findViewById(R.id.frDims_tvFloorArea);
+        this.tvWarning = layout.findViewById(R.id.frDims_tvWarning);
         this.cbProperGroundPlan = layout.findViewById(R.id.frDims_cbProperGroundPlan);
 
         if(mBuilding!=null){
@@ -86,61 +86,71 @@ public class DimensionsFragment extends Fragment implements DetailsUpdateListene
     }
 
     private void setUpButtonAndListener(View layout) {
+
         this.btnAccept =layout.findViewById(R.id.frDims_btnNext);
         this.btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(tvWarning.getVisibility()==View.VISIBLE){
+                    Toast.makeText(getContext(), CHECK_DETAILS_FIRST, Toast.LENGTH_SHORT).show();
+                }
                 boolean properGroundPlan = cbProperGroundPlan.isChecked();
-                if(checkData(properGroundPlan)){
-                    int numofFlats = Integer.parseInt(etNumOfFlats.getText().toString().trim());
-                    double length = Double.parseDouble(etLength.getText().toString().trim());
-                    double width = Double.parseDouble(etWidth.getText().toString().trim());
-                    double brutoArea = Double.parseDouble(etAtticArea.getText().toString().trim());
-                    double basementArea=0, residentialArea=0, businessArea=0;
-                    if(!etBasementArea.getText().toString().trim().isEmpty()){
-                        basementArea = Double.parseDouble(etBasementArea.getText().toString().trim());
+                if(checkData()){
+
+                    try {
+                        double length = Double.parseDouble(etLength.getText().toString().trim());
+                        double width = Double.parseDouble(etWidth.getText().toString().trim());
+                        double basementArea = Double.parseDouble(etBasementArea.getText().toString().trim());
+                        double atticArea = Double.parseDouble(etAtticArea.getText().toString().trim());
+                        int numOfFloors = Integer.parseInt(etNumberOfFloors.getText().toString().trim());
+                        double floorHeight = Double.parseDouble(etFloorHeight.getText().toString().trim());
+                        double fullHeight = Double.parseDouble(etFullHeight.getText().toString().trim());
+
+                        double residentialArea= 0, businessArea=0, floorArea=0;
+                        int numOfFlats=0;
+                        if(mBuilding.getPurpose().getPurpose().equals(RESIDENTIAL)){
+                            residentialArea = Double.parseDouble(etResidentArea.getText().toString().trim());
+                            numOfFlats = Integer.parseInt(etNumOfFlats.getText().toString().trim());
+                            floorArea = residentialArea;
+                            setTvFloorAreaText(floorArea);
+                        }else if(mBuilding.getPurpose().getPurpose().equals(RES_BUSSINES)){
+                            residentialArea = Double.parseDouble(etResidentArea.getText().toString().trim());
+                            businessArea = Double.parseDouble(etBusinessArea.getText().toString().trim());
+                            numOfFlats = Integer.parseInt(etNumOfFlats.getText().toString().trim());
+                            floorArea = residentialArea+businessArea;
+                            setTvFloorAreaText(floorArea);
+                        }else{
+                            floorArea = Double.parseDouble(etFloorArea.getText().toString().trim());
+                        }
+                        setBrutoAndNetoTexts(basementArea,atticArea,floorArea,numOfFloors);
+                        dimensionsInsertedListener.onDimensionsInformationInserted(length, width, atticArea, basementArea, residentialArea, businessArea, fullHeight, floorHeight, numOfFloors, numOfFlats, floorArea, properGroundPlan);
+                    }catch (Exception e){
+                        Log.e("INSERT",e.getMessage());
+                        Toast.makeText(getActivity(), PARSING_ERROR, Toast.LENGTH_SHORT).show();
                     }
-                    if(!etResidentArea.getText().toString().trim().isEmpty()){
-                        residentialArea = Double.parseDouble(etResidentArea.getText().toString().trim());
-                    }
-                    if(!etBusinessArea.getText().toString().trim().isEmpty()){
-                        businessArea = Double.parseDouble(etBusinessArea.getText().toString().trim());
-                    }
-                    double fullHeight = Double.parseDouble(etFullHeight.getText().toString().trim());
-                    double floorHeight = Double.parseDouble(etFloorHeight.getText().toString().trim());
-                    int numOfFloors = Integer.parseInt(etNumberOfFloors.getText().toString().trim());
-                    Log.i("DIMENSIONS","onInsert");
-                    dimensionsInsertedListener.onDimensionsInformationInserted(length,width,brutoArea,basementArea,residentialArea,businessArea,fullHeight,floorHeight,numOfFloors,numofFlats,properGroundPlan);
                 }
             }
         });
     }
 
+    private void setBrutoAndNetoTexts(double basementArea, double atticArea, double floorArea, int numOfFloors) {
+        double brutoArea= AreaCalculator.getInstance().calculateBrutoArea(floorArea,basementArea,atticArea,numOfFloors);
+        String brutoAreaS = String.format("%.2f", brutoArea);
+        tvBrutoArea.setText(Html.fromHtml(getActivity().getResources().getText(R.string.tvBrutoArea)+" "+brutoAreaS+"m<sup>2</sup>"));
+        tvBrutoArea.setVisibility(View.VISIBLE);
+        String netoArea = String.format("%.2f",  AreaCalculator.getInstance().calculateNetoArea(brutoArea,mBuilding.getConstruction().getSupportingSystem().getSupportingSystem()));
+        tvNetoArea.setText( Html.fromHtml(getActivity().getResources().getText(R.string.tvBrutoArea)+" "+ netoArea +"m<sup>2</sup>"));
+        tvNetoArea.setVisibility(View.VISIBLE);
+    }
+
+    private void setTvFloorAreaText(double floorArea) {
+        String floorAreaS=String.format("%.2f",floorArea);
+        tvFloorArea.setText(Html.fromHtml(getActivity().getResources().getText(R.string.tvFloorArea)+" "+ floorAreaS+"m<sup>2</sup>"));
+        tvFloorArea.setVisibility(View.VISIBLE);
+    }
+
     private void setUpEditTexts(View layout) {
         this.etFloorArea = layout.findViewById(R.id.frDims_etFloorArea);
-        this.etFloorArea.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-                if(!mBuilding.getPurpose().getPurpose().equals(RES_BUSSINES)&&
-                        !mBuilding.getPurpose().getPurpose().equals(RESIDENTIAL) &&
-                        etFloorArea.getText().toString().trim().equals("")){
-                    String brutoArea, netoArea;
-                  //  brutoArea=String.valueOf(AreaCalculator.getInstance().calculateBrutoArea())
-                }
-
-            }
-        });
         this.etNumOfFlats = layout.findViewById(R.id.frDims_etNumOfFlats);
         this.etBasementArea = layout.findViewById(R.id.frDims_etBasementBA);
         this.etResidentArea = layout.findViewById(R.id.frDims_etResidentialBA);
@@ -187,72 +197,117 @@ public class DimensionsFragment extends Fragment implements DetailsUpdateListene
         this.tvNetoArea.setText("Neto ploština: "+ AreaCalculator.getInstance().calculateNetoArea(mBuilding));
     }
 
-    private boolean checkData(boolean properGroundPlan) {
+    private boolean checkData() {
         boolean isValid=true;
         refreshErrors();
         String length= etLength.getText().toString().trim();
         String width = etWidth.getText().toString().trim();
-        String brutoArea = etAtticArea.getText().toString().trim();
-        /*String basementArea = etBasementArea.getText().toString();
-        String businessArea = etBusinessArea.getText().toString();
-        String residentialArea = etResidentArea.getText().toString();*/
+        String basementArea = etBasementArea.getText().toString().trim();
+        String atticArea = etAtticArea.getText().toString().trim();
+        String businessArea = etBusinessArea.getText().toString().trim();
+        String residentialArea = etResidentArea.getText().toString().trim();
         String fullHeight = etFullHeight.getText().toString().trim();
         String floorHeight = etFloorHeight.getText().toString().trim();
         String numOfFloors = etNumberOfFloors.getText().toString().trim();
         String numOfFlats = etNumOfFlats.getText().toString().trim();
+        String floorArea = etFloorArea.getText().toString().trim();
 
-        if(length.isEmpty()){
-            isValid=false;
-            tilLength.setError(EMPTY_FIELD);
-        }else if(Double.parseDouble(length)<=0){
-            isValid = false;
-            tilLength.setError(VALUE_TOO_SMALL);
-        }
-
-        if(width.isEmpty()){
-            isValid=false;
-            tilWidth.setError(EMPTY_FIELD);
-        }else if(Double.parseDouble(width)<=0){
-            isValid=false;
-            tilWidth.setError(VALUE_TOO_SMALL);
-        }
-
-        if(brutoArea.isEmpty()){
-            isValid=false;
-            tilAtticArea.setError(EMPTY_FIELD);
-        }else if(!width.isEmpty() && !length.isEmpty() && properGroundPlan){
-            if(Double.parseDouble(brutoArea)<(Double.parseDouble(width)*Double.parseDouble(length))){
-                isValid=false;
-                tilAtticArea.setError(BRUTO_AREA_TOO_BIG);
+        try {
+            //Mandatory fields
+            if (atticArea.isEmpty()) {
+                isValid = false;
+                tilAtticArea.setError(EMPTY_FIELD);
             }
-        }
 
-        if(floorHeight.isEmpty()){
-            isValid=false;
-            tilFloorHeight.setError(EMPTY_FIELD);
-        }else if(Double.parseDouble(floorHeight)<0){
-            isValid=false;
-            tilFloorHeight.setError(VALUE_TOO_SMALL);
-        }
-
-        if(numOfFloors.isEmpty()){
-            isValid=false;
-            tilNumOfFloors.setError(EMPTY_FIELD);
-        }else if(Double.parseDouble(numOfFloors)<1){
-            isValid=false;
-            tilNumOfFloors.setError(NUM_OF_FLOORS_SMALL);
-        }
-
-        if(fullHeight.isEmpty()){
-            isValid=false;
-            tilFullHeight.setError(EMPTY_FIELD);
-        }else if(!floorHeight.isEmpty() && !numOfFloors.isEmpty()){
-            if(Double.parseDouble(fullHeight)<(Double.parseDouble(floorHeight)*Double.parseDouble(numOfFloors))){
-                isValid=false;
-                tilFullHeight.setError(FULL_HEIGHT_SMALL);
+            if (basementArea.isEmpty()) {
+                isValid = false;
+                tilBasementArea.setError(EMPTY_FIELD);
             }
-        }
 
+            if (length.isEmpty()) {
+                isValid = false;
+                tilLength.setError(EMPTY_FIELD);
+            } else if (Double.parseDouble(length) <= 0) {
+                isValid = false;
+                tilLength.setError(VALUE_TOO_SMALL);
+            }
+
+            if (width.isEmpty()) {
+                isValid = false;
+                tilWidth.setError(EMPTY_FIELD);
+            } else if (Double.parseDouble(width) <= 0) {
+                isValid = false;
+                tilWidth.setError(VALUE_TOO_SMALL);
+            }
+
+            if (floorHeight.isEmpty()) {
+                isValid = false;
+                tilFloorHeight.setError(EMPTY_FIELD);
+            }
+
+            if (numOfFloors.isEmpty()) {
+                isValid = false;
+                tilNumOfFloors.setError(EMPTY_FIELD);
+            } else if (Integer.parseInt(numOfFloors) < 1) {
+                isValid = false;
+                tilNumOfFloors.setError(NUM_OF_FLOORS_SMALL);
+            }
+
+            if (fullHeight.isEmpty()) {
+                isValid = false;
+                tilFullHeight.setError(EMPTY_FIELD);
+            } else if (!floorHeight.isEmpty() && !numOfFloors.isEmpty()) {
+                if (Double.parseDouble(fullHeight) < (Double.parseDouble(floorHeight) * Double.parseDouble(numOfFloors))) {
+                    isValid = false;
+                    tilFullHeight.setError(FULL_HEIGHT_SMALL);
+                }
+            }
+
+            //if "residential" - check residentialArea and number of flats
+            //ELSE IF "RESIDENTIAL AND BUSINESS" - check residential, num of flats and business
+            //ELSE check floorArea
+            if (mBuilding.getPurpose().getPurpose().equals(RESIDENTIAL)) {
+                if (residentialArea.isEmpty()) {
+                    isValid = false;
+                    tilResidentArea.setError(EMPTY_FIELD);
+                }
+
+                if (numOfFlats.isEmpty()) {
+                    isValid = false;
+                    tilNumOfFlats.setError(EMPTY_FIELD);
+                } else if (Integer.parseInt(numOfFlats) < 1) {
+                    isValid = false;
+                    tilNumOfFlats.setError(VALUE_TOO_SMALL);
+                }
+            } else if (mBuilding.getPurpose().getPurpose().equals(RES_BUSSINES)) {
+                if (residentialArea.isEmpty()) {
+                    isValid = false;
+                    tilResidentArea.setError(EMPTY_FIELD);
+                }
+
+                if (businessArea.isEmpty()) {
+                    isValid = false;
+                    tilBusinessArea.setError(EMPTY_FIELD);
+                }
+
+                if (numOfFlats.isEmpty()) {
+                    isValid = false;
+                    tilNumOfFlats.setError(EMPTY_FIELD);
+                } else if (Integer.parseInt(numOfFlats) < 1) {
+                    isValid = false;
+                    tilNumOfFlats.setError(VALUE_TOO_SMALL);
+                }
+            } else {
+                if (floorArea.isEmpty()) {
+                    isValid = false;
+                    tilFloorArea.setError(EMPTY_FIELD);
+                }
+            }
+        }catch (Exception e){
+            Log.e("CHECKDATA",e.getMessage());
+            Toast.makeText(getContext(), PARSING_ERROR, Toast.LENGTH_SHORT).show();
+            return false;
+        }
 
         return isValid;
     }
@@ -261,12 +316,14 @@ public class DimensionsFragment extends Fragment implements DetailsUpdateListene
         tilFullHeight.setErrorEnabled(false);
         tilNumOfFloors.setErrorEnabled(false);
         tilFloorHeight.setErrorEnabled(false);
-        tilAtticArea.setErrorEnabled(false);
         tilWidth.setErrorEnabled(false);
+        tilNumOfFlats.setErrorEnabled(false);
         tilLength.setErrorEnabled(false);
         tilResidentArea.setErrorEnabled(false);
         tilBusinessArea.setErrorEnabled(false);
         tilBasementArea.setErrorEnabled(false);
+        tilFloorArea.setErrorEnabled(false);
+        tilAtticArea.setErrorEnabled(false);
     }
 
 
@@ -292,21 +349,25 @@ public class DimensionsFragment extends Fragment implements DetailsUpdateListene
 
     @Override
     public void onDetailsUpdate(Building mBuilding) {
+        this.mBuilding=mBuilding;
+        tvBrutoArea.setVisibility(View.GONE);
+        tvNetoArea.setVisibility(View.GONE);
+        tvFloorArea.setVisibility(View.GONE);
         switch (mBuilding.getPurpose().getPurpose()){
             case RESIDENTIAL:
                 tilFloorArea.setVisibility(View.GONE);
                 tilResidentArea.setVisibility(View.VISIBLE);
                 tilBusinessArea.setVisibility(View.GONE);
-                tvFloorArea.setVisibility(View.VISIBLE);
                 tilNumOfFlats.setVisibility(View.VISIBLE);
+                tvWarning.setVisibility(View.GONE);
                 break;
 
             case RES_BUSSINES:
                 tilFloorArea.setVisibility(View.GONE);
-                tvFloorArea.setVisibility(View.VISIBLE);
                 tilNumOfFlats.setVisibility(View.VISIBLE);
                 tilResidentArea.setVisibility(View.VISIBLE);
                 tilBusinessArea.setVisibility(View.VISIBLE);
+                tvWarning.setVisibility(View.GONE);
                 break;
 
             default:
@@ -315,15 +376,16 @@ public class DimensionsFragment extends Fragment implements DetailsUpdateListene
                 tilBusinessArea.setVisibility(View.GONE);
                 tilResidentArea.setVisibility(View.GONE);
                 tilNumOfFlats.setVisibility(View.GONE);
+                tvWarning.setVisibility(View.GONE);
                 break;
         }
     }
 
 
     public interface DimensionsInserted{
-        void onDimensionsInformationInserted(double length, double width, double brutoArea,
+        void onDimensionsInformationInserted(double length, double width, double atticBrutoArea,
                                              double basementArea, double residentalArea, double businessArea,
-                                             double fullHeight, double floorHeight, int numOfFloors, int numOfFlats, boolean properGroundPlan);
+                                             double fullHeight, double floorHeight, int numOfFloors, int numOfFlats, double floorArea, boolean properGroundPlan);
     }
 
 }

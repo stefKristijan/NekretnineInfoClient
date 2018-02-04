@@ -45,9 +45,10 @@ public class BuildingDetailsFragment extends Fragment {
     private static final String FUTURE_YEAR = "Ne možete unijeti godinu veću od trenutne";
     private static final String FIRST_YEAR_GREATER = "Prva godina mora biti manja od druge godine";
     private static final String FORMAT_NOT_VALID = "Godina mora biti formata ####. ili ####.-####.";
-    private static final String CHOOSE_PURPOSE = "Odaberite namjenu iz padajućeg izbornika";
+    private static final String CHOOSE_PURPOSE = "Odaberite namjenu zgrade";
     private static final int PURPOSE_REQUEST = 11;
     private static final int CONSTRUCTION_REQUEST = 21;
+    private static final String CHOOSE_CONSTRUCTION = "Odaberite nosivi sustav zgrade";
     private Button btnAccept, btnPurpose, btnConstruction;
     private EditText etYearOfBuild, etCompanyInBuilding;
     private Spinner  spCeilingMaterial, spRoof, spMaintenanceGrade;
@@ -147,7 +148,6 @@ public class BuildingDetailsFragment extends Fragment {
         this.btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Material material = materials.get(spMaterial.getSelectedItemPosition());
                 CeilingMaterial ceilingMaterial = ceilingMaterials.get(spCeilingMaterial.getSelectedItemPosition());
                 Roof roof = roofs.get(spRoof.getSelectedItemPosition());
                 if(checkData(etYearOfBuild.getText().toString().trim(), etCompanyInBuilding.getText().toString().trim())){
@@ -245,13 +245,16 @@ public class BuildingDetailsFragment extends Fragment {
             if (year > Calendar.getInstance().get(Calendar.YEAR)) {
                 isValid=false;
                 tilYearOfBuild.setError(FUTURE_YEAR);
+            }else if(selectedPurpose==null){
+                isValid=false;
+                Toast.makeText(getContext(), CHOOSE_PURPOSE, Toast.LENGTH_SHORT).show();
+            }else if(selectedConstruction==null){
+                isValid=false;
+                Toast.makeText(getContext(), CHOOSE_CONSTRUCTION, Toast.LENGTH_SHORT).show();
             }
         }
 
-        if(selectedPurpose==null){
-            isValid=false;
-            Toast.makeText(getContext(), CHOOSE_PURPOSE, Toast.LENGTH_SHORT).show();
-        }
+
         return isValid;
     }
 

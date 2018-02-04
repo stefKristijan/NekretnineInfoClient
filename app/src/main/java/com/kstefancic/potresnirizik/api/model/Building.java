@@ -203,9 +203,10 @@ public class Building implements Serializable{
     }
 
     public void setDimensions(double width, double length, double atticBrutoArea, double floorHeight, double fullHeight,
-                              int numberOfFloors, int numberOfFlats, double residentialBrutoArea, double basementBrutoArea,
+                              int numberOfFloors, int numberOfFlats, double residentialBrutoArea, double businessBrutoArea, double basementBrutoArea,
                               double floorArea) {
         this.width = width;
+        this.businessBrutoArea =businessBrutoArea;
         this.length = length;
         this.numberOfFlats = numberOfFlats;
         this.floorHeight = floorHeight;

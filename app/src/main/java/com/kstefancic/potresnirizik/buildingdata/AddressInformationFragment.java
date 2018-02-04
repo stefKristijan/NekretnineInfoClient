@@ -48,7 +48,7 @@ public class AddressInformationFragment extends Fragment {
 
     private static final String FORMAT_NOT_VALID = "Dopušteni formati katastarske čestice i općine su: # ili #/#";
     private static final String EMPTY_FIELD = "*Obavezno polje";
-    private static final String CHAR_ONLY = "Dopušteno jedno slovo";
+    private static final String CHAR_ONLY = "*Slovo";
     private static final String UNKNOWN_STREET = "Ulica ne postoji";
     private static final String UNKNOWN_CITY= "Grad ne postoji";
     private static final String UNKNOWN_STATE= "Županija ne postoji";
@@ -293,7 +293,7 @@ public class AddressInformationFragment extends Fragment {
         if(settlement.isEmpty()){
             isValid=false;
             tilSettlement.setError(EMPTY_FIELD);
-        } else if(!getSettlementNames().contains(settlements)){
+        } else if(!getSettlementNames().contains(settlement)){
             isValid=false;
             tilSettlement.setError(UNKNOWN_SETTLEMENT);
         }

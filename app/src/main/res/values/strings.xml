@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NekretnineInfo</string>
+    <string name="app_name">Potresni rizik - Osijek</string>
     <string name="etUsernameHint">Korisničko ime</string>
     <string name="etPasswordHint">Lozinka</string>
     <string name="btnLogInText">Prijavi se</string>
@@ -101,6 +101,7 @@
     <string name="one">1</string>
     <string name="zero">0</string>
     <string name="choose">Odaberi...</string>
+    <string name="tvWarningAboutDetailsInDims">*Potvrdite detalje kako bi mogli unijeti sva polja na ovoj stranici</string>
     <string-array name="maintenanceGrades">
         <item>Vrlo dobro</item>
         <item>Prihvatljivo</item>

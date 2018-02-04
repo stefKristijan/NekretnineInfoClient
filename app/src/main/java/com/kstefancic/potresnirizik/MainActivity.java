@@ -272,6 +272,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     buildings.get(position).setLocations(building.getLocations());
                     DBHelper.getInstance(getApplicationContext()).updateBuildingByuId(building);
                     buildingAdapter.notifyDataSetChanged();
+                }else{
+                    Toast.makeText(getApplicationContext(), response.errorBody().toString(),Toast.LENGTH_SHORT).show();
                 }
             }
 
