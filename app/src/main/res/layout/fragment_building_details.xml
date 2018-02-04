@@ -68,17 +68,25 @@
             android:text="@string/tvWallsMaterial"
             android:textAppearance="@style/TextAppearance.AppCompat.Notification"
             android:textColor="@android:color/black"
-            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_spMaterials"
+            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_btnConstruction"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_elvPurpose" />
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_btnPurpose" />
 
-        <Spinner
-            android:id="@+id/buildingDetailsFr_spMaterials"
+        <Button
+            android:id="@+id/buildingDetailsFr_btnConstruction"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
+            android:background="@color/transparent"
+            android:gravity="start"
+            android:paddingLeft="24dp"
+            android:paddingTop="7dp"
+            android:text="@string/choose"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/textColor"
+            android:textSize="14sp"
             app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_tvCeilingMaterial"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -109,33 +117,7 @@
             android:textColor="@android:color/black"
             app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_spCeilingMaterials"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_spMaterials" />
-
-        <Spinner
-            android:id="@+id/buildingDetailsFr_spConstrSys"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
-            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_tvMaintenanceGrade"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_tvConstrSys" />
-
-        <TextView
-            android:id="@+id/buildingDetailsFr_tvConstrSys"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/tvConstructionSystem"
-            android:textAppearance="@style/TextAppearance.AppCompat.Notification"
-            android:textColor="@android:color/black"
-            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_spConstrSys"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_spRoof" />
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_btnConstruction" />
 
         <Button
             android:id="@+id/buildingDetailsFr_btnNext"
@@ -154,14 +136,21 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_spMaintenanceGrade" />
 
-        <com.kstefancic.potresnirizik.views.NonScrollExpandableListView
-            android:id="@+id/buildingDetailsFr_elvPurpose"
+        <Button
+            android:id="@+id/buildingDetailsFr_btnPurpose"
             android:layout_width="0dp"
-            android:layout_height="200dp"
+            android:layout_height="35dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
-            android:visibility="visible"
+            android:background="@color/transparent"
+            android:gravity="start"
+            android:paddingLeft="24dp"
+            android:paddingTop="7dp"
+            android:text="@string/choose"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/textColor"
+            android:textSize="14sp"
             app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_tvWallMaterial"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -177,7 +166,7 @@
             android:text="@string/tvPurpose"
             android:textAppearance="@style/TextAppearance.AppCompat.Notification"
             android:textColor="@android:color/black"
-            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_elvPurpose"
+            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_btnPurpose"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_tilCompanyInBuilding" />
 
@@ -201,7 +190,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
-            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_tvConstrSys"
+            app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_tvMaintenanceGrade"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_tvRoof" />
@@ -211,8 +200,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:textColor="@color/textColor"
             android:textAppearance="@style/TextAppearance.AppCompat.Notification.Info"
+            android:textColor="@color/textColor"
             app:layout_constraintBottom_toBottomOf="@+id/buildingDetailsFr_tvPurpose"
             app:layout_constraintStart_toEndOf="@+id/buildingDetailsFr_tvPurpose"
             app:layout_constraintTop_toTopOf="@+id/buildingDetailsFr_tvPurpose" />
@@ -251,7 +240,7 @@
             android:textColor="@android:color/black"
             app:layout_constraintBottom_toTopOf="@+id/buildingDetailsFr_spMaintenanceGrade"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_spConstrSys" />
+            app:layout_constraintTop_toBottomOf="@+id/buildingDetailsFr_spRoof" />
 
         <Spinner
             android:id="@+id/buildingDetailsFr_spMaintenanceGrade"

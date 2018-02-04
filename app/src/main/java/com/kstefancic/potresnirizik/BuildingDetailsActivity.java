@@ -146,6 +146,7 @@ public class BuildingDetailsActivity extends AppCompatActivity {
         this.tvNumOfFlats.setText(String.valueOf(mBuilding.getNumberOfFlats()));
     }
 
+
     private void setUpDetailsInfo() {
         this.tvYearOfBuild = findViewById(R.id.buildingDetailsActvty_tvYearOfBuild);
         this.tvPurpose = findViewById(R.id.buildingDetailsActvty_tvPurpose);

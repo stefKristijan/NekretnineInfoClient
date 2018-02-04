@@ -105,7 +105,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/frDims_tilBrutoArea"
+            android:id="@+id/frDims_tilAtticArea"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -117,16 +117,18 @@
             app:layout_constraintTop_toTopOf="@+id/frDims_tilBasementArea">
 
             <EditText
-                android:id="@+id/frDims_etBrutoArea"
+                android:id="@+id/frDims_etAtticArea"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/edit_text"
                 android:ems="10"
-                android:hint="@string/etBrutoAreaHint"
+                android:text="@string/zero"
+                android:hint="@string/etAtticArea"
                 android:inputType="numberDecimal"
                 android:padding="5dp" />
         </android.support.design.widget.TextInputLayout>
+
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/frDims_tilFullHeight"
@@ -135,7 +137,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/frDims_cbProperGroundPlan"
+            app:layout_constraintBottom_toTopOf="@+id/frDims_tvBrutoArea"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/frDims_tilFloorHeight"
@@ -197,6 +199,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/edit_text"
                 android:ems="10"
+                android:text="@string/one"
                 android:hint="@string/etNumOfFloorsHint"
                 android:inputType="numberDecimal"
                 android:padding="5dp" />
@@ -239,7 +242,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/frDims_tilFullHeight" />
+            app:layout_constraintTop_toBottomOf="@+id/frDims_tvBrutoArea" />
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/frDims_tilResidentArea"
@@ -248,7 +251,7 @@
             android:layout_marginEnd="4dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/frDims_tilBasementArea"
+            app:layout_constraintBottom_toTopOf="@+id/frDims_tilFloorArea"
             app:layout_constraintEnd_toStartOf="@+id/frDims_tilBusinessArea"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -292,6 +295,32 @@
 
         </android.support.design.widget.TextInputLayout>
 
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/frDims_tilFloorArea"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/frDims_tvFloorArea"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/frDims_tilResidentArea">
+
+            <EditText
+                android:id="@+id/frDims_etFloorArea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/edit_text"
+                android:ems="10"
+                android:hint="@string/etFloorAreaHint"
+                android:inputType="numberDecimal"
+                android:padding="5dp" />
+
+        </android.support.design.widget.TextInputLayout>
+
         <android.support.design.widget.TextInputLayout
             android:id="@+id/frDims_tilBasementArea"
             android:layout_width="0dp"
@@ -300,10 +329,10 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toTopOf="@+id/frDims_tilNumOfFloors"
-            app:layout_constraintEnd_toStartOf="@+id/frDims_tilBrutoArea"
+            app:layout_constraintEnd_toStartOf="@+id/frDims_tilAtticArea"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/frDims_tilResidentArea">
+            app:layout_constraintTop_toBottomOf="@+id/frDims_tvFloorArea">
 
             <EditText
                 android:id="@+id/frDims_etBasementBA"
@@ -312,11 +341,56 @@
                 android:layout_weight="1"
                 android:background="@drawable/edit_text"
                 android:ems="10"
+                android:text="@string/zero"
                 android:hint="@string/etBasementBAHint"
                 android:inputType="numberDecimal"
                 android:padding="5dp" />
 
         </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/frDims_tvFloorArea"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tvFloorArea"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/frDims_tilBasementArea"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/frDims_tilFloorArea" />
+
+        <TextView
+            android:id="@+id/frDims_tvBrutoArea"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tvBrutoArea"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/frDims_cbProperGroundPlan"
+            app:layout_constraintEnd_toStartOf="@+id/frDims_tvNetoArea"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/frDims_tilFullHeight" />
+
+        <TextView
+            android:id="@+id/frDims_tvNetoArea"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="4dp"
+            android:text="@string/tvNetoArea"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/frDims_tvBrutoArea"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/frDims_tvBrutoArea"
+            app:layout_constraintTop_toTopOf="@+id/frDims_tvBrutoArea" />
+
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

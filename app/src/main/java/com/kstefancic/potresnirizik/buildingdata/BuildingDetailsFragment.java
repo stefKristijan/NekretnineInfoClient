@@ -1,6 +1,7 @@
 package com.kstefancic.potresnirizik.buildingdata;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -12,21 +13,19 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kstefancic.potresnirizik.R;
 import com.kstefancic.potresnirizik.api.model.Building;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.CeilingMaterial;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Construction;
-import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Material;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Purpose;
 import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Roof;
-import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Sector;
 import com.kstefancic.potresnirizik.helper.DBHelper;
 import com.kstefancic.potresnirizik.helper.PurposeExpandableListAdapter;
+import com.kstefancic.potresnirizik.views.ExpandableConstructionActivity;
+import com.kstefancic.potresnirizik.views.ExpandablePurposeActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +33,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 import static com.kstefancic.potresnirizik.MainActivity.BUILDING_DATA;
 
 /**
@@ -45,22 +46,19 @@ public class BuildingDetailsFragment extends Fragment {
     private static final String FIRST_YEAR_GREATER = "Prva godina mora biti manja od druge godine";
     private static final String FORMAT_NOT_VALID = "Godina mora biti formata ####. ili ####.-####.";
     private static final String CHOOSE_PURPOSE = "Odaberite namjenu iz padajućeg izbornika";
-    private Button btnAccept;
+    private static final int PURPOSE_REQUEST = 11;
+    private static final int CONSTRUCTION_REQUEST = 21;
+    private Button btnAccept, btnPurpose, btnConstruction;
     private EditText etYearOfBuild, etCompanyInBuilding;
-    private Spinner spMaterial, spCeilingMaterial, spConstructionSystem, spRoof, spMaintenanceGrade;
-    private TextView tvSelectedPurpose;
-    private ExpandableListView expandableListView;
+    private Spinner  spCeilingMaterial, spRoof, spMaintenanceGrade;
     private TextInputLayout tilYearOfBuild, tilCompanyInBuilding;
-    private List<Material> materials;
     private List<CeilingMaterial> ceilingMaterials;
-    private List<Construction> constructions;
     private List<Roof> roofs;
-    private List<Sector> sectors;
-    private List<Purpose> purposes;
     private Purpose selectedPurpose;
+    private Construction selectedConstruction;
     private BuildingDetailsInserted buildingDetailsInserted;
     private Building mBuilding;
-    private PurposeExpandableListAdapter purposeExpandableListAdapter;
+
 
 
     public static BuildingDetailsFragment newInstance(Building building) {
@@ -77,9 +75,6 @@ public class BuildingDetailsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBuilding = (Building) getArguments().getSerializable(BUILDING_DATA);
-
-        this.sectors = DBHelper.getInstance(getActivity()).getAllSectors();
-        this.purposes = DBHelper.getInstance(getActivity()).getAllPurposes();
     }
 
     @Override
@@ -90,42 +85,61 @@ public class BuildingDetailsFragment extends Fragment {
         return layout;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i("RESULT",String.valueOf(requestCode)+" "+resultCode);
+        if (requestCode == PURPOSE_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                selectedPurpose = (Purpose) data.getSerializableExtra(ExpandablePurposeActivity.PURPOSE);
+                btnPurpose.setText(selectedPurpose.getPurpose());
+                Log.d("NEW PURPOSE", selectedPurpose.toString());
+            } else if (resultCode == RESULT_CANCELED) {
+                Log.i("RESULT_CANCEL", "purpose canceled");
+            }
+        }
+        else if (requestCode == CONSTRUCTION_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                selectedConstruction = (Construction) data.getSerializableExtra(ExpandableConstructionActivity.CONSTRUCTION);
+                btnConstruction.setText(selectedConstruction.getConstruction());
+                Log.d("NEW CONSTRUCTION", selectedConstruction.toString());
+            } else if (resultCode == RESULT_CANCELED) {
+                Log.i("RESULT_CANCEL", "constr canceled");
+            }
+        }
+    }
+
     private void setUI(View layout) {
         this.spRoof = layout.findViewById(R.id.buildingDetailsFr_spRoof);
-        this.tvSelectedPurpose = layout.findViewById(R.id.buildingDetailsFr_tvSelectedPurpose);
-        this.spMaterial = layout.findViewById(R.id.buildingDetailsFr_spMaterials);
         this.spCeilingMaterial =layout.findViewById(R.id.buildingDetailsFr_spCeilingMaterials);
-        this.spConstructionSystem =layout.findViewById(R.id.buildingDetailsFr_spConstrSys);
         this.spMaintenanceGrade = layout.findViewById(R.id.buildingDetailsFr_spMaintenanceGrade);
+        this.btnPurpose=layout.findViewById(R.id.buildingDetailsFr_btnPurpose);
+        this.btnPurpose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent purposeIntent = new Intent(getActivity(),ExpandablePurposeActivity.class);
+                startActivityForResult(purposeIntent, PURPOSE_REQUEST);
+            }
+        });
+        this.btnConstruction = layout.findViewById(R.id.buildingDetailsFr_btnConstruction);
+        this.btnConstruction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent constructionIntent = new Intent(getActivity(),ExpandableConstructionActivity.class);
+                startActivityForResult(constructionIntent, CONSTRUCTION_REQUEST);
+            }
+        });
         this.etYearOfBuild = layout.findViewById(R.id.buildingDetailsFr_etYearOfBuild);
         this.tilYearOfBuild = layout.findViewById(R.id.buildingDetailsFr_tilYear);
         this.tilCompanyInBuilding = layout.findViewById(R.id.buildingDetailsFr_tilCompanyInBuilding);
         this.etCompanyInBuilding = layout.findViewById(R.id.buildingDetailsFr_etCompanyInBuilding);
-        this.expandableListView = layout.findViewById(R.id.buildingDetailsFr_elvPurpose);
-        this.expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long l) {
-                Sector sector = sectors.get(groupPosition);
-                List<Purpose> purposeGroup = new ArrayList<>();
 
-                for(Purpose purpose : purposes){
-                    if(sector.getSectorName().equals(purpose.getSector().getSectorName())){
-                        purposeGroup.add(purpose);
-                    }
-                }
-                selectedPurpose = purposeGroup.get(childPosition);
-                tvSelectedPurpose.setText(selectedPurpose.getPurpose());
-                return false;
-            }
-        });
 
         setUpSpinners();
-        setUpPurposeELV();
 
         if(mBuilding!=null){
             this.etYearOfBuild.setText(mBuilding.getYearOfBuild());
             this.etCompanyInBuilding.setText(mBuilding.getCompanyInBuilding());
-            this.tvSelectedPurpose.setText(mBuilding.getPurpose().getPurpose());
             this.selectedPurpose=mBuilding.getPurpose();
         }
 
@@ -133,31 +147,24 @@ public class BuildingDetailsFragment extends Fragment {
         this.btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Material material = materials.get(spMaterial.getSelectedItemPosition());
+                //Material material = materials.get(spMaterial.getSelectedItemPosition());
                 CeilingMaterial ceilingMaterial = ceilingMaterials.get(spCeilingMaterial.getSelectedItemPosition());
-                Construction construction = constructions.get(spConstructionSystem.getSelectedItemPosition());
                 Roof roof = roofs.get(spRoof.getSelectedItemPosition());
                 if(checkData(etYearOfBuild.getText().toString().trim(), etCompanyInBuilding.getText().toString().trim())){
                     String yearOfBuild = etYearOfBuild.getText().toString().trim();
                     String companyInBuilding = etCompanyInBuilding.getText().toString().trim();
                     String maintenanceGrade = spMaintenanceGrade.getSelectedItem().toString();
                     Log.i("BUILDING","onInsert");
-                    buildingDetailsInserted.onBuildingDetailsInserted(material,ceilingMaterial, construction,roof,selectedPurpose,yearOfBuild, companyInBuilding, maintenanceGrade);
+                    buildingDetailsInserted.onBuildingDetailsInserted(ceilingMaterial, selectedConstruction,roof,selectedPurpose,yearOfBuild, companyInBuilding, maintenanceGrade);
                 }
+
             }
         });
 
     }
 
-    private void setUpPurposeELV() {
-        this.purposeExpandableListAdapter= new PurposeExpandableListAdapter(getActivity(), sectors, purposes);
-        this.expandableListView.setAdapter(purposeExpandableListAdapter);
-    }
 
     private void setUpSpinners() {
-
-        List<String> constSysSpinnerItems = setUpConstrSysSpinnerItems();
-        inflateSpinnerWithList(constSysSpinnerItems,spConstructionSystem);
 
         List<String> roofSpinnerItems = setUpRoofSpinnerItems();
         inflateSpinnerWithList(roofSpinnerItems,spRoof);
@@ -165,16 +172,11 @@ public class BuildingDetailsFragment extends Fragment {
         List<String> ceilingMaterialSpinnerItems = setUpCeilingMaterialSpinnerItems();
         inflateSpinnerWithList(ceilingMaterialSpinnerItems,spCeilingMaterial);
 
-        List<String> materialSpinnerItems = setUpMaterialSpinnerItems();
-        inflateSpinnerWithList(materialSpinnerItems,spMaterial);
-
         inflateSpinnerWithList(Arrays.asList(getResources().getStringArray(R.array.maintenanceGrades)),spMaintenanceGrade);
 
         if(mBuilding!=null){
-            setSpinnersToBuildingData(constSysSpinnerItems,mBuilding.getConstruction().getConstruction(),spConstructionSystem);
             setSpinnersToBuildingData(roofSpinnerItems,mBuilding.getRoof().getRoofType(),spRoof);
             setSpinnersToBuildingData(ceilingMaterialSpinnerItems,mBuilding.getCeilingMaterial().getCeilingMaterial(),spCeilingMaterial);
-            //setSpinnersToBuildingData(materialSpinnerItems, mBuilding.getMaterial().getMaterial(),spMaterial);
             setSpinnersToBuildingData(Arrays.asList(getResources().getStringArray(R.array.maintenanceGrades)), mBuilding.getMaintenanceGrade(), spMaintenanceGrade);
         }
     }
@@ -199,16 +201,6 @@ public class BuildingDetailsFragment extends Fragment {
         return  roofsTxts;
     }
 
-    private List<String> setUpMaterialSpinnerItems() {
-        List<String> materialTxts = new ArrayList<>();
-        materials= DBHelper.getInstance(getActivity()).getAllMaterials();
-
-        for(Material material: materials){
-            materialTxts.add(material.getMaterial());
-        }
-
-        return  materialTxts;
-    }
 
     private List<String> setUpCeilingMaterialSpinnerItems() {
         List<String> ceilingMaterialTxts = new ArrayList<>();
@@ -219,17 +211,6 @@ public class BuildingDetailsFragment extends Fragment {
         }
 
         return  ceilingMaterialTxts;
-    }
-
-    private List<String> setUpConstrSysSpinnerItems() {
-        List<String> constrSysTexts = new ArrayList<>();
-        constructions = DBHelper.getInstance(getActivity()).getAllConstructionSystems();
-
-        for(Construction construction : constructions){
-            constrSysTexts.add(construction.getConstruction());
-        }
-
-        return  constrSysTexts;
     }
 
     private boolean checkData(String yearOfBuild, String companyInBuilding){
@@ -297,7 +278,7 @@ public class BuildingDetailsFragment extends Fragment {
     }
 
     public interface BuildingDetailsInserted {
-        void onBuildingDetailsInserted(Material wallMaterial, CeilingMaterial ceilingMaterial,
+        void onBuildingDetailsInserted( CeilingMaterial ceilingMaterial,
                                        Construction construction, Roof roof,
                                        Purpose purpose, String yearOfBuild, String companyInBuilding, String maintenanceGrade);
     }

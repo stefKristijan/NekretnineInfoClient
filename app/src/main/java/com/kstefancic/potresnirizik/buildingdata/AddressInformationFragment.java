@@ -343,7 +343,6 @@ public class AddressInformationFragment extends Fragment {
     }
 
     private void setUpCityDistrictAutocomplete() {
-        List<String> cityDistrictNames = getCityDistrictNames();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, getCityDistrictNames());
         actvCityDistrict.setAdapter(adapter);
     }

@@ -1,7 +1,6 @@
 package com.kstefancic.potresnirizik.helper;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,73 +8,72 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import com.kstefancic.potresnirizik.R;
-import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Purpose;
-import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Sector;
+import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Construction;
+import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.SupportingSystem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by user on 28.11.2017..
+ * Created by user on 4.2.2018..
  */
 
-public class PurposeExpandableListAdapter extends BaseExpandableListAdapter {
-
-    private List<String> sectorHeaders;
-    private HashMap<String, List<String>> purposeChildren;
+public class ConstructionExpandableListAdapter extends BaseExpandableListAdapter{
+    private List<String> supportingHeaders;
+    private HashMap<String, List<String>> constructionChildren;
     private Context context;
 
 
-    public PurposeExpandableListAdapter(Context context, List<Sector> sectors, List<Purpose> purposes) {
+    public ConstructionExpandableListAdapter(Context context, List<SupportingSystem> supportingSystems, List<Construction> constructions) {
         this.context = context;
-        this.sectorHeaders = new ArrayList<>();
-        this.purposeChildren = new HashMap<>();
-        prepareData(sectors,purposes);
+        this.supportingHeaders = new ArrayList<>();
+        this.constructionChildren = new HashMap<>();
+        prepareData(supportingSystems,constructions);
     }
 
-    private void prepareData(List<Sector> sectors, List<Purpose> purposes) {
+    private void prepareData(List<SupportingSystem> supportingSystems, List<Construction> constructions) {
         List<String> tempList = new ArrayList<>();
         String header = "";
-        for (int i=0; i<purposes.size();i++) {
-            Purpose purpose = purposes.get(i);
+        for (int i=0; i<constructions.size();i++) {
+            Construction construction = constructions.get(i);
             if (header.isEmpty()) {
-                header = purpose.getSector().getSectorName();
-                sectorHeaders.add(header);
-                tempList.add(purpose.getPurpose());
-            } else if (header.equals(purpose.getSector().getSectorName())) {
-                tempList.add(purpose.getPurpose());
-                if(i==purposes.size()-1){
-                    this.purposeChildren.put(header, new ArrayList<>(tempList));
+                header = construction.getSupportingSystem().getSupportingSystem();
+                supportingHeaders.add(header);
+                tempList.add(construction.getConstruction());
+            } else if (header.equals(construction.getSupportingSystem().getSupportingSystem())) {
+                tempList.add(construction.getConstruction());
+                if(i==constructions.size()-1){
+                    this.constructionChildren.put(header, new ArrayList<>(tempList));
                 }
-            } else if (!header.equals(purpose.getSector().getSectorName())) {
-                this.purposeChildren.put(header, new ArrayList<>(tempList));
+            } else if (!header.equals(construction.getSupportingSystem().getSupportingSystem())) {
+                this.constructionChildren.put(header, new ArrayList<>(tempList));
                 tempList.clear();
-                header = purpose.getSector().getSectorName();
-                sectorHeaders.add(header);
-                tempList.add(purpose.getPurpose());
+                header = construction.getSupportingSystem().getSupportingSystem();
+                supportingHeaders.add(header);
+                tempList.add(construction.getConstruction());
             }
         }
     }
 
     @Override
     public int getGroupCount() {
-        return sectorHeaders.size();
+        return supportingHeaders.size();
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this.purposeChildren.get(this.sectorHeaders.get(groupPosition)).size();
+        return this.constructionChildren.get(this.supportingHeaders.get(groupPosition)).size();
     }
 
     @Override
     public Object getGroup(int i) {
-        return this.sectorHeaders.get(i);
+        return this.supportingHeaders.get(i);
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return this.purposeChildren.get(this.sectorHeaders.get(groupPosition)).get(childPosition);
+        return this.constructionChildren.get(this.supportingHeaders.get(groupPosition)).get(childPosition);
     }
 
     @Override

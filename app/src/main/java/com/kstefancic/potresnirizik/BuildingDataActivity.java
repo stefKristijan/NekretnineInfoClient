@@ -31,6 +31,7 @@ import com.kstefancic.potresnirizik.api.model.MultiChoiceModels.Roof;
 import com.kstefancic.potresnirizik.api.model.localDBdto.LocalImage;
 import com.kstefancic.potresnirizik.buildingdata.AddressInformationFragment;
 import com.kstefancic.potresnirizik.buildingdata.BuildingDetailsFragment;
+import com.kstefancic.potresnirizik.buildingdata.DetailsUpdateListener;
 import com.kstefancic.potresnirizik.buildingdata.DimensionsFragment;
 import com.kstefancic.potresnirizik.buildingdata.PicturesFragment;
 import com.kstefancic.potresnirizik.helper.DBHelper;
@@ -42,7 +43,8 @@ import java.util.UUID;
 
 import static com.kstefancic.potresnirizik.MainActivity.BUILDING_DATA;
 
-public class BuildingDataActivity extends AppCompatActivity implements View.OnClickListener,BuildingDetailsFragment.BuildingDetailsInserted, AddressInformationFragment.AddressInformationInserted, DimensionsFragment.DimensionsInserted,PicturesFragment.PictureChoosen{
+public class BuildingDataActivity extends AppCompatActivity implements View.OnClickListener,
+        BuildingDetailsFragment.BuildingDetailsInserted, AddressInformationFragment.AddressInformationInserted, DimensionsFragment.DimensionsInserted,PicturesFragment.PictureChoosen {
 
     private static final String VALIDATE = "Potvrdite podatke radi validacije";
     private static final String NO_CONSTRUCTION_SYSTEM = "Morate odabrati konstrukcijski sustav kako bi spremili dimenzije";
@@ -69,10 +71,10 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
             R.drawable.ic_photo_library_white_24dp
     };
 
-    private Building mBuilding;
+    Building mBuilding;
     private List<LocalImage> images = new ArrayList<>();
     private boolean hasDimensions=false, hasLocations=false, hasDetails=false, hasPictures=false, isUpdating=false;
-
+    private DetailsUpdateListener mDetailsUpdateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,7 +195,7 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
     }
 
     @Override
-    public void onBuildingDetailsInserted(Material wallMaterial, CeilingMaterial ceilingMaterial, Construction construction, Roof roof, Purpose purpose, String yearOfBuild, String companyInBuilding, String maintenanceGrade) {
+    public void onBuildingDetailsInserted( CeilingMaterial ceilingMaterial, Construction construction, Roof roof, Purpose purpose, String yearOfBuild, String companyInBuilding, String maintenanceGrade) {
         //this.mBuilding.setMaterial(wallMaterial);
         this.mBuilding.setCeilingMaterial(ceilingMaterial);
         this.mBuilding.setConstruction(construction);
@@ -204,6 +206,7 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
         this.mBuilding.setCompanyInBuilding(companyInBuilding);
         this.mViewPager.setCurrentItem(2,true);
         this.hasDetails=true;
+        detailsUpdated();
     }
 
     @Override
@@ -284,6 +287,19 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
 
     }
 
+    public synchronized void detailsUpdated(){
+        Log.d("UPDATE", mBuilding.toString());
+        mDetailsUpdateListener.onDetailsUpdate(mBuilding);
+    }
+
+    public synchronized void registerDataUpdateListener(DetailsUpdateListener listener) {
+        this.mDetailsUpdateListener = listener;
+    }
+
+    public synchronized void unregisterDataUpdateListener() {
+        this.mDetailsUpdateListener=null;
+    }
+
 
 
     /**
@@ -317,4 +333,6 @@ public class BuildingDataActivity extends AppCompatActivity implements View.OnCl
             return null;
         }
     }
+
+
 }

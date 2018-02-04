@@ -96,6 +96,11 @@
     <string name="tvNetoArea">Neto ploština:</string>
     <string name="tvNumOfResidents">Broj stanara:</string>
     <string name="tvCompanyInBuilding">Tvrtka unutar zgrade:</string>
+    <string name="etAtticArea">Ploština tavana</string>
+    <string name="tvFloorArea">Katna ploština:</string>
+    <string name="one">1</string>
+    <string name="zero">0</string>
+    <string name="choose">Odaberi...</string>
     <string-array name="maintenanceGrades">
         <item>Vrlo dobro</item>
         <item>Prihvatljivo</item>
